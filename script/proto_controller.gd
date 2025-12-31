@@ -50,8 +50,12 @@ var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
-var coin : int = 0
+var score : int = 0
 var current_interactable : Node = null
+
+## Inventory system
+var inventory : Array = []
+var max_capacity : int = 2
 
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
@@ -59,6 +63,7 @@ var current_interactable : Node = null
 @onready var interact_ray: RayCast3D = $Head/InteractRay
 @onready var score_label: Label = $HUD/ScoreLabel
 @onready var interact_prompt: Label = $HUD/InteractPrompt
+@onready var inventory_label: Label = $HUD/InventoryLabel
 
 func _ready() -> void:
 	check_input_mappings()
@@ -206,14 +211,22 @@ func check_interactable():
 	if interact_ray.is_colliding():
 		var collider_obj = interact_ray.get_collider()
 		if collider_obj:
-			# Get the parent node which should have the Interactable script
-			var interactable = collider_obj.get_parent()
-			if interactable and interactable.has_method("interact"):
+			# First check if the collider itself has interact method (e.g. DeliveryArea)
+			var interactable = null
+			if collider_obj.has_method("interact"):
+				interactable = collider_obj
+			else:
+				# Otherwise check parent (e.g. coin's Area3D -> coin)
+				var parent = collider_obj.get_parent()
+				if parent and parent.has_method("interact"):
+					interactable = parent
+			
+			if interactable:
 				current_interactable = interactable
 				# Show interact prompt
 				if interact_prompt:
-					var prompt_text = "Nhấn E để nhặt"
-					if interactable.has_method("get") and interactable.get("prompt_message"):
+					var prompt_text = "Nhấn E"
+					if interactable.get("prompt_message"):
 						prompt_text = interactable.prompt_message
 					interact_prompt.text = prompt_text
 				return
@@ -230,14 +243,43 @@ func try_interact():
 		current_interactable.interact(self)
 
 
-## Add coin to player inventory
-func add_coin(value: int):
-	coin += value
+## Add item to inventory (returns true if successful)
+func add_to_inventory(item_value: int) -> bool:
+	if inventory.size() >= max_capacity:
+		return false
+	inventory.append(item_value)
+	update_inventory_ui()
+	return true
+
+
+## Deliver all items in inventory to score
+func deliver_items():
+	if inventory.size() == 0:
+		return
+	
+	var total = 0
+	for item in inventory:
+		total += item
+	score += total
+	inventory.clear()
+	
 	update_score_ui()
+	update_inventory_ui()
+
+
+## Check if inventory is full
+func is_inventory_full() -> bool:
+	return inventory.size() >= max_capacity
 
 
 ## Update the score display on screen
 func update_score_ui():
 	if score_label:
-		score_label.text = "Coin: " + str(coin)
+		score_label.text = "Score: " + str(score)
+
+
+## Update the inventory display on screen
+func update_inventory_ui():
+	if inventory_label:
+		inventory_label.text = "Túi: " + str(inventory.size()) + "/" + str(max_capacity)
 

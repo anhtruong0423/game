@@ -5,6 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://biaygbcmy14af" path="res://scene/nhanvat.tscn" id="3_0ha60"]
 [ext_resource type="PackedScene" uid="uid://cbtvvo6xyqfk5" path="res://scene/coin.tscn" id="4_0ha60"]
 [ext_resource type="Script" uid="uid://corsns17hbnw2" path="res://script/coin.gd" id="5_4j5ol"]
+[ext_resource type="Script" path="res://script/delivery_point.gd" id="6_delivery"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_delivery"]
+radius = 2.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -136,6 +140,15 @@ size = Vector3(6.2000003, 0.001, 10.1)
 
 [node name="nhanvat" parent="." instance=ExtResource("3_0ha60")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.54494905, 1.1)
+
+[node name="DeliveryArea" type="Area3D" parent="nhanvat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("6_delivery")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="nhanvat/DeliveryArea"]
+shape = SubResource("SphereShape3D_delivery")
 
 [node name="Node3D" type="Node3D" parent="."]
 
