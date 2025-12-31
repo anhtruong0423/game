@@ -5,7 +5,7 @@ class_name Interactable
 
 @export var prompt_message: String = "Nhấn E để nhặt" # Chữ hiện lên màn hình
 
-@export var value: int = 1
+@export var value: int = 1000
 
 func interact(player):
 	# Check if inventory is full
