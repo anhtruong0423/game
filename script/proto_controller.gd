@@ -43,20 +43,35 @@ extends CharacterBody3D
 @export var input_sprint : String = "sprint"
 ## Name of Input Action to toggle freefly mode.
 @export var input_freefly : String = "freefly"
+## Name of Input Action to interact with objects.
+@export var input_interact : String = "interact"
 
 var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
+var coin : int = 0
+var current_interactable : Node = null
 
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
+@onready var interact_ray: RayCast3D = $Head/InteractRay
 
 func _ready() -> void:
 	check_input_mappings()
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
+	
+	# Debug: Check if InteractRay is loaded
+	print("[DEBUG] === Player Ready ===")
+	print("[DEBUG] interact_ray: ", interact_ray)
+	if interact_ray:
+		print("[DEBUG] RayCast enabled: ", interact_ray.enabled)
+		print("[DEBUG] RayCast target_position: ", interact_ray.target_position)
+		print("[DEBUG] RayCast collision_mask: ", interact_ray.collision_mask)
+	else:
+		push_error("[ERROR] InteractRay not found! Check proto_controller.tscn")
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Mouse capturing
@@ -75,6 +90,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			enable_freefly()
 		else:
 			disable_freefly()
+	
+	# Interact with objects (press E)
+	if Input.is_action_just_pressed(input_interact):
+		try_interact()
 
 func _physics_process(delta: float) -> void:
 	# If freeflying, handle freefly and nothing else
@@ -180,5 +199,46 @@ func check_input_mappings():
 	if can_freefly and not InputMap.has_action(input_freefly):
 		push_error("Freefly disabled. No InputAction found for input_freefly: " + input_freefly)
 		can_freefly = false
-		
-		
+
+
+## Check for interactable objects every frame
+func _process(_delta: float) -> void:
+	check_interactable()
+
+
+## Check if raycast is hitting an interactable object
+func check_interactable():
+	if not interact_ray:
+		return
+	
+	if interact_ray.is_colliding():
+		var collider_obj = interact_ray.get_collider()
+		if collider_obj:
+			print("[DEBUG] RayCast hit: ", collider_obj.name, " - Type: ", collider_obj.get_class())
+			# Get the parent node which should have the Interactable script
+			var interactable = collider_obj.get_parent()
+			print("[DEBUG] Parent: ", interactable.name if interactable else "NULL")
+			if interactable and interactable.has_method("interact"):
+				print("[DEBUG] Found interactable! Press E to pick up")
+				current_interactable = interactable
+				return
+			else:
+				print("[DEBUG] Parent has no interact method")
+	current_interactable = null
+
+
+## Try to interact with the current interactable object
+func try_interact():
+	print("[DEBUG] try_interact() called - current_interactable: ", current_interactable)
+	if current_interactable and current_interactable.has_method("interact"):
+		current_interactable.interact(self)
+		print("Đã nhặt vật phẩm! Tổng coin: ", coin)
+	else:
+		print("[DEBUG] Không có vật phẩm để nhặt!")
+
+
+## Add coin to player inventory
+func add_coin(value: int):
+	coin += value
+	print("Nhận được ", value, " coin!")
+
