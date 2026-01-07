@@ -343,6 +343,14 @@ func update_inventory_ui():
 ## Tiêu hao năng lượng
 func drain_energy(amount: float):
 	energy = max(0, energy - amount)
+	if energy <= 0:
+		trigger_game_over()
+
+
+## Kích hoạt màn hình Game Over
+func trigger_game_over():
+	Global.save_game_result(score)
+	get_tree().change_scene_to_file("res://scene/gameover.tscn")
 
 
 ## Thêm năng lượng (từ milk)
