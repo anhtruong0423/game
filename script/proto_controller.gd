@@ -57,8 +57,13 @@ var current_interactable : Node = null
 var current_milk : Node = null  ## Milk gần nhất có thể nhặt bằng Q
 
 ## Inventory system
-var inventory : Array = []
+var inventory : Array = []  ## Array of {value: int, weight: float}
 var max_capacity : int = 2
+var total_weight : float = 0.0  ## Tổng trọng lượng đang mang
+
+## Weight system constants
+const WEIGHT_SPEED_PENALTY : float = 0.05  ## Giảm 5% tốc độ mỗi kg
+const MAX_WEIGHT_PENALTY : float = 0.5  ## Tối đa giảm 50% tốc độ
 
 ## Energy system
 var energy : float = 100.0
@@ -69,6 +74,7 @@ var energy_drain_rate : float = 5.0  ## Năng lượng mất mỗi giây khi di 
 var upgrade_levels : Dictionary = {"inventory": 0, "speed": 0, "energy": 0}
 var coin_value_multiplier : float = 1.0  ## Dự phòng cho tương lai
 var upgrade_menu_open : bool = false
+var pause_menu_open : bool = false
 const UPGRADE_PRICES : Dictionary = {"inventory": 100, "speed": 50, "energy": 200}
 const BASE_INVENTORY_CAPACITY : int = 2
 const BASE_SPEED : float = 7.0
@@ -89,6 +95,16 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var speed_upgrade_btn: Button = $HUD/UpgradeMenu/VBoxContainer/SpeedUpgrade
 @onready var energy_upgrade_btn: Button = $HUD/UpgradeMenu/VBoxContainer/EnergyUpgrade
 
+## Pause Menu references
+@onready var pause_panel: Control = $HUD/PausePanel
+@onready var pause_continue_btn: Button = $HUD/PausePanel/VBoxContainer/ContinueButton
+@onready var pause_restart_btn: Button = $HUD/PausePanel/VBoxContainer/RestartButton
+@onready var pause_settings_btn: Button = $HUD/PausePanel/VBoxContainer/SettingsButton
+@onready var pause_mainmenu_btn: Button = $HUD/PausePanel/VBoxContainer/MainMenuButton
+@onready var pause_quit_btn: Button = $HUD/PausePanel/VBoxContainer/QuitButton
+@onready var pause_settings_panel: Control = $HUD/PausePanel/PauseSettingsPanel
+@onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/VBoxContainer/CloseButton
+
 func _ready() -> void:
 	check_input_mappings()
 	look_rotation.y = rotation.y
@@ -106,16 +122,44 @@ func _ready() -> void:
 		speed_upgrade_btn.pressed.connect(_on_speed_upgrade_pressed)
 	if energy_upgrade_btn:
 		energy_upgrade_btn.pressed.connect(_on_energy_upgrade_pressed)
+	
+	# Khởi tạo pause menu
+	if pause_panel:
+		pause_panel.visible = false
+	
+	# Kết nối signals cho pause menu buttons
+	if pause_continue_btn:
+		pause_continue_btn.pressed.connect(_on_pause_continue_pressed)
+	if pause_restart_btn:
+		pause_restart_btn.pressed.connect(_on_pause_restart_pressed)
+	if pause_settings_btn:
+		pause_settings_btn.pressed.connect(_on_pause_settings_pressed)
+	if pause_mainmenu_btn:
+		pause_mainmenu_btn.pressed.connect(_on_pause_mainmenu_pressed)
+	if pause_quit_btn:
+		pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
+	if pause_settings_close_btn:
+		pause_settings_close_btn.pressed.connect(_on_pause_settings_close_pressed)
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Mouse capturing
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	# Mouse capturing (chỉ khi không pause)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not pause_menu_open:
 		capture_mouse()
+	
+	# Xử lý ESC
 	if Input.is_key_pressed(KEY_ESCAPE):
-		if upgrade_menu_open:
+		if pause_menu_open:
+			# Nếu đang mở settings trong pause, đóng settings
+			if pause_settings_panel and pause_settings_panel.visible:
+				pause_settings_panel.visible = false
+			else:
+				# Đóng pause menu
+				toggle_pause_menu()
+		elif upgrade_menu_open:
 			toggle_upgrade_menu()
 		else:
-			release_mouse()
+			# Mở pause menu
+			toggle_pause_menu()
 	
 	# Look around
 	if mouse_captured and event is InputEventMouseMotion:
@@ -136,9 +180,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed(input_pickup_milk):
 		try_pickup_milk()
 	
-	# Open upgrade menu (press Tab) - chỉ mở, không đóng
+	# Open upgrade menu (press Tab) - chỉ mở, không đóng, không cho mở khi pause
 	if event is InputEventKey and event.pressed and event.keycode == KEY_TAB:
-		if not upgrade_menu_open:
+		if not upgrade_menu_open and not pause_menu_open:
 			toggle_upgrade_menu()
 
 func _physics_process(delta: float) -> void:
@@ -297,13 +341,19 @@ func try_interact():
 		current_interactable.interact(self)
 
 
-## Add item to inventory (returns true if successful)
+## Add item to inventory (returns true if successful) - legacy support
 func add_to_inventory(item_value: int) -> bool:
+	return add_to_inventory_with_weight(item_value, 1.0)
+
+
+## Add item to inventory with weight (returns true if successful)
+func add_to_inventory_with_weight(item_value: int, item_weight: float) -> bool:
 	if inventory.size() >= max_capacity:
 		return false
 	# Áp dụng coin_value_multiplier (dự phòng cho tương lai)
 	var final_value = int(item_value * coin_value_multiplier)
-	inventory.append(final_value)
+	inventory.append({"value": final_value, "weight": item_weight})
+	total_weight += item_weight
 	update_inventory_ui()
 	return true
 
@@ -315,9 +365,13 @@ func deliver_items():
 	
 	var total = 0
 	for item in inventory:
-		total += item
+		if item is Dictionary:
+			total += item.get("value", 0)
+		else:
+			total += item  # Legacy support
 	score += total
 	inventory.clear()
+	total_weight = 0.0  # Reset trọng lượng
 	
 	update_score_ui()
 	update_inventory_ui()
@@ -337,7 +391,7 @@ func update_score_ui():
 ## Update the inventory display on screen
 func update_inventory_ui():
 	if inventory_label:
-		inventory_label.text = "Túi: " + str(inventory.size()) + "/" + str(max_capacity)
+		inventory_label.text = "Túi: " + str(inventory.size()) + "/" + str(max_capacity) + " (%.1fkg)" % total_weight
 
 
 ## Tiêu hao năng lượng
@@ -408,9 +462,12 @@ func try_pickup_milk():
 
 ## ==================== UPGRADE SYSTEM ====================
 
-## Tính tốc độ di chuyển dựa trên upgrade level
+## Tính tốc độ di chuyển dựa trên upgrade level và trọng lượng
 func calculate_speed() -> float:
-	return BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"])
+	var base = BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"])
+	# Tính penalty từ trọng lượng
+	var weight_penalty = min(total_weight * WEIGHT_SPEED_PENALTY, MAX_WEIGHT_PENALTY)
+	return base * (1.0 - weight_penalty)
 
 
 ## Tính tốc độ tiêu hao năng lượng dựa trên upgrade level
@@ -525,3 +582,58 @@ func _on_speed_upgrade_pressed():
 ## Callback khi nhấn nút nâng cấp Energy
 func _on_energy_upgrade_pressed():
 	buy_upgrade("energy")
+
+
+## ==================== PAUSE MENU SYSTEM ====================
+
+## Toggle pause menu
+func toggle_pause_menu():
+	pause_menu_open = not pause_menu_open
+	
+	if pause_panel:
+		pause_panel.visible = pause_menu_open
+	
+	# Pause/unpause game
+	get_tree().paused = pause_menu_open
+	
+	if pause_menu_open:
+		release_mouse()
+		# Đóng settings panel nếu đang mở
+		if pause_settings_panel:
+			pause_settings_panel.visible = false
+	else:
+		capture_mouse()
+
+
+## Continue button - tiếp tục chơi
+func _on_pause_continue_pressed():
+	toggle_pause_menu()
+
+
+## Restart button - chơi lại từ đầu
+func _on_pause_restart_pressed():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scene/main.tscn")
+
+
+## Settings button - mở settings panel
+func _on_pause_settings_pressed():
+	if pause_settings_panel:
+		pause_settings_panel.visible = true
+
+
+## Settings close button - đóng settings panel
+func _on_pause_settings_close_pressed():
+	if pause_settings_panel:
+		pause_settings_panel.visible = false
+
+
+## Main Menu button - về menu chính
+func _on_pause_mainmenu_pressed():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
+
+
+## Quit button - thoát game
+func _on_pause_quit_pressed():
+	get_tree().quit()

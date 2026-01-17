@@ -1,12 +1,10 @@
 extends Node3D
 
+## Script cho vật nặng - có trọng lượng lớn để test hệ thống weight
 
-class_name Interactable
-
-@export var prompt_message: String = "Nhấn E để nhặt" # Chữ hiện lên màn hình
-
-@export var value: int = 1000
-@export var weight: float = 1.0  ## Trọng lượng của item (kg)
+@export var prompt_message: String = "Nhấn E để nhặt (Nặng!)"
+@export var value: int = 5000  ## Giá trị cao hơn coin thường
+@export var weight: float = 10.0  ## Nặng 10kg - sẽ giảm 50% tốc độ
 
 func interact(player):
 	# Check if inventory is full
@@ -16,6 +14,4 @@ func interact(player):
 	if player.has_method("add_to_inventory_with_weight"):
 		if player.add_to_inventory_with_weight(value, weight):
 			queue_free()  # Only delete if successfully added
-	elif player.has_method("add_to_inventory"):
-		if player.add_to_inventory(value):
-			queue_free()  # Only delete if successfully added
+

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ums2w3jcdrjc"]
+[gd_scene load_steps=20 format=3 uid="uid://ums2w3jcdrjc"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_wp4xf"]
 [ext_resource type="PackedScene" uid="uid://b3mffnawbabpn" path="res://scene/tree_static.tscn" id="2_brvut"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://corsns17hbnw2" path="res://script/coin.gd" id="5_4j5ol"]
 [ext_resource type="Script" uid="uid://krx2f7ckwnbg" path="res://script/delivery_point.gd" id="6_delivery"]
 [ext_resource type="PackedScene" uid="uid://cmilk12345678" path="res://scene/milk.tscn" id="7_p1hux"]
+[ext_resource type="Script" path="res://script/heavy_item.gd" id="8_heavy"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -43,6 +44,9 @@ albedo_color = Color(0.27, 0.1053, 0.1053, 1)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_delivery"]
 radius = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_heavy"]
+size = Vector3(0.4, 0.5, 0.5)
 
 [node name="main" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14494896, 0)
@@ -201,3 +205,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8612806, 0.2858663, 5.94107
 
 [node name="Milk9" parent="milk" instance=ExtResource("7_p1hux")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49602556, 0.28586677, 8.561032)
+
+[node name="vatnang" type="CSGBox3D" parent="milk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.050000012, 0.4, -4.6000004)
+size = Vector3(0.3, 0.4, 0.4)
+script = ExtResource("8_heavy")
+
+[node name="Area3D" type="Area3D" parent="milk/vatnang"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="milk/vatnang/Area3D"]
+shape = SubResource("BoxShape3D_heavy")
