@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cbtvvo6xyqfk5" path="res://scene/coin.tscn" id="4_0ha60"]
 [ext_resource type="Script" uid="uid://corsns17hbnw2" path="res://script/coin.gd" id="5_4j5ol"]
 [ext_resource type="Script" uid="uid://krx2f7ckwnbg" path="res://script/delivery_point.gd" id="6_delivery"]
-[ext_resource type="PackedScene" path="res://scene/milk.tscn" id="7_p1hux"]
+[ext_resource type="PackedScene" uid="uid://cmilk12345678" path="res://scene/milk.tscn" id="7_p1hux"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 

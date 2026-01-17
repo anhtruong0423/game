@@ -65,8 +65,7 @@ func _on_restart_pressed() -> void:
 
 
 func _on_main_menu_pressed() -> void:
-	# Hiện tại chưa có main menu, nên reload main scene
-	get_tree().change_scene_to_file("res://scene/main.tscn")
+	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
 
 
 func _on_quit_pressed() -> void:
