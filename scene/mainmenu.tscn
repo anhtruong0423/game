@@ -95,6 +95,14 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
 text = "Thoát"
 
+[node name="ResetButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(150, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 14
+text = "Reset Data (Test)"
+
 [node name="SettingsPanel" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -120,51 +128,228 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -150.0
-offset_right = 200.0
-offset_bottom = 150.0
+offset_left = -280.0
+offset_top = -280.0
+offset_right = 280.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanel/Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="SettingsPanel/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanel/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "⚙️ CÀI ĐẶT"
+
+[node name="DisplaySection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "🖥️ HIỂN THỊ"
+
+[node name="BrightnessContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/BrightnessContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Độ sáng:"
+
+[node name="BrightnessSlider" type="HSlider" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/BrightnessContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 50.0
+max_value = 150.0
+value = 100.0
+
+[node name="BrightnessValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/BrightnessContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+text = "100%"
+
+[node name="FullscreenContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/FullscreenContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Toàn màn hình:"
+
+[node name="FullscreenCheck" type="CheckBox" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/FullscreenContainer"]
+layout_mode = 2
+
+[node name="VsyncContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/VsyncContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "VSync:"
+
+[node name="VsyncCheck" type="CheckBox" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/VsyncContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="AudioSection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "🔊 ÂM THANH"
+
+[node name="MasterContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Master:"
+
+[node name="MasterSlider" type="HSlider" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 100.0
+
+[node name="MasterValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+text = "100%"
+
+[node name="MusicContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Nhạc nền:"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="MusicValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+text = "80%"
+
+[node name="SfxContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Hiệu ứng:"
+
+[node name="SfxSlider" type="HSlider" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 100.0
+
+[node name="SfxValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+text = "100%"
+
+[node name="ControlSection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "🎮 ĐIỀU KHIỂN"
+
+[node name="SensitivityContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Độ nhạy chuột:"
+
+[node name="SensitivitySlider" type="HSlider" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 10.0
+max_value = 100.0
+value = 40.0
+
+[node name="SensitivityValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+text = "40%"
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="SettingsPanel/Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = -50.0
+offset_right = -15.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="SettingsPanel/Panel/VBoxContainer"]
+[node name="SaveButton" type="Button" parent="SettingsPanel/Panel/ButtonsContainer"]
+custom_minimum_size = Vector2(100, 35)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
-text = "Cài Đặt"
+theme_override_font_sizes/font_size = 16
+text = "Lưu"
 
-[node name="Content" type="Label" parent="SettingsPanel/Panel/VBoxContainer"]
+[node name="ResetSettingsButton" type="Button" parent="SettingsPanel/Panel/ButtonsContainer"]
+custom_minimum_size = Vector2(100, 35)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "Đang phát triển...
+theme_override_font_sizes/font_size = 16
+text = "Đặt lại"
 
-Các tùy chọn cài đặt sẽ được
-thêm vào trong bản cập nhật sau."
-autowrap_mode = 2
-
-[node name="CloseButton" type="Button" parent="SettingsPanel/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(150, 45)
+[node name="CloseButton" type="Button" parent="SettingsPanel/Panel/ButtonsContainer"]
+custom_minimum_size = Vector2(100, 35)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 text = "Đóng"
 
 [node name="TutorialPanel" type="Control" parent="."]

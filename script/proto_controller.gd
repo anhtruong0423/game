@@ -103,7 +103,21 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var pause_mainmenu_btn: Button = $HUD/PausePanel/VBoxContainer/MainMenuButton
 @onready var pause_quit_btn: Button = $HUD/PausePanel/VBoxContainer/QuitButton
 @onready var pause_settings_panel: Control = $HUD/PausePanel/PauseSettingsPanel
-@onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/VBoxContainer/CloseButton
+
+## Pause Settings UI references
+@onready var pause_brightness_slider: HSlider = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/BrightnessContainer/PauseBrightnessSlider
+@onready var pause_brightness_value: Label = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/BrightnessContainer/PauseBrightnessValue
+@onready var pause_master_slider: HSlider = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer/PauseMasterSlider
+@onready var pause_master_value: Label = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer/PauseMasterValue
+@onready var pause_music_slider: HSlider = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer/PauseMusicSlider
+@onready var pause_music_value: Label = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer/PauseMusicValue
+@onready var pause_sfx_slider: HSlider = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer/PauseSfxSlider
+@onready var pause_sfx_value: Label = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer/PauseSfxValue
+@onready var pause_sensitivity_slider: HSlider = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer/PauseSensitivitySlider
+@onready var pause_sensitivity_value: Label = $HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer/PauseSensitivityValue
+@onready var pause_settings_save_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/SaveButton
+@onready var pause_settings_reset_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/ResetButton
+@onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/CloseButton
 
 func _ready() -> void:
 	check_input_mappings()
@@ -138,8 +152,26 @@ func _ready() -> void:
 		pause_mainmenu_btn.pressed.connect(_on_pause_mainmenu_pressed)
 	if pause_quit_btn:
 		pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
+	
+	# Kết nối signals cho pause settings panel
 	if pause_settings_close_btn:
 		pause_settings_close_btn.pressed.connect(_on_pause_settings_close_pressed)
+	if pause_settings_save_btn:
+		pause_settings_save_btn.pressed.connect(_on_pause_settings_save_pressed)
+	if pause_settings_reset_btn:
+		pause_settings_reset_btn.pressed.connect(_on_pause_settings_reset_pressed)
+	
+	# Kết nối signals cho pause settings sliders
+	if pause_brightness_slider:
+		pause_brightness_slider.value_changed.connect(_on_pause_brightness_changed)
+	if pause_master_slider:
+		pause_master_slider.value_changed.connect(_on_pause_master_changed)
+	if pause_music_slider:
+		pause_music_slider.value_changed.connect(_on_pause_music_changed)
+	if pause_sfx_slider:
+		pause_sfx_slider.value_changed.connect(_on_pause_sfx_changed)
+	if pause_sensitivity_slider:
+		pause_sensitivity_slider.value_changed.connect(_on_pause_sensitivity_changed)
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Mouse capturing (chỉ khi không pause)
@@ -235,10 +267,13 @@ func _physics_process(delta: float) -> void:
 ## Base of controller rotates around y (left/right). Head rotates around x (up/down).
 ## Modifies look_rotation based on rot_input, then resets basis and rotates by look_rotation.
 func rotate_look(rot_input : Vector2):
+	# Lấy mouse sensitivity từ Global settings
+	var current_sensitivity = Global.settings.get("mouse_sensitivity", look_speed)
+	
 	# 1. Tính toán góc xoay mới
-	look_rotation.x -= rot_input.y * look_speed
+	look_rotation.x -= rot_input.y * current_sensitivity
 	look_rotation.x = clamp(look_rotation.x, deg_to_rad(-85), deg_to_rad(85))
-	look_rotation.y -= rot_input.x * look_speed
+	look_rotation.y -= rot_input.x * current_sensitivity
 	
 	# 2. Xoay thân người (chỉ xoay quanh trục Y)
 	# Thay vì reset Basis, chúng ta set trực tiếp góc xoay để bảo toàn vị trí
@@ -462,23 +497,29 @@ func try_pickup_milk():
 
 ## ==================== UPGRADE SYSTEM ====================
 
-## Tính tốc độ di chuyển dựa trên upgrade level và trọng lượng
+## Tính tốc độ di chuyển dựa trên upgrade level, bonus nhân vật và trọng lượng
 func calculate_speed() -> float:
-	var base = BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"])
+	# Base speed + upgrade bonus + character bonus (Minh: +10%)
+	var character_speed_bonus = Global.get_character_bonus("speed_bonus")
+	var base = BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"] + character_speed_bonus)
 	# Tính penalty từ trọng lượng
 	var weight_penalty = min(total_weight * WEIGHT_SPEED_PENALTY, MAX_WEIGHT_PENALTY)
 	return base * (1.0 - weight_penalty)
 
 
-## Tính tốc độ tiêu hao năng lượng dựa trên upgrade level
+## Tính tốc độ tiêu hao năng lượng dựa trên upgrade level và bonus nhân vật
 func calculate_energy_drain() -> float:
-	var drain = BASE_ENERGY_DRAIN * (1.0 - 0.1 * upgrade_levels["energy"])
+	# Character bonus (Lan: -10% tiêu hao = +0.1 energy_bonus)
+	var character_energy_bonus = Global.get_character_bonus("energy_bonus")
+	var drain = BASE_ENERGY_DRAIN * (1.0 - 0.1 * upgrade_levels["energy"] - character_energy_bonus)
 	return max(0.1, drain)  ## Tối thiểu 0.1
 
 
-## Tính dung lượng túi dựa trên upgrade level
+## Tính dung lượng túi dựa trên upgrade level và bonus nhân vật
 func calculate_inventory_capacity() -> int:
-	return BASE_INVENTORY_CAPACITY + upgrade_levels["inventory"]
+	# Character bonus (Hùng: +1 slot)
+	var character_inv_bonus = int(Global.get_character_bonus("inventory_bonus"))
+	return BASE_INVENTORY_CAPACITY + upgrade_levels["inventory"] + character_inv_bonus
 
 
 ## Lấy giá nâng cấp tiếp theo
@@ -620,12 +661,88 @@ func _on_pause_restart_pressed():
 func _on_pause_settings_pressed():
 	if pause_settings_panel:
 		pause_settings_panel.visible = true
+		load_pause_settings_to_ui()
 
 
 ## Settings close button - đóng settings panel
 func _on_pause_settings_close_pressed():
 	if pause_settings_panel:
 		pause_settings_panel.visible = false
+
+
+## Settings save button - lưu settings
+func _on_pause_settings_save_pressed():
+	Global.save_data()
+	if pause_settings_panel:
+		pause_settings_panel.visible = false
+
+
+## Settings reset button - đặt lại settings về mặc định
+func _on_pause_settings_reset_pressed():
+	Global.reset_settings()
+	load_pause_settings_to_ui()
+
+
+## Load settings từ Global vào pause settings UI
+func load_pause_settings_to_ui():
+	if pause_brightness_slider:
+		pause_brightness_slider.value = Global.settings["brightness"] * 100
+		pause_brightness_value.text = str(int(pause_brightness_slider.value)) + "%"
+	
+	if pause_master_slider:
+		pause_master_slider.value = Global.settings["master_volume"] * 100
+		pause_master_value.text = str(int(pause_master_slider.value)) + "%"
+	
+	if pause_music_slider:
+		pause_music_slider.value = Global.settings["music_volume"] * 100
+		pause_music_value.text = str(int(pause_music_slider.value)) + "%"
+	
+	if pause_sfx_slider:
+		pause_sfx_slider.value = Global.settings["sfx_volume"] * 100
+		pause_sfx_value.text = str(int(pause_sfx_slider.value)) + "%"
+	
+	if pause_sensitivity_slider:
+		# Sensitivity: 0.001-0.005 -> 10-100
+		var sens = Global.settings["mouse_sensitivity"]
+		pause_sensitivity_slider.value = (sens - 0.001) / 0.004 * 90 + 10
+		pause_sensitivity_value.text = str(int(pause_sensitivity_slider.value)) + "%"
+
+
+## Callback khi thay đổi độ sáng
+func _on_pause_brightness_changed(value: float):
+	if pause_brightness_value:
+		pause_brightness_value.text = str(int(value)) + "%"
+	Global.set_setting("brightness", value / 100.0)
+
+
+## Callback khi thay đổi master volume
+func _on_pause_master_changed(value: float):
+	if pause_master_value:
+		pause_master_value.text = str(int(value)) + "%"
+	Global.set_setting("master_volume", value / 100.0)
+
+
+## Callback khi thay đổi music volume
+func _on_pause_music_changed(value: float):
+	if pause_music_value:
+		pause_music_value.text = str(int(value)) + "%"
+	Global.set_setting("music_volume", value / 100.0)
+
+
+## Callback khi thay đổi SFX volume
+func _on_pause_sfx_changed(value: float):
+	if pause_sfx_value:
+		pause_sfx_value.text = str(int(value)) + "%"
+	Global.set_setting("sfx_volume", value / 100.0)
+
+
+## Callback khi thay đổi mouse sensitivity
+func _on_pause_sensitivity_changed(value: float):
+	if pause_sensitivity_value:
+		pause_sensitivity_value.text = str(int(value)) + "%"
+	# Convert 10-100 -> 0.001-0.005
+	var sens = (value - 10) / 90.0 * 0.004 + 0.001
+	Global.set_setting("mouse_sensitivity", sens)
 
 
 ## Main Menu button - về menu chính

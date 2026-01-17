@@ -1,0 +1,207 @@
+[gd_scene load_steps=2 format=3 uid="uid://character_select_2024"]
+
+[ext_resource type="Script" path="res://script/character_select.gd" id="1_charselect"]
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_charselect")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.15, 0.2, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 42
+horizontal_alignment = 1
+text = "CHỌN NHÂN VẬT"
+
+[node name="Subtitle" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "Mỗi nhân vật có khả năng đặc biệt riêng"
+
+[node name="CharactersContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="MinhContainer" type="VBoxContainer" parent="VBoxContainer/CharactersContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Avatar" type="Panel" parent="VBoxContainer/CharactersContainer/MinhContainer"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/CharactersContainer/MinhContainer/Avatar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "🏃"
+
+[node name="Name" type="Label" parent="VBoxContainer/CharactersContainer/MinhContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.7, 0.9, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "MINH"
+
+[node name="Trait" type="Label" parent="VBoxContainer/CharactersContainer/MinhContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Năng động"
+
+[node name="Bonus" type="Label" parent="VBoxContainer/CharactersContainer/MinhContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "+10% Tốc độ"
+
+[node name="SelectButton" type="Button" parent="VBoxContainer/CharactersContainer/MinhContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "Chọn"
+
+[node name="LanContainer" type="VBoxContainer" parent="VBoxContainer/CharactersContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Avatar" type="Panel" parent="VBoxContainer/CharactersContainer/LanContainer"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/CharactersContainer/LanContainer/Avatar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "💡"
+
+[node name="Name" type="Label" parent="VBoxContainer/CharactersContainer/LanContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.5, 0.7, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "LAN"
+
+[node name="Trait" type="Label" parent="VBoxContainer/CharactersContainer/LanContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Thông minh"
+
+[node name="Bonus" type="Label" parent="VBoxContainer/CharactersContainer/LanContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "-10% Tiêu hao NL"
+
+[node name="SelectButton" type="Button" parent="VBoxContainer/CharactersContainer/LanContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "Chọn"
+
+[node name="HungContainer" type="VBoxContainer" parent="VBoxContainer/CharactersContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Avatar" type="Panel" parent="VBoxContainer/CharactersContainer/HungContainer"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/CharactersContainer/HungContainer/Avatar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "💪"
+
+[node name="Name" type="Label" parent="VBoxContainer/CharactersContainer/HungContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "HÙNG"
+
+[node name="Trait" type="Label" parent="VBoxContainer/CharactersContainer/HungContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Khỏe mạnh"
+
+[node name="Bonus" type="Label" parent="VBoxContainer/CharactersContainer/HungContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "+1 Slot túi đồ"
+
+[node name="SelectButton" type="Button" parent="VBoxContainer/CharactersContainer/HungContainer"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "Chọn"
+
