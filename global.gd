@@ -6,9 +6,17 @@ var coin := 0
 var best_score := 0
 var last_score := 0
 
+## Level system
+var current_level: int = 1
+var level_stars: Dictionary = {1: 0, 2: 0, 3: 0}
+var total_coins: int = 0
+var last_stars: int = 0
+var last_elapsed_time: float = 0.0
+
 ## Tutorial và Character Selection
 var tutorial_completed := false
 var selected_character := ""  ## "minh", "lan", "hung"
+var dialogue_mode := "tutorial"  ## "tutorial" hoặc "level"
 
 ## Character bonuses
 const CHARACTER_BONUSES = {
@@ -49,7 +57,20 @@ func save_game_result(score: int):
 	last_score = score
 	if score > best_score:
 		best_score = score
-		save_data()  # Lưu khi có best score mới
+		save_data()
+
+
+func save_level_result(level: int, stars: int):
+	last_stars = stars
+	if stars > level_stars.get(level, 0):
+		level_stars[level] = stars
+	save_data()
+
+
+func advance_level():
+	if current_level < 3:
+		current_level += 1
+		save_data()
 
 
 ## Đánh dấu tutorial đã hoàn thành
@@ -77,7 +98,10 @@ func save_data():
 	config.set_value("game", "best_score", best_score)
 	config.set_value("game", "tutorial_completed", tutorial_completed)
 	config.set_value("game", "selected_character", selected_character)
-	# Save settings
+	config.set_value("game", "current_level", current_level)
+	config.set_value("game", "total_coins", total_coins)
+	for level in level_stars:
+		config.set_value("level_stars", str(level), level_stars[level])
 	for key in settings:
 		config.set_value("settings", key, settings[key])
 	config.save(SAVE_PATH)
@@ -91,10 +115,13 @@ func load_data():
 		best_score = config.get_value("game", "best_score", 0)
 		tutorial_completed = config.get_value("game", "tutorial_completed", false)
 		selected_character = config.get_value("game", "selected_character", "")
-		# Load settings
+		current_level = config.get_value("game", "current_level", 1)
+		total_coins = config.get_value("game", "total_coins", 0)
+		for level in level_stars:
+			level_stars[level] = config.get_value("level_stars", str(level), 0)
 		for key in settings:
 			settings[key] = config.get_value("settings", key, DEFAULT_SETTINGS[key])
-	print("[Global] Loaded: tutorial_completed=", tutorial_completed, ", selected_character=", selected_character)
+	print("[Global] Loaded: level=", current_level, ", tutorial=", tutorial_completed, ", character=", selected_character)
 
 
 ## Reset tất cả dữ liệu (dùng để test)
@@ -102,6 +129,9 @@ func reset_all_data():
 	best_score = 0
 	tutorial_completed = false
 	selected_character = ""
+	current_level = 1
+	total_coins = 0
+	level_stars = {1: 0, 2: 0, 3: 0}
 	settings = DEFAULT_SETTINGS.duplicate()
 	save_data()
 	apply_all_settings()

@@ -64,11 +64,10 @@ func update_selection_ui():
 func start_game():
 	if selected_character == "":
 		return
-	
-	# Lưu nhân vật đã chọn
+
 	Global.select_character(selected_character)
 	Global.complete_tutorial()
-	
-	# Chuyển sang game
-	get_tree().change_scene_to_file("res://scene/main.tscn")
+
+	Global.dialogue_mode = "level"
+	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 

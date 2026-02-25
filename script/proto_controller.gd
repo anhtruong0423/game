@@ -69,6 +69,9 @@ const MAX_WEIGHT_PENALTY : float = 0.5  ## Tối đa giảm 50% tốc độ
 var energy : float = 100.0
 var max_energy : float = 100.0
 var energy_drain_rate : float = 5.0  ## Năng lượng mất mỗi giây khi di chuyển
+var is_exhausted : bool = false
+var is_sprinting : bool = false
+var energy_blink_timer : float = 0.0
 
 ## Upgrade system
 var upgrade_levels : Dictionary = {"inventory": 0, "speed": 0, "energy": 0}
@@ -123,8 +126,12 @@ func _ready() -> void:
 	check_input_mappings()
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
-	
-	# Khởi tạo upgrade system
+
+	if score_label:
+		score_label.visible = false
+
+	_setup_energy_bar_style()
+
 	apply_upgrades()
 	if upgrade_menu:
 		upgrade_menu.visible = false
@@ -236,12 +243,17 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed(input_jump) and is_on_floor():
 			velocity.y = jump_velocity
 
-	# Modify speed based on sprinting and upgrades
+	# Modify speed based on sprinting, upgrades, and exhaustion
 	var upgraded_speed = calculate_speed()
-	if can_sprint and Input.is_action_pressed(input_sprint):
-			move_speed = sprint_speed * (1.0 + 0.1 * upgrade_levels["speed"])
+	if is_exhausted:
+		move_speed = BASE_SPEED * 0.15
+		is_sprinting = false
+	elif can_sprint and Input.is_action_pressed(input_sprint):
+		move_speed = sprint_speed * (1.0 + 0.1 * upgrade_levels["speed"])
+		is_sprinting = true
 	else:
 		move_speed = upgraded_speed
+		is_sprinting = false
 
 	# Apply desired movement to velocity
 	if can_move:
@@ -250,8 +262,9 @@ func _physics_process(delta: float) -> void:
 		if move_dir:
 			velocity.x = move_dir.x * move_speed
 			velocity.z = move_dir.z * move_speed
-			# Tiêu hao năng lượng khi di chuyển (dựa trên upgrade)
-			drain_energy(calculate_energy_drain() * delta)
+			if not is_exhausted:
+				var drain_multiplier = 2.0 if is_sprinting else 1.0
+				drain_energy(calculate_energy_drain() * drain_multiplier * delta)
 		else:
 			velocity.x = move_toward(velocity.x, 0, move_speed)
 			velocity.z = move_toward(velocity.z, 0, move_speed)
@@ -383,33 +396,42 @@ func add_to_inventory(item_value: int) -> bool:
 
 ## Add item to inventory with weight (returns true if successful)
 func add_to_inventory_with_weight(item_value: int, item_weight: float) -> bool:
+	return add_to_inventory_typed("", item_value, item_weight)
+
+
+## Add item to inventory with type and weight (returns true if successful)
+func add_to_inventory_typed(item_type: String, item_value: int, item_weight: float) -> bool:
 	if inventory.size() >= max_capacity:
 		return false
-	# Áp dụng coin_value_multiplier (dự phòng cho tương lai)
 	var final_value = int(item_value * coin_value_multiplier)
-	inventory.append({"value": final_value, "weight": item_weight})
+	inventory.append({"type": item_type, "value": final_value, "weight": item_weight})
 	total_weight += item_weight
 	update_inventory_ui()
 	return true
 
 
-## Deliver all items in inventory to score
-func deliver_items():
+## Deliver all items in inventory to score, returns list of delivered item types
+func deliver_items() -> Array:
 	if inventory.size() == 0:
-		return
+		return []
 	
+	var delivered_types: Array = []
 	var total = 0
 	for item in inventory:
 		if item is Dictionary:
 			total += item.get("value", 0)
+			var t = item.get("type", "")
+			if t != "":
+				delivered_types.append(t)
 		else:
-			total += item  # Legacy support
+			total += item
 	score += total
 	inventory.clear()
-	total_weight = 0.0  # Reset trọng lượng
+	total_weight = 0.0
 	
 	update_score_ui()
 	update_inventory_ui()
+	return delivered_types
 
 
 ## Check if inventory is full
@@ -432,8 +454,8 @@ func update_inventory_ui():
 ## Tiêu hao năng lượng
 func drain_energy(amount: float):
 	energy = max(0, energy - amount)
-	if energy <= 0:
-		trigger_game_over()
+	if energy <= 0 and not is_exhausted:
+		is_exhausted = true
 
 
 ## Kích hoạt màn hình Game Over
@@ -445,12 +467,59 @@ func trigger_game_over():
 ## Thêm năng lượng (từ milk)
 func add_energy(amount: float):
 	energy = min(max_energy, energy + amount)
+	if energy > 0:
+		is_exhausted = false
+
+
+var _energy_fill_style: StyleBoxFlat = null
+var _energy_bg_style: StyleBoxFlat = null
+
+func _setup_energy_bar_style():
+	if not energy_bar:
+		return
+
+	energy_bar.anchor_left = 1.0
+	energy_bar.anchor_right = 1.0
+	energy_bar.offset_left = -220.0
+	energy_bar.offset_top = 20.0
+	energy_bar.offset_right = -20.0
+	energy_bar.offset_bottom = 50.0
+	energy_bar.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+
+	_energy_fill_style = StyleBoxFlat.new()
+	_energy_fill_style.bg_color = Color(0.2, 0.8, 0.2)
+	_energy_fill_style.corner_radius_top_left = 3
+	_energy_fill_style.corner_radius_top_right = 3
+	_energy_fill_style.corner_radius_bottom_left = 3
+	_energy_fill_style.corner_radius_bottom_right = 3
+	energy_bar.add_theme_stylebox_override("fill", _energy_fill_style)
+
+	_energy_bg_style = StyleBoxFlat.new()
+	_energy_bg_style.bg_color = Color(0.15, 0.15, 0.15, 0.8)
+	_energy_bg_style.corner_radius_top_left = 3
+	_energy_bg_style.corner_radius_top_right = 3
+	_energy_bg_style.corner_radius_bottom_left = 3
+	_energy_bg_style.corner_radius_bottom_right = 3
+	energy_bar.add_theme_stylebox_override("background", _energy_bg_style)
 
 
 ## Cập nhật UI thanh năng lượng
 func update_energy_ui():
-	if energy_bar:
-		energy_bar.value = energy
+	if not energy_bar:
+		return
+	energy_bar.value = energy
+
+	if not _energy_fill_style:
+		return
+
+	var ratio = energy / max_energy
+	if ratio <= 0.2:
+		energy_blink_timer += get_process_delta_time()
+		var blink = (sin(energy_blink_timer * 10.0) + 1.0) / 2.0
+		_energy_fill_style.bg_color = Color(0.9, 0.1, 0.1).lerp(Color(0.5, 0.0, 0.0), blink)
+	else:
+		_energy_fill_style.bg_color = Color(0.2, 0.8, 0.2)
+		energy_blink_timer = 0.0
 
 
 ## Kiểm tra milk gần nhất có thể nhặt

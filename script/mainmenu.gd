@@ -69,16 +69,14 @@ func _ready() -> void:
 
 
 func _on_play_pressed() -> void:
-	# Kiểm tra đã hoàn thành tutorial chưa
 	if not Global.tutorial_completed:
-		# Lần đầu chơi -> hiển thị dialogue tutorial
+		Global.dialogue_mode = "tutorial"
 		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 	elif Global.selected_character == "":
-		# Đã xem tutorial nhưng chưa chọn nhân vật
 		get_tree().change_scene_to_file("res://scene/character_select.tscn")
 	else:
-		# Đã hoàn thành tất cả -> vào game
-		get_tree().change_scene_to_file("res://scene/main.tscn")
+		Global.dialogue_mode = "level"
+		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 
 func _on_settings_pressed() -> void:

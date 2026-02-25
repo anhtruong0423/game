@@ -1,7 +1,7 @@
 extends Control
 
 ## Dialogue Manager - Visual Novel style
-## Hiển thị đối thoại với avatar và tự động/click để tiếp tục
+## Hỗ trợ cả tutorial dialogue và level mission dialogue
 
 signal dialogue_finished
 
@@ -10,30 +10,64 @@ signal dialogue_finished
 @onready var text_label: Label = $DialogueBox/HBoxContainer/VBoxContainer/TextLabel
 @onready var continue_hint: Label = $DialogueBox/ContinueHint
 @onready var skip_button: Button = $SkipButton
+@onready var scene_label: Label = $SceneImage/SceneLabel
 
-## Dialogue data - mỗi entry là {speaker, text, color}
-var dialogue_data: Array = [
+const TUTORIAL_DIALOGUE: Array = [
 	{"speaker": "Bác Bảo Vệ", "text": "Chào các cháu! Hôm nay là ngày đầu tiên các cháu làm việc ở đây nhỉ?", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Minh", "text": "Dạ vâng ạ! Cháu háo hức quá!", "color": Color(0.2, 0.7, 0.9)},
 	{"speaker": "Lan", "text": "Bác ơi, công việc của tụi cháu là gì ạ?", "color": Color(0.9, 0.5, 0.7)},
-	{"speaker": "Bác Bảo Vệ", "text": "Đơn giản thôi! Các cháu cần thu thập các món đồ và mang đến điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+	{"speaker": "Bác Bảo Vệ", "text": "Đơn giản thôi! Các cháu cần thu thập rác và mang đến điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Hùng", "text": "Nghe dễ quá vậy bác!", "color": Color(0.3, 0.8, 0.4)},
 	{"speaker": "Bác Bảo Vệ", "text": "Khoan đã! Các cháu cần chú ý năng lượng. Di chuyển sẽ tiêu hao năng lượng đấy.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Lan", "text": "Vậy hết năng lượng thì sao ạ?", "color": Color(0.9, 0.5, 0.7)},
-	{"speaker": "Bác Bảo Vệ", "text": "Thì... Game Over! Nhưng đừng lo, uống sữa sẽ hồi phục năng lượng.", "color": Color(0.8, 0.6, 0.2)},
+	{"speaker": "Bác Bảo Vệ", "text": "Thì các cháu sẽ đi rất chậm! Nhưng đừng lo, uống sữa FRUMI sẽ hồi phục năng lượng.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Minh", "text": "Cháu hiểu rồi! WASD để di chuyển, E để nhặt đồ, Q để uống sữa!", "color": Color(0.2, 0.7, 0.9)},
-	{"speaker": "Bác Bảo Vệ", "text": "Đúng rồi! Còn nhấn Tab để mở menu nâng cấp. Chúc các cháu làm việc vui vẻ!", "color": Color(0.8, 0.6, 0.2)},
+	{"speaker": "Bác Bảo Vệ", "text": "Đúng rồi! Giữ Shift để chạy nhanh nhưng tốn gấp đôi năng lượng. Còn Tab để mở menu nâng cấp.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Hùng", "text": "Cảm ơn bác! Để cháu xem ai làm giỏi nhất nào!", "color": Color(0.3, 0.8, 0.4)},
 ]
 
+const LEVEL_DIALOGUES: Dictionary = {
+	1: {
+		"scene_text": "Trước cổng công ty...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level 1! Nhiệm vụ đầu tiên của các cháu đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần tìm và nhặt 1 túi nilong vàng và 1 chai nhựa, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Minh", "text": "Chỉ 2 món thôi hả bác? Dễ quá!", "color": Color(0.2, 0.7, 0.9)},
+			{"speaker": "Bác Bảo Vệ", "text": "Đừng chủ quan nhé! Nhớ mang về điểm giao hàng mới tính. Không giới hạn thời gian đâu.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Vậy thì thoải mái rồi! Đi thôi nào!", "color": Color(0.9, 0.5, 0.7)},
+		]
+	},
+	2: {
+		"scene_text": "Khu vực phân loại rác...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level 2! Lần này khó hơn một chút đấy các cháu.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Cần nhặt 3 món: túi nilong xanh, chai nhựa, và túi nilong đỏ.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "3 món! Túi đồ cháu có đủ chỗ không nhỉ?", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 món là qua màn, nhưng muốn 3 sao thì phải đủ 3 món trong vòng 5 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Minh", "text": "5 phút thôi sao? Phải nhanh tay lên thôi!", "color": Color(0.2, 0.7, 0.9)},
+		]
+	},
+	3: {
+		"scene_text": "Thử thách cuối cùng...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level cuối rồi! Đây là thử thách lớn nhất!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần nhặt lá cây, túi nilong đỏ và chai nhựa - tất cả trong vòng 3 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "3 phút cho 3 món? Căng quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt được 1 món trong 3 phút là qua màn. Nhưng muốn 3 sao thì phải đủ cả 3!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "Thử thách cuối cùng! Cháu sẽ làm được!", "color": Color(0.3, 0.8, 0.4)},
+		]
+	}
+}
+
+var dialogue_data: Array = []
 var current_index := 0
 var is_typing := false
 var full_text := ""
 var displayed_text := ""
 var char_index := 0
 
-const TYPING_SPEED := 0.03  ## Giây giữa mỗi ký tự
-const AUTO_ADVANCE_DELAY := 2.0  ## Giây chờ trước khi tự động chuyển
+const TYPING_SPEED := 0.03
+const AUTO_ADVANCE_DELAY := 2.0
 
 var typing_timer := 0.0
 var auto_timer := 0.0
@@ -43,11 +77,37 @@ var waiting_for_advance := false
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	skip_button.pressed.connect(_on_skip_pressed)
+	_set_click_through(self)
+	_load_dialogue_data()
 	show_dialogue(current_index)
 
 
+func _set_click_through(node: Node):
+	if node is Button:
+		return
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_set_click_through(child)
+
+
+func _load_dialogue_data():
+	if Global.dialogue_mode == "tutorial":
+		dialogue_data = TUTORIAL_DIALOGUE.duplicate()
+		if scene_label:
+			scene_label.text = "Trước cổng công ty..."
+	else:
+		var level = Global.current_level
+		var level_data = LEVEL_DIALOGUES.get(level, null)
+		if level_data:
+			dialogue_data = level_data["data"].duplicate()
+			if scene_label:
+				scene_label.text = level_data["scene_text"]
+		else:
+			dialogue_data = LEVEL_DIALOGUES[1]["data"].duplicate()
+
+
 func _process(delta):
-	# Typing effect
 	if is_typing:
 		typing_timer += delta
 		if typing_timer >= TYPING_SPEED:
@@ -60,8 +120,7 @@ func _process(delta):
 				is_typing = false
 				waiting_for_advance = true
 				continue_hint.text = "Click hoặc đợi để tiếp tục..."
-	
-	# Auto advance
+
 	if waiting_for_advance:
 		auto_timer += delta
 		if auto_timer >= AUTO_ADVANCE_DELAY:
@@ -71,7 +130,6 @@ func _process(delta):
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if is_typing:
-			# Skip typing, show full text immediately
 			char_index = full_text.length()
 			displayed_text = full_text
 			text_label.text = displayed_text
@@ -80,8 +138,7 @@ func _unhandled_input(event):
 			continue_hint.text = "Click hoặc đợi để tiếp tục..."
 		elif waiting_for_advance:
 			advance_dialogue()
-	
-	# Spacebar cũng có thể dùng để tiếp tục
+
 	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
 		if is_typing:
 			char_index = full_text.length()
@@ -97,16 +154,16 @@ func show_dialogue(index: int):
 	if index >= dialogue_data.size():
 		finish_dialogue()
 		return
-	
+
 	var entry = dialogue_data[index]
 	name_label.text = entry.speaker
 	name_label.add_theme_color_override("font_color", entry.color)
-	
+
 	full_text = entry.text
 	displayed_text = ""
 	char_index = 0
 	text_label.text = ""
-	
+
 	is_typing = true
 	waiting_for_advance = false
 	typing_timer = 0.0
@@ -123,10 +180,11 @@ func advance_dialogue():
 
 func finish_dialogue():
 	dialogue_finished.emit()
-	# Chuyển sang màn hình chọn nhân vật
-	get_tree().change_scene_to_file("res://scene/character_select.tscn")
+	if Global.dialogue_mode == "tutorial":
+		get_tree().change_scene_to_file("res://scene/character_select.tscn")
+	else:
+		get_tree().change_scene_to_file("res://scene/main.tscn")
 
 
 func _on_skip_pressed():
 	finish_dialogue()
-

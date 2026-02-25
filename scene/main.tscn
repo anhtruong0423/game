@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ums2w3jcdrjc"]
+[gd_scene load_steps=23 format=3 uid="uid://ums2w3jcdrjc"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_wp4xf"]
 [ext_resource type="PackedScene" uid="uid://b3mffnawbabpn" path="res://scene/tree_static.tscn" id="2_brvut"]
@@ -8,6 +8,9 @@
 [ext_resource type="Script" uid="uid://krx2f7ckwnbg" path="res://script/delivery_point.gd" id="6_delivery"]
 [ext_resource type="PackedScene" uid="uid://cmilk12345678" path="res://scene/milk.tscn" id="7_p1hux"]
 [ext_resource type="Script" uid="uid://b67dapmvqm8c8" path="res://script/heavy_item.gd" id="8_heavy"]
+[ext_resource type="Script" path="res://script/level_manager.gd" id="9_lvlmgr"]
+[ext_resource type="PackedScene" path="res://scene/milk_grape.tscn" id="10_grape"]
+[ext_resource type="PackedScene" path="res://scene/milk_melon.tscn" id="11_melon"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -206,6 +209,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8612806, 0.2858663, 5.94107
 [node name="Milk9" parent="milk" instance=ExtResource("7_p1hux")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49602556, 0.28586677, 8.561032)
 
+[node name="MilkGrape1" parent="milk" instance=ExtResource("10_grape")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, 0.28586653, 7.5)
+
+[node name="MilkGrape2" parent="milk" instance=ExtResource("10_grape")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.28586665, 6.0)
+
+[node name="MilkGrape3" parent="milk" instance=ExtResource("10_grape")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.28586653, 8.3)
+
+[node name="MilkMelon1" parent="milk" instance=ExtResource("11_melon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.28586653, 5.2)
+
+[node name="MilkMelon2" parent="milk" instance=ExtResource("11_melon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.28586665, 9.5)
+
+[node name="MilkMelon3" parent="milk" instance=ExtResource("11_melon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.28586653, 7.0)
+
 [node name="vatnang" type="CSGBox3D" parent="milk"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.050000012, 0.4, -4.6000004)
 size = Vector3(0.3, 0.4, 0.4)
@@ -217,3 +238,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="milk/vatnang/Area3D"]
 shape = SubResource("BoxShape3D_heavy")
+
+[node name="LevelManager" type="Node" parent="."]
+script = ExtResource("9_lvlmgr")
