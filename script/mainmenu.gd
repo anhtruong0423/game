@@ -208,4 +208,3 @@ func _unhandled_input(event: InputEvent) -> void:
 			hide_panel(settings_panel)
 		elif tutorial_panel.visible:
 			hide_panel(tutorial_panel)
-
