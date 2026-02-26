@@ -9,7 +9,17 @@ const ITEM_DISPLAY_NAMES = {
 	"green_bag": "Túi xanh",
 	"red_bag": "Túi đỏ",
 	"plastic_bottle": "Chai nhựa",
-	"leaf": "Lá cây"
+	"leaf": "Lá cây",
+	"grape": "Nho",
+	"melon": "Dưa lưới",
+	"strawberry": "Dâu",
+	"banana": "Chuối",
+	"lemon": "Chanh",
+	"mango": "Xoài",
+	"apple": "Táo",
+	"orange": "Cam",
+	"watermelon": "Dưa hấu",
+	"pineapple": "Thơm"
 }
 
 const LEVEL_DATA = {

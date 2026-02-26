@@ -456,6 +456,7 @@ func drain_energy(amount: float):
 	energy = max(0, energy - amount)
 	if energy <= 0 and not is_exhausted:
 		is_exhausted = true
+		trigger_game_over()
 
 
 ## Kích hoạt màn hình Game Over

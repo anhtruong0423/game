@@ -2,20 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bww5nhurhmelp" path="res://script/proto_controller.gd" id="1_ucva2"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy_fill"]
-bg_color = Color(0.2, 0.85, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy_bg"]
-bg_color = Color(0.15, 0.15, 0.15, 0.8)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
 
@@ -26,6 +12,27 @@ height = 1.8
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy_bg"]
+bg_color = Color(0.15, 0.15, 0.15, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy_fill"]
+bg_color = Color(0.2, 0.85, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_indicator"]
+bg_color = Color(0.1, 0.1, 0.15, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_bg"]
 bg_color = Color(0.1, 0.1, 0.15, 0.95)
@@ -41,15 +48,15 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.3, 0.4, 0.55, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.15, 0.2, 0.3, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.15, 0.2, 0.3, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.3, 0.4, 0.55, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -62,18 +69,11 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_indicator"]
-bg_color = Color(0.1, 0.1, 0.15, 0.7)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
 [node name="ProtoController" type="CharacterBody3D"]
 script = ExtResource("1_ucva2")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+transform = Transform3D(1, 0, 0, 0, 1.3, 0, 0, 0, 0.9, 0, 1.1, 0)
 material_override = SubResource("StandardMaterial3D_iof21")
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_ucva2")
@@ -88,11 +88,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 [node name="Camera3D" type="Camera3D" parent="Head"]
 
 [node name="InteractRay" type="RayCast3D" parent="Head"]
-enabled = true
 target_position = Vector3(0, 0, -15)
 collision_mask = 2
 collide_with_areas = true
-collide_with_bodies = true
 debug_shape_custom_color = Color(1, 0, 0, 1)
 debug_shape_thickness = 3
 
@@ -145,7 +143,6 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 20
 horizontal_alignment = 1
 vertical_alignment = 1
-text = ""
 
 [node name="EnergyBar" type="ProgressBar" parent="HUD"]
 anchors_preset = 1
@@ -156,9 +153,8 @@ offset_top = 20.0
 offset_right = -20.0
 offset_bottom = 50.0
 grow_horizontal = 0
-theme_override_styles/fill = SubResource("StyleBoxFlat_energy_fill")
 theme_override_styles/background = SubResource("StyleBoxFlat_energy_bg")
-max_value = 100.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_energy_fill")
 value = 100.0
 show_percentage = false
 
@@ -197,7 +193,6 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 20
 horizontal_alignment = 1
 vertical_alignment = 1
-text = ""
 
 [node name="UpgradeIndicator" type="Label" parent="HUD"]
 anchors_preset = 1
@@ -270,8 +265,8 @@ theme_override_colors/font_hover_color = Color(1, 1, 0.8, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
 text = "Túi đồ Lv.0 → Lv.1
 (2 slot → 3 slot)
@@ -285,8 +280,8 @@ theme_override_colors/font_hover_color = Color(1, 1, 0.8, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
 text = "Tốc độ Lv.0 → Lv.1
 (+0% → +10%)
@@ -300,8 +295,8 @@ theme_override_colors/font_hover_color = Color(1, 1, 0.8, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
 text = "Năng lượng Lv.0 → Lv.1
 (-0% → -10% tiêu hao)
@@ -315,8 +310,8 @@ text = "Nhấn ESC để đóng"
 horizontal_alignment = 1
 
 [node name="PausePanel" type="Control" parent="HUD"]
-visible = false
 process_mode = 3
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -352,8 +347,8 @@ theme_override_constants/separation = 15
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 48
-horizontal_alignment = 1
 text = "PAUSED"
+horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="HUD/PausePanel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
@@ -447,8 +442,8 @@ theme_override_constants/separation = 10
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
 theme_override_font_sizes/font_size = 24
-horizontal_alignment = 1
 text = "CÀI ĐẶT"
+horizontal_alignment = 1
 
 [node name="DisplaySection" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -477,8 +472,8 @@ value = 100.0
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="AudioSection" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -499,15 +494,14 @@ text = "Master:"
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 100.0
 
 [node name="PauseMasterValue" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer"]
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="MusicContainer" type="HBoxContainer" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -522,15 +516,14 @@ text = "Nhạc nền:"
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 80.0
 
 [node name="PauseMusicValue" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer"]
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
 text = "80%"
+horizontal_alignment = 2
 
 [node name="SfxContainer" type="HBoxContainer" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -545,15 +538,14 @@ text = "Hiệu ứng:"
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 100.0
 
 [node name="PauseSfxValue" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer"]
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="ControlSection" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -575,15 +567,14 @@ custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 10.0
-max_value = 100.0
 value = 40.0
 
 [node name="PauseSensitivityValue" type="Label" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer"]
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
 text = "40%"
+horizontal_alignment = 2
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="HUD/PausePanel/PauseSettingsPanel/Panel"]
 layout_mode = 1
@@ -597,8 +588,8 @@ offset_right = -15.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
 theme_override_constants/separation = 15
+alignment = 1
 
 [node name="SaveButton" type="Button" parent="HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer"]
 custom_minimum_size = Vector2(90, 35)

@@ -1,16 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://ums2w3jcdrjc"]
+[gd_scene load_steps=13 format=3 uid="uid://ums2w3jcdrjc"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_wp4xf"]
-[ext_resource type="PackedScene" uid="uid://b3mffnawbabpn" path="res://scene/tree_static.tscn" id="2_brvut"]
-[ext_resource type="PackedScene" uid="uid://biaygbcmy14af" path="res://scene/nhanvat.tscn" id="3_0ha60"]
-[ext_resource type="PackedScene" uid="uid://cbtvvo6xyqfk5" path="res://scene/coin.tscn" id="4_0ha60"]
-[ext_resource type="Script" uid="uid://corsns17hbnw2" path="res://script/coin.gd" id="5_4j5ol"]
-[ext_resource type="Script" uid="uid://krx2f7ckwnbg" path="res://script/delivery_point.gd" id="6_delivery"]
-[ext_resource type="PackedScene" uid="uid://cmilk12345678" path="res://scene/milk.tscn" id="7_p1hux"]
-[ext_resource type="Script" uid="uid://b67dapmvqm8c8" path="res://script/heavy_item.gd" id="8_heavy"]
-[ext_resource type="Script" path="res://script/level_manager.gd" id="9_lvlmgr"]
-[ext_resource type="PackedScene" path="res://scene/milk_grape.tscn" id="10_grape"]
-[ext_resource type="PackedScene" path="res://scene/milk_melon.tscn" id="11_melon"]
+[ext_resource type="PackedScene" uid="uid://w18xq5ll0352" path="res://scene/FARM.tscn" id="6_k65ib"]
+[ext_resource type="Script" uid="uid://cbp4mivxk8aod" path="res://script/level_manager.gd" id="9_lvlmgr"]
+[ext_resource type="Script" path="res://script/day_night_cycle.gd" id="10_daynight"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -23,36 +16,30 @@ background_energy_multiplier = 2.2
 sky = SubResource("Sky_0xm2m")
 sky_custom_fov = 125.8
 sky_rotation = Vector3(0, 0.9302605, 0)
-ambient_light_energy = 0.0
+ambient_light_energy = 0.5
+ambient_light_color = Color(0.6, 0.7, 0.9, 1)
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0xm2m"]
-albedo_color = Color(0.74, 0.37, 0.185, 1)
+[sub_resource type="StandardMaterial3D" id="mat_gate_pillar"]
+albedo_color = Color(0.85, 0.75, 0.6, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
-albedo_color = Color(0.6627451, 0.37254903, 0.22745098, 1)
+[sub_resource type="StandardMaterial3D" id="mat_gate_arch"]
+albedo_color = Color(0.7, 0.5, 0.25, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
-albedo_color = Color(0.69803923, 0.37254903, 0.21176471, 1)
+[sub_resource type="StandardMaterial3D" id="mat_gate_sign"]
+albedo_color = Color(0.2, 0.6, 0.3, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lquwl"]
-albedo_color = Color(0.25, 0.17083333, 0, 1)
+[sub_resource type="StandardMaterial3D" id="mat_lamp_pole"]
+albedo_color = Color(0.3, 0.3, 0.3, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
-albedo_color = Color(0.69803923, 0.37254903, 0.21176471, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_272bh"]
-albedo_color = Color(0.27, 0.1053, 0.1053, 1)
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_delivery"]
-radius = 2.0
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_heavy"]
-size = Vector3(0.4, 0.5, 0.5)
+[sub_resource type="StandardMaterial3D" id="mat_lamp_head"]
+albedo_color = Color(0.9, 0.85, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.9, 0.6, 1)
+emission_energy_multiplier = 2.0
 
 [node name="main" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14494896, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_h2yge")
@@ -61,81 +48,13 @@ environment = SubResource("Environment_h2yge")
 transform = Transform3D(0.92718387, 0.343797, -0.14877422, 0, 0.3971479, 0.91775465, 0.37460664, -0.8509273, 0.3682291, -13.30394, 8.21233, 0.026408195)
 shadow_enabled = true
 
-[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
-use_collision = true
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(8.3047695e-08, 0, -1.1, 0, 1.1, 0, 1.1, 0, 8.3047695e-08, -8.155002, 1, 4.6000004)
-size = Vector3(0.1, 2.1000001, 9)
-material = SubResource("StandardMaterial3D_0xm2m")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(1, 0, -1.4210855e-14, 0, 1, 0, 1.4210855e-14, 0, 1, -12.950001, 1.1999999, 0.6500001)
-size = Vector3(0.1, 2.1000001, 8.1)
-material = SubResource("StandardMaterial3D_h2yge")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D/CSGBox3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 2.6000001)
-operation = 2
-
-[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(2.355957e-07, 0, -1.21, 0, 1.21, 0, 1.21, 0, 2.355957e-07, -8.050001, 0.93999994, -3.3899999)
-size = Vector3(0.1, 2.1000001, 8.1)
-material = SubResource("StandardMaterial3D_1bvp3")
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.900003, 0.049999572, -4.700003)
-use_collision = true
-size = Vector3(39, 0.3, 30)
-material = SubResource("StandardMaterial3D_lquwl")
-
-[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(1, 0, -2.842171e-14, 0, 1, 0, 2.842171e-14, 0, 1, -3.1000023, 1.0999999, 0.6000001)
-size = Vector3(0.1, 2.1000001, 7.9)
-material = SubResource("StandardMaterial3D_7mycd")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D/CSGBox3D5"]
-transform = Transform3D(-3.4969112e-08, 0.8, 2.2737368e-14, -0.8, -3.4969112e-08, 2.2737368e-14, 2.2737368e-14, -2.2737368e-14, 0.8, -1.2, -0.6, 0)
-operation = 2
-radius = 1.2
-height = 3.848
-sides = 30
-
-[node name="CSGTorus3D" type="CSGTorus3D" parent="CSGCombiner3D"]
-transform = Transform3D(4.371139e-08, -2.2, 4.371138e-08, -0.99999994, -9.616505e-08, 4.3711385e-08, -4.371138e-08, -9.616505e-08, -0.99999994, -7, 0.89999986, -5)
-sides = 20
-ring_sides = 13
-material = SubResource("StandardMaterial3D_272bh")
-
-[node name="CSGTorus3D" type="CSGTorus3D" parent="CSGCombiner3D/CSGTorus3D"]
-transform = Transform3D(-1.9847319, -0.0028716049, 0.008573375, 0.017051551, -0.043876793, 0.99981827, -0.0019178732, 2.5816498, 0.017002083, 0.6000004, 1.0000019, 2.0000038)
-sides = 20
-ring_sides = 13
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D"]
-transform = Transform3D(0.19999999, 0, 0, 0, 0.19999999, 0, 0, 0, 0.19999999, -11.2, 1.2400002, 0)
-height = 14.200001
-sides = 16
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D/CSGCylinder3D"]
-transform = Transform3D(1.3800002, 0, 0, 0, 1.3800002, 0, 0, 0, 1.3800002, 14.300003, 2.0292492, 0)
-height = 11.475
-sides = 16
-
-[node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.45, 0.9, -0.60000014)
-size = Vector3(0.1, 2.6000001, 5.6)
-
-[node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D/CSGBox3D6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9499998, -5.9604645e-08, 2.3)
-size = Vector3(0.1, 2.6000001, 5.6)
-
-[node name="CSGBox3D7" type="CSGBox3D" parent="CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3, 2.1005, 0.4499998)
-size = Vector3(6.2000003, 0.001, 10.1)
+[node name="DayNightCycle" type="Node3D" parent="."]
+script = ExtResource("10_daynight")
+cycle_duration = 600.0
+start_time = 0.2
 
 [node name="ProtoController" parent="." instance=ExtResource("1_wp4xf")]
-transform = Transform3D(0.23999998, -7.152557e-09, 0, 0, 0.24, 0, 0, 1.4305114e-08, 0.24, -5.8110795, -2.0712614e-06, 0.80290055)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -133.90001, 89.100006)
 can_sprint = true
 can_freefly = true
 input_left = "move_left"
@@ -143,101 +62,223 @@ input_right = "move_right"
 input_forward = "move_up"
 input_back = "move_down"
 
-[node name="tree_static" parent="." instance=ExtResource("2_brvut")]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+[node name="FARM" parent="." instance=ExtResource("6_k65ib")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0, 0)
 
-[node name="nhanvat" parent="." instance=ExtResource("3_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.54494905, 1.1)
+[node name="StartGate" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -135, 91)
 
-[node name="DeliveryArea" type="Area3D" parent="nhanvat"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-collision_layer = 2
-collision_mask = 0
-script = ExtResource("6_delivery")
+[node name="PillarLeft" type="CSGBox3D" parent="StartGate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.5, 0)
+use_collision = true
+size = Vector3(0.4, 3, 0.4)
+material = SubResource("mat_gate_pillar")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="nhanvat/DeliveryArea"]
-shape = SubResource("SphereShape3D_delivery")
+[node name="PillarRight" type="CSGBox3D" parent="StartGate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.5, 0)
+use_collision = true
+size = Vector3(0.4, 3, 0.4)
+material = SubResource("mat_gate_pillar")
 
-[node name="coins" type="Node3D" parent="."]
+[node name="Arch" type="CSGBox3D" parent="StartGate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+use_collision = true
+size = Vector3(3.4, 0.4, 0.5)
+material = SubResource("mat_gate_arch")
 
-[node name="coin" parent="coins" instance=ExtResource("4_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.3, 0.24494895, 9)
-script = ExtResource("5_4j5ol")
+[node name="SignBoard" type="CSGBox3D" parent="StartGate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
+size = Vector3(2.5, 0.6, 0.1)
+material = SubResource("mat_gate_sign")
 
-[node name="coin2" parent="coins" instance=ExtResource("4_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.1, 0.24494895, 9)
-script = ExtResource("5_4j5ol")
+[node name="Label3D" type="Label3D" parent="StartGate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0.06)
+pixel_size = 0.01
+text = "START"
+font_size = 64
+outline_size = 8
 
-[node name="coin3" parent="coins" instance=ExtResource("4_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 0.24494895, 9.1)
-script = ExtResource("5_4j5ol")
+[node name="StreetLights" type="Node3D" parent="."]
 
-[node name="coin4" parent="coins" instance=ExtResource("4_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.8, 0.24494895, 7.6)
-script = ExtResource("5_4j5ol")
+[node name="StreetLamp1" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -135, 85)
 
-[node name="coin5" parent="coins" instance=ExtResource("4_0ha60")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, 0.24494895, 6.6)
-script = ExtResource("5_4j5ol")
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
 
-[node name="milk" type="Node3D" parent="."]
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
 
-[node name="Milk" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.439209, 0.28586653, 9.255847)
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
 
-[node name="Milk2" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4830108, 0.28586665, 7.8834558)
+[node name="StreetLamp2" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -135, 85)
 
-[node name="Milk3" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.020114899, 0.28586653, 6.31897)
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
 
-[node name="Milk4" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4912205, 0.28586653, 8.876585)
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
 
-[node name="Milk5" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.0814085, 0.28586605, 5.7159553)
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
 
-[node name="Milk6" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4787874, 0.28586665, 5.8409243)
+[node name="StreetLamp3" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, -135, 80)
 
-[node name="Milk7" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.978019, 0.28586665, 8.448661)
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
 
-[node name="Milk8" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8612806, 0.2858663, 5.9410796)
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
 
-[node name="Milk9" parent="milk" instance=ExtResource("7_p1hux")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49602556, 0.28586677, 8.561032)
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
 
-[node name="MilkGrape1" parent="milk" instance=ExtResource("10_grape")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, 0.28586653, 7.5)
+[node name="StreetLamp4" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, -135, 80)
 
-[node name="MilkGrape2" parent="milk" instance=ExtResource("10_grape")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.28586665, 6.0)
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
 
-[node name="MilkGrape3" parent="milk" instance=ExtResource("10_grape")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.28586653, 8.3)
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
 
-[node name="MilkMelon1" parent="milk" instance=ExtResource("11_melon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.28586653, 5.2)
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
 
-[node name="MilkMelon2" parent="milk" instance=ExtResource("11_melon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.28586665, 9.5)
+[node name="StreetLamp5" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -135, 75)
 
-[node name="MilkMelon3" parent="milk" instance=ExtResource("11_melon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.28586653, 7.0)
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
 
-[node name="vatnang" type="CSGBox3D" parent="milk"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.050000012, 0.4, -4.6000004)
-size = Vector3(0.3, 0.4, 0.4)
-script = ExtResource("8_heavy")
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
 
-[node name="Area3D" type="Area3D" parent="milk/vatnang"]
-collision_layer = 2
-collision_mask = 0
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="milk/vatnang/Area3D"]
-shape = SubResource("BoxShape3D_heavy")
+[node name="StreetLamp6" type="Node3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -135, 95)
+
+[node name="Pole" type="CSGCylinder3D" parent="StreetLights/StreetLamp6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+radius = 0.08
+height = 4.0
+sides = 8
+material = SubResource("mat_lamp_pole")
+
+[node name="Head" type="CSGSphere3D" parent="StreetLights/StreetLamp6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+radius = 0.25
+radial_segments = 8
+rings = 4
+material = SubResource("mat_lamp_head")
+
+[node name="Light" type="OmniLight3D" parent="StreetLights/StreetLamp6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.9, 0.65, 1)
+light_energy = 3.0
+omni_range = 15.0
+omni_attenuation = 1.5
+shadow_enabled = true
+
+[node name="HouseLights" type="Node3D" parent="."]
+
+[node name="HouseLight1" type="OmniLight3D" parent="HouseLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -132, 90)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 4.0
+omni_range = 12.0
+omni_attenuation = 1.2
+
+[node name="HouseLight2" type="OmniLight3D" parent="HouseLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, -132, 79)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 4.0
+omni_range = 12.0
+omni_attenuation = 1.2
+
+[node name="HouseLight3" type="OmniLight3D" parent="HouseLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, -132, 81)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 4.0
+omni_range = 12.0
+omni_attenuation = 1.2
+
+[node name="HouseLight4" type="OmniLight3D" parent="HouseLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -132, 97)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 4.0
+omni_range = 12.0
+omni_attenuation = 1.2
 
 [node name="LevelManager" type="Node" parent="."]
 script = ExtResource("9_lvlmgr")
