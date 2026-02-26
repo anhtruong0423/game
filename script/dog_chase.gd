@@ -1,6 +1,7 @@
 extends Node3D
 
 ## Con chó bảo vệ - đuổi theo player khi player đến gần
+## Dùng distance check thay vì Area3D để tránh lag physics server
 
 @export var chase_radius: float = 5.0
 @export var move_speed: float = 3.0
@@ -8,22 +9,32 @@ extends Node3D
 @export var energy_drain_per_second: float = 15.0
 @export var bite_range: float = 1.2
 
-var player: Node3D = null
+var player: CharacterBody3D = null
 var is_chasing := false
 var anim_player: AnimationPlayer = null
 var anim_name := "metarigAction"
+var chase_radius_sq: float
+var bite_range_sq: float
+var home_position: Vector3
 
 
 func _ready():
+	chase_radius_sq = chase_radius * chase_radius
+	bite_range_sq = bite_range * bite_range
+	home_position = global_position
 	_find_animation_player(self)
+	_find_player.call_deferred()
 
-	var area = $Area3D
-	if area:
-		area.body_entered.connect(_on_body_entered)
-		area.body_exited.connect(_on_body_exited)
-		var col_shape = area.get_child(0)
-		if col_shape is CollisionShape3D and col_shape.shape is SphereShape3D:
-			col_shape.shape.radius = chase_radius
+
+func _find_player():
+	var bodies = get_tree().get_nodes_in_group("player")
+	if bodies.size() > 0:
+		player = bodies[0] as CharacterBody3D
+	else:
+		for node in get_tree().get_nodes_in_group(""):
+			if node is CharacterBody3D:
+				player = node
+				break
 
 
 func _find_animation_player(node: Node):
@@ -35,37 +46,37 @@ func _find_animation_player(node: Node):
 
 
 func _physics_process(delta):
-	if not is_chasing or not is_instance_valid(player):
+	if not is_instance_valid(player):
 		return
 
-	var dir = player.global_position - global_position
-	dir.y = 0
-	var distance = dir.length()
+	var diff := player.global_position - global_position
+	diff.y = 0.0
+	var dist_sq := diff.x * diff.x + diff.z * diff.z
 
-	if distance <= bite_range:
-		if player.has_method("drain_energy"):
-			player.drain_energy(energy_drain_per_second * delta)
-	else:
-		dir = dir.normalized()
-		global_position += dir * move_speed * delta
+	if not is_chasing:
+		if dist_sq <= chase_radius_sq:
+			is_chasing = true
+			_play_chase_animation()
+		return
 
-	if distance > 0.1:
-		var target_angle = atan2(dir.normalized().x, dir.normalized().z)
-		rotation.y = lerp_angle(rotation.y, target_angle, rotation_speed * delta)
-
-
-func _on_body_entered(body: Node3D):
-	if body is CharacterBody3D:
-		player = body
-		is_chasing = true
-		_play_chase_animation()
-
-
-func _on_body_exited(body: Node3D):
-	if body == player:
+	if dist_sq > chase_radius_sq:
 		is_chasing = false
-		player = null
 		_stop_animation()
+		return
+
+	if dist_sq <= bite_range_sq:
+		player.drain_energy(energy_drain_per_second * delta)
+	elif dist_sq > 0.01:
+		var inv_dist := 1.0 / sqrt(dist_sq)
+		var dir_x := diff.x * inv_dist
+		var dir_z := diff.z * inv_dist
+		global_position.x += dir_x * move_speed * delta
+		global_position.z += dir_z * move_speed * delta
+
+	if dist_sq > 0.01:
+		var inv_dist := 1.0 / sqrt(dist_sq)
+		var target_angle := atan2(diff.x * inv_dist, diff.z * inv_dist)
+		rotation.y = lerp_angle(rotation.y, target_angle, rotation_speed * delta)
 
 
 func _play_chase_animation():

@@ -126,6 +126,7 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/CloseButton
 
 func _ready() -> void:
+	add_to_group("player")
 	check_input_mappings()
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
