@@ -8,7 +8,7 @@ var last_score := 0
 
 ## Level system
 var current_level: int = 1
-var level_stars: Dictionary = {1: 0, 2: 0, 3: 0}
+var level_stars: Dictionary = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 var total_coins: int = 0
 var last_stars: int = 0
 var last_elapsed_time: float = 0.0
@@ -17,6 +17,9 @@ var last_elapsed_time: float = 0.0
 var tutorial_completed := false
 var selected_character := ""  ## "minh", "lan", "hung"
 var dialogue_mode := "tutorial"  ## "tutorial" hoặc "level"
+
+## Loading screen
+var next_scene_path := ""
 
 ## Character bonuses
 const CHARACTER_BONUSES = {
@@ -55,9 +58,10 @@ func _ready():
 
 func save_game_result(score: int):
 	last_score = score
+	total_coins += score
 	if score > best_score:
 		best_score = score
-		save_data()
+	save_data()
 
 
 func save_level_result(level: int, stars: int):
@@ -68,7 +72,7 @@ func save_level_result(level: int, stars: int):
 
 
 func advance_level():
-	if current_level < 3:
+	if current_level < 6:
 		current_level += 1
 		save_data()
 
@@ -83,6 +87,12 @@ func complete_tutorial():
 func select_character(character_name: String):
 	selected_character = character_name
 	save_data()
+
+
+## Chuyển scene qua loading screen
+func go_to_scene(scene_path: String):
+	next_scene_path = scene_path
+	get_tree().change_scene_to_file("res://scene/loading.tscn")
 
 
 ## Lấy bonus của nhân vật hiện tại
@@ -131,7 +141,7 @@ func reset_all_data():
 	selected_character = ""
 	current_level = 1
 	total_coins = 0
-	level_stars = {1: 0, 2: 0, 3: 0}
+	level_stars = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 	settings = DEFAULT_SETTINGS.duplicate()
 	save_data()
 	apply_all_settings()

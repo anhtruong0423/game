@@ -5,26 +5,20 @@ signal level_can_pass()
 signal level_completed(stars: int)
 
 const ITEM_DISPLAY_NAMES = {
-	"yellow_bag": "Túi vàng",
-	"green_bag": "Túi xanh",
-	"red_bag": "Túi đỏ",
-	"plastic_bottle": "Chai nhựa",
-	"leaf": "Lá cây",
-	"grape": "Nho",
-	"melon": "Dưa lưới",
-	"strawberry": "Dâu",
+	"apple": "Táo",
 	"banana": "Chuối",
+	"cherry": "Cherry",
+	"grape": "Nho",
 	"lemon": "Chanh",
 	"mango": "Xoài",
-	"apple": "Táo",
+	"melon": "Dưa lưới",
 	"orange": "Cam",
-	"watermelon": "Dưa hấu",
-	"pineapple": "Thơm"
+	"strawberry": "Dâu",
 }
 
 const LEVEL_DATA = {
 	1: {
-		"required_items": ["yellow_bag", "plastic_bottle"],
+		"required_items": ["apple", "banana"],
 		"min_to_pass": 1,
 		"time_limit": 0,
 		"star_conditions": {
@@ -33,12 +27,12 @@ const LEVEL_DATA = {
 			3: {"items": 2, "time": 0}
 		},
 		"spawn_items": [
-			{"type": "yellow_bag", "position": Vector3(-11.3, 0.4, 9.0)},
-			{"type": "plastic_bottle", "position": Vector3(-6.4, 0.3, 9.1)},
+			{"type": "apple", "position": Vector3(108, -133.5, 68)},
+			{"type": "banana", "position": Vector3(116, -133.5, 73)},
 		]
 	},
 	2: {
-		"required_items": ["green_bag", "plastic_bottle", "red_bag"],
+		"required_items": ["orange", "lemon", "grape"],
 		"min_to_pass": 2,
 		"time_limit": 300,
 		"star_conditions": {
@@ -47,27 +41,91 @@ const LEVEL_DATA = {
 			3: {"items": 3, "time": 300}
 		},
 		"spawn_items": [
-			{"type": "green_bag", "position": Vector3(-15.8, 0.4, 7.6)},
-			{"type": "plastic_bottle", "position": Vector3(-9.1, 0.3, 9.0)},
-			{"type": "red_bag", "position": Vector3(-12.5, 0.4, 6.6)},
+			{"type": "orange", "position": Vector3(105, -133.5, 66)},
+			{"type": "lemon", "position": Vector3(118, -133.5, 72)},
+			{"type": "grape", "position": Vector3(110, -133.5, 78)},
 		]
 	},
 	3: {
-		"required_items": ["leaf", "red_bag", "plastic_bottle"],
-		"min_to_pass": 1,
-		"time_limit": 180,
+		"required_items": ["strawberry", "mango", "melon"],
+		"min_to_pass": 2,
+		"time_limit": 240,
 		"star_conditions": {
-			1: {"items": 1, "time": 180},
-			2: {"items": 2, "time": 180},
+			1: {"items": 2, "time": 0},
+			2: {"items": 3, "time": 0},
 			3: {"items": 3, "time": 180}
 		},
 		"spawn_items": [
-			{"type": "leaf", "position": Vector3(-11.3, 0.2, 9.0)},
-			{"type": "red_bag", "position": Vector3(-15.8, 0.4, 7.6)},
-			{"type": "plastic_bottle", "position": Vector3(-6.4, 0.3, 6.6)},
+			{"type": "strawberry", "position": Vector3(106, -133.5, 74)},
+			{"type": "mango", "position": Vector3(119, -133.5, 67)},
+			{"type": "melon", "position": Vector3(112, -133.5, 80)},
 		]
-	}
+	},
+	4: {
+		"required_items": ["apple", "cherry", "orange", "mango"],
+		"min_to_pass": 3,
+		"time_limit": 240,
+		"star_conditions": {
+			1: {"items": 3, "time": 0},
+			2: {"items": 4, "time": 0},
+			3: {"items": 4, "time": 180}
+		},
+		"spawn_items": [
+			{"type": "apple", "position": Vector3(104, -133.5, 70)},
+			{"type": "cherry", "position": Vector3(120, -133.5, 74)},
+			{"type": "orange", "position": Vector3(108, -133.5, 64)},
+			{"type": "mango", "position": Vector3(117, -133.5, 80)},
+		]
+	},
+	5: {
+		"required_items": ["banana", "lemon", "grape", "strawberry", "melon"],
+		"min_to_pass": 3,
+		"time_limit": 210,
+		"star_conditions": {
+			1: {"items": 3, "time": 0},
+			2: {"items": 4, "time": 0},
+			3: {"items": 5, "time": 180}
+		},
+		"spawn_items": [
+			{"type": "banana", "position": Vector3(103, -133.5, 67)},
+			{"type": "lemon", "position": Vector3(121, -133.5, 71)},
+			{"type": "grape", "position": Vector3(106, -133.5, 78)},
+			{"type": "strawberry", "position": Vector3(118, -133.5, 64)},
+			{"type": "melon", "position": Vector3(110, -133.5, 82)},
+		]
+	},
+	6: {
+		"required_items": ["apple", "cherry", "orange", "mango", "grape", "melon", "strawberry"],
+		"min_to_pass": 4,
+		"time_limit": 180,
+		"star_conditions": {
+			1: {"items": 4, "time": 0},
+			2: {"items": 6, "time": 0},
+			3: {"items": 7, "time": 150}
+		},
+		"spawn_items": [
+			{"type": "apple", "position": Vector3(104, -133.5, 66)},
+			{"type": "cherry", "position": Vector3(121, -133.5, 68)},
+			{"type": "orange", "position": Vector3(106, -133.5, 75)},
+			{"type": "mango", "position": Vector3(119, -133.5, 78)},
+			{"type": "grape", "position": Vector3(110, -133.5, 82)},
+			{"type": "melon", "position": Vector3(115, -133.5, 63)},
+			{"type": "strawberry", "position": Vector3(108, -133.5, 71)},
+		]
+	},
 }
+
+const MILK_SCENES = [
+	"res://scene/milk_grape.tscn",
+	"res://scene/milk_melon.tscn",
+	"res://scene/milk_strawberry.tscn",
+]
+
+const MILK_SPAWN_POSITIONS = [
+	Vector3(110.5, -133.5, 70),
+	Vector3(114, -133.5, 74),
+	Vector3(107, -133.5, 68),
+]
 
 var current_level: int = 1
 var delivered_items: Dictionary = {}
@@ -105,6 +163,8 @@ func _process(delta):
 func _setup_level():
 	clear_existing_items()
 	spawn_level_items()
+	spawn_milk_items()
+	setup_basket()
 	setup_hud()
 	update_mission_hud()
 
@@ -113,6 +173,11 @@ func clear_existing_items():
 	var coins_node = get_parent().get_node_or_null("coins")
 	if coins_node:
 		for child in coins_node.get_children():
+			child.queue_free()
+
+	var milks_node = get_parent().get_node_or_null("milks")
+	if milks_node:
+		for child in milks_node.get_children():
 			child.queue_free()
 
 
@@ -134,6 +199,40 @@ func spawn_level_items():
 			var instance = scene.instantiate()
 			instance.position = item_info["position"]
 			coins_node.add_child(instance)
+
+
+func spawn_milk_items():
+	var milks_node = get_parent().get_node_or_null("milks")
+	if milks_node:
+		for child in milks_node.get_children():
+			child.queue_free()
+	else:
+		milks_node = Node3D.new()
+		milks_node.name = "milks"
+		get_parent().add_child(milks_node)
+
+	for i in range(MILK_SPAWN_POSITIONS.size()):
+		var scene_path = MILK_SCENES[i % MILK_SCENES.size()]
+		var scene = load(scene_path)
+		if scene:
+			var instance = scene.instantiate()
+			instance.position = MILK_SPAWN_POSITIONS[i]
+			milks_node.add_child(instance)
+
+
+func setup_basket():
+	var basket_node = get_parent().get_node_or_null("nhanvat")
+	if not basket_node:
+		return
+
+	var existing = basket_node.get_node_or_null("BasketDelivery")
+	if existing:
+		existing.queue_free()
+
+	var delivery = Node3D.new()
+	delivery.name = "BasketDelivery"
+	delivery.set_script(load("res://script/basket_delivery.gd"))
+	basket_node.add_child(delivery)
 
 
 func setup_hud():

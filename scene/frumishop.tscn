@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://unyj76hq8g4e"]
+
+[ext_resource type="PackedScene" uid="uid://d7mlisuvrk6i" path="res://assets/FRUMISHOP/FRUMI SHOP.glb" id="1_urcu4"]
+[ext_resource type="Script" path="res://script/frumishop_collision.gd" id="2_colscr"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("2_colscr")
+
+[node name="FRUMI SHOP" parent="." instance=ExtResource("1_urcu4")]

@@ -65,6 +65,9 @@ var total_weight : float = 0.0  ## Tổng trọng lượng đang mang
 const WEIGHT_SPEED_PENALTY : float = 0.05  ## Giảm 5% tốc độ mỗi kg
 const MAX_WEIGHT_PENALTY : float = 0.5  ## Tối đa giảm 50% tốc độ
 
+## Proximity detection range
+const INTERACT_RANGE : float = 3.0
+
 ## Energy system
 var energy : float = 100.0
 var max_energy : float = 100.0
@@ -79,7 +82,7 @@ var coin_value_multiplier : float = 1.0  ## Dự phòng cho tương lai
 var upgrade_menu_open : bool = false
 var pause_menu_open : bool = false
 const UPGRADE_PRICES : Dictionary = {"inventory": 100, "speed": 50, "energy": 200}
-const BASE_INVENTORY_CAPACITY : int = 2
+const BASE_INVENTORY_CAPACITY : int = 1
 const BASE_SPEED : float = 7.0
 const BASE_ENERGY_DRAIN : float = 5.0
 
@@ -131,6 +134,7 @@ func _ready() -> void:
 		score_label.visible = false
 
 	_setup_energy_bar_style()
+	_setup_transparent_buttons()
 
 	apply_upgrades()
 	if upgrade_menu:
@@ -349,37 +353,47 @@ func _process(_delta: float) -> void:
 	update_energy_ui()
 
 
-## Check if raycast is hitting an interactable object
+## Check for nearby interactable objects (fruits, basket) using proximity
 func check_interactable():
-	if not interact_ray:
+	# Check for nearby fruits first
+	var nearest_fruit = null
+	var nearest_fruit_dist = INTERACT_RANGE
+
+	for node in get_tree().get_nodes_in_group("interactable"):
+		if not is_instance_valid(node):
+			continue
+		var dist = global_position.distance_to(node.global_position)
+		if dist < nearest_fruit_dist:
+			nearest_fruit_dist = dist
+			nearest_fruit = node
+
+	if nearest_fruit:
+		current_interactable = nearest_fruit
+		if interact_prompt:
+			interact_prompt.text = nearest_fruit.prompt_message if nearest_fruit.get("prompt_message") else "Nhấn E để nhặt"
 		return
-	
-	if interact_ray.is_colliding():
-		var collider_obj = interact_ray.get_collider()
-		if collider_obj:
-			# First check if the collider itself has interact method (e.g. DeliveryArea)
-			var interactable = null
-			if collider_obj.has_method("interact"):
-				interactable = collider_obj
-			else:
-				# Otherwise check parent (e.g. coin's Area3D -> coin)
-				var parent = collider_obj.get_parent()
-				if parent and parent.has_method("interact"):
-					interactable = parent
-			
-			if interactable:
-				current_interactable = interactable
-				# Show interact prompt
-				if interact_prompt:
-					var prompt_text = "Nhấn E"
-					if interactable.get("prompt_message"):
-						prompt_text = interactable.prompt_message
-					interact_prompt.text = prompt_text
-				return
-	
+
+	# No fruit nearby → check basket (only if player has items)
+	if inventory.size() > 0:
+		var nearest_basket = null
+		var nearest_basket_dist = INTERACT_RANGE
+
+		for node in get_tree().get_nodes_in_group("basket"):
+			if not is_instance_valid(node):
+				continue
+			var dist = global_position.distance_to(node.global_position)
+			if dist < nearest_basket_dist:
+				nearest_basket_dist = dist
+				nearest_basket = node
+
+		if nearest_basket:
+			current_interactable = nearest_basket
+			if interact_prompt:
+				interact_prompt.text = nearest_basket.prompt_message if nearest_basket.get("prompt_message") else "Nhấn E để bỏ trái cây vào rổ"
+			return
+
 	current_interactable = null
-	# Hide interact prompt (chỉ ẩn nếu không có milk)
-	if interact_prompt and not current_milk:
+	if interact_prompt:
 		interact_prompt.text = ""
 
 
@@ -504,6 +518,106 @@ func _setup_energy_bar_style():
 	energy_bar.add_theme_stylebox_override("background", _energy_bg_style)
 
 
+func _setup_transparent_buttons():
+	var all_buttons: Array = []
+
+	if inventory_upgrade_btn:
+		all_buttons.append(inventory_upgrade_btn)
+	if speed_upgrade_btn:
+		all_buttons.append(speed_upgrade_btn)
+	if energy_upgrade_btn:
+		all_buttons.append(energy_upgrade_btn)
+	if pause_continue_btn:
+		all_buttons.append(pause_continue_btn)
+	if pause_restart_btn:
+		all_buttons.append(pause_restart_btn)
+	if pause_settings_btn:
+		all_buttons.append(pause_settings_btn)
+	if pause_mainmenu_btn:
+		all_buttons.append(pause_mainmenu_btn)
+	if pause_quit_btn:
+		all_buttons.append(pause_quit_btn)
+	if pause_settings_save_btn:
+		all_buttons.append(pause_settings_save_btn)
+	if pause_settings_reset_btn:
+		all_buttons.append(pause_settings_reset_btn)
+	if pause_settings_close_btn:
+		all_buttons.append(pause_settings_close_btn)
+
+	for btn in all_buttons:
+		_apply_transparent_style(btn)
+
+
+func _apply_transparent_style(btn: Button):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.1, 0.1, 0.1, 0.3)
+	normal.border_color = Color(1, 1, 1, 0.3)
+	normal.border_width_bottom = 1
+	normal.border_width_top = 1
+	normal.border_width_left = 1
+	normal.border_width_right = 1
+	normal.corner_radius_top_left = 6
+	normal.corner_radius_top_right = 6
+	normal.corner_radius_bottom_left = 6
+	normal.corner_radius_bottom_right = 6
+	normal.content_margin_left = 10
+	normal.content_margin_right = 10
+	normal.content_margin_top = 6
+	normal.content_margin_bottom = 6
+	btn.add_theme_stylebox_override("normal", normal)
+
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = Color(0.2, 0.4, 0.8, 0.4)
+	hover.border_color = Color(1, 1, 1, 0.5)
+	hover.border_width_bottom = 1
+	hover.border_width_top = 1
+	hover.border_width_left = 1
+	hover.border_width_right = 1
+	hover.corner_radius_top_left = 6
+	hover.corner_radius_top_right = 6
+	hover.corner_radius_bottom_left = 6
+	hover.corner_radius_bottom_right = 6
+	hover.content_margin_left = 10
+	hover.content_margin_right = 10
+	hover.content_margin_top = 6
+	hover.content_margin_bottom = 6
+	btn.add_theme_stylebox_override("hover", hover)
+
+	var pressed = StyleBoxFlat.new()
+	pressed.bg_color = Color(0.1, 0.3, 0.6, 0.5)
+	pressed.border_color = Color(1, 1, 1, 0.6)
+	pressed.border_width_bottom = 1
+	pressed.border_width_top = 1
+	pressed.border_width_left = 1
+	pressed.border_width_right = 1
+	pressed.corner_radius_top_left = 6
+	pressed.corner_radius_top_right = 6
+	pressed.corner_radius_bottom_left = 6
+	pressed.corner_radius_bottom_right = 6
+	pressed.content_margin_left = 10
+	pressed.content_margin_right = 10
+	pressed.content_margin_top = 6
+	pressed.content_margin_bottom = 6
+	btn.add_theme_stylebox_override("pressed", pressed)
+
+	var disabled = StyleBoxFlat.new()
+	disabled.bg_color = Color(0.05, 0.05, 0.05, 0.2)
+	disabled.border_color = Color(0.5, 0.5, 0.5, 0.2)
+	disabled.border_width_bottom = 1
+	disabled.border_width_top = 1
+	disabled.border_width_left = 1
+	disabled.border_width_right = 1
+	disabled.corner_radius_top_left = 6
+	disabled.corner_radius_top_right = 6
+	disabled.corner_radius_bottom_left = 6
+	disabled.corner_radius_bottom_right = 6
+	disabled.content_margin_left = 10
+	disabled.content_margin_right = 10
+	disabled.content_margin_top = 6
+	disabled.content_margin_bottom = 6
+	btn.add_theme_stylebox_override("disabled", disabled)
+
+
 ## Cập nhật UI thanh năng lượng
 func update_energy_ui():
 	if not energy_bar:
@@ -523,40 +637,27 @@ func update_energy_ui():
 		energy_blink_timer = 0.0
 
 
-## Kiểm tra milk gần nhất có thể nhặt
+## Kiểm tra milk gần nhất bằng proximity
 func check_milk():
-	if not interact_ray:
+	var nearest = null
+	var nearest_dist = INTERACT_RANGE
+
+	for node in get_tree().get_nodes_in_group("milk"):
+		if not is_instance_valid(node):
+			continue
+		var dist = global_position.distance_to(node.global_position)
+		if dist < nearest_dist:
+			nearest_dist = dist
+			nearest = node
+
+	if nearest:
+		current_milk = nearest
+		if milk_prompt:
+			milk_prompt.text = nearest.prompt_message if nearest.get("prompt_message") else "Nhấn Q để nhặt sữa"
+	else:
 		current_milk = null
-		return
-	
-	if interact_ray.is_colliding():
-		var collider_obj = interact_ray.get_collider()
-		if collider_obj:
-			var milk = null
-			# Kiểm tra xem collider có phải là milk không
-			if collider_obj.has_method("pickup_milk"):
-				milk = collider_obj
-			else:
-				# Kiểm tra parent (Area3D -> Milk node)
-				var parent = collider_obj.get_parent()
-				if parent:
-					if parent.has_method("pickup_milk"):
-						milk = parent
-					else:
-						# Kiểm tra thêm 1 level nữa cho trường hợp nested
-						var grandparent = parent.get_parent()
-						if grandparent and grandparent.has_method("pickup_milk"):
-							milk = grandparent
-			
-			if milk:
-				current_milk = milk
-				if milk_prompt:
-					milk_prompt.text = "Ấn Q để nhặt milk"
-				return
-	
-	current_milk = null
-	if milk_prompt:
-		milk_prompt.text = ""
+		if milk_prompt:
+			milk_prompt.text = ""
 
 
 ## Nhặt milk khi nhấn Q
@@ -600,20 +701,25 @@ func get_upgrade_price(upgrade_type: String) -> int:
 ## Mua nâng cấp
 func buy_upgrade(upgrade_type: String) -> bool:
 	var price = get_upgrade_price(upgrade_type)
-	if score < price:
-		return false
-	
-	score -= price
+
+	if upgrade_type == "inventory":
+		if Global.total_coins < price:
+			return false
+		Global.total_coins -= price
+		Global.save_data()
+	else:
+		if score < price:
+			return false
+		score -= price
+
 	upgrade_levels[upgrade_type] += 1
-	
-	# Áp dụng hiệu ứng ngay lập tức
+
 	apply_upgrades()
-	
-	# Cập nhật UI
+
 	update_score_ui()
 	update_upgrade_ui()
 	update_inventory_ui()
-	
+
 	return true
 
 
@@ -641,17 +747,17 @@ func update_upgrade_ui():
 	if not upgrade_menu:
 		return
 	
-	# Cập nhật nút Inventory
+	# Cập nhật nút Inventory (dùng total_coins từ qua màn)
 	if inventory_upgrade_btn:
 		var inv_level = upgrade_levels["inventory"]
 		var inv_price = get_upgrade_price("inventory")
-		inventory_upgrade_btn.text = "Túi đồ Lv.%d → Lv.%d\n(%d slot → %d slot)\nGiá: %d điểm" % [
+		inventory_upgrade_btn.text = "Túi đồ Lv.%d → Lv.%d\n(%d slot → %d slot)\nGiá: %d xu (có: %d xu)" % [
 			inv_level, inv_level + 1,
 			BASE_INVENTORY_CAPACITY + inv_level,
 			BASE_INVENTORY_CAPACITY + inv_level + 1,
-			inv_price
+			inv_price, Global.total_coins
 		]
-		inventory_upgrade_btn.disabled = score < inv_price
+		inventory_upgrade_btn.disabled = Global.total_coins < inv_price
 	
 	# Cập nhật nút Speed
 	if speed_upgrade_btn:
@@ -724,7 +830,7 @@ func _on_pause_continue_pressed():
 ## Restart button - chơi lại từ đầu
 func _on_pause_restart_pressed():
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scene/main.tscn")
+	Global.go_to_scene("res://scene/main.tscn")
 
 
 ## Settings button - mở settings panel

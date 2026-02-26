@@ -99,15 +99,6 @@ func _update_cycle():
 
 func _collect_night_lights(node: Node):
 	if node is Light3D and node != sun:
-		var parent_name = node.get_parent().name if node.get_parent() else ""
-		var in_light_group = (
-			"StreetLamp" in parent_name or
-			"StreetLight" in parent_name or
-			"HouseLight" in node.name or
-			"NightLight" in node.name or
-			node.is_in_group("night_light")
-		)
-		if in_light_group:
-			night_lights.append(node)
+		night_lights.append(node)
 	for child in node.get_children():
 		_collect_night_lights(child)

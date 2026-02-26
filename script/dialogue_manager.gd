@@ -16,7 +16,7 @@ const TUTORIAL_DIALOGUE: Array = [
 	{"speaker": "Bác Bảo Vệ", "text": "Chào các cháu! Hôm nay là ngày đầu tiên các cháu làm việc ở đây nhỉ?", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Minh", "text": "Dạ vâng ạ! Cháu háo hức quá!", "color": Color(0.2, 0.7, 0.9)},
 	{"speaker": "Lan", "text": "Bác ơi, công việc của tụi cháu là gì ạ?", "color": Color(0.9, 0.5, 0.7)},
-	{"speaker": "Bác Bảo Vệ", "text": "Đơn giản thôi! Các cháu cần thu thập rác và mang đến điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+	{"speaker": "Bác Bảo Vệ", "text": "Đơn giản thôi! Các cháu cần thu thập trái cây trong vườn và mang đến điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Hùng", "text": "Nghe dễ quá vậy bác!", "color": Color(0.3, 0.8, 0.4)},
 	{"speaker": "Bác Bảo Vệ", "text": "Khoan đã! Các cháu cần chú ý năng lượng. Di chuyển sẽ tiêu hao năng lượng đấy.", "color": Color(0.8, 0.6, 0.2)},
 	{"speaker": "Lan", "text": "Vậy hết năng lượng thì sao ạ?", "color": Color(0.9, 0.5, 0.7)},
@@ -28,35 +28,65 @@ const TUTORIAL_DIALOGUE: Array = [
 
 const LEVEL_DIALOGUES: Dictionary = {
 	1: {
-		"scene_text": "Trước cổng công ty...",
+		"scene_text": "Vườn trái cây...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 1! Nhiệm vụ đầu tiên của các cháu đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần tìm và nhặt 1 túi nilong vàng và 1 chai nhựa, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Minh", "text": "Chỉ 2 món thôi hả bác? Dễ quá!", "color": Color(0.2, 0.7, 0.9)},
+			{"speaker": "Bác Bảo Vệ", "text": "Level 1 - Bắt đầu thu hoạch! Nhiệm vụ đầu tiên đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần tìm và nhặt 1 quả Táo và 1 quả Chuối, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Minh", "text": "Chỉ 2 loại trái cây thôi hả bác? Dễ quá!", "color": Color(0.2, 0.7, 0.9)},
 			{"speaker": "Bác Bảo Vệ", "text": "Đừng chủ quan nhé! Nhớ mang về điểm giao hàng mới tính. Không giới hạn thời gian đâu.", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Lan", "text": "Vậy thì thoải mái rồi! Đi thôi nào!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	2: {
-		"scene_text": "Khu vực phân loại rác...",
+		"scene_text": "Khu vườn cam chanh...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 2! Lần này khó hơn một chút đấy các cháu.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Cần nhặt 3 món: túi nilong xanh, chai nhựa, và túi nilong đỏ.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "3 món! Túi đồ cháu có đủ chỗ không nhỉ?", "color": Color(0.3, 0.8, 0.4)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 món là qua màn, nhưng muốn 3 sao thì phải đủ 3 món trong vòng 5 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Level 2 - Vườn trái cây! Lần này khó hơn một chút đấy.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 3 loại: Cam, Chanh và Nho.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "3 loại trái cây! Cháu thích nho lắm!", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 3 loại trong 5 phút!", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Minh", "text": "5 phút thôi sao? Phải nhanh tay lên thôi!", "color": Color(0.2, 0.7, 0.9)},
 		]
 	},
 	3: {
-		"scene_text": "Thử thách cuối cùng...",
+		"scene_text": "Vườn trái cây mùa hè...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level cuối rồi! Đây là thử thách lớn nhất!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần nhặt lá cây, túi nilong đỏ và chai nhựa - tất cả trong vòng 3 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "3 phút cho 3 món? Căng quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt được 1 món trong 3 phút là qua màn. Nhưng muốn 3 sao thì phải đủ cả 3!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "Thử thách cuối cùng! Cháu sẽ làm được!", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Bảo Vệ", "text": "Level 3 - Mùa hè rực rỡ! Trái cây mùa hè chín rộ rồi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần thu thập Dâu, Xoài và Dưa lưới trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Dâu và Xoài! Nghe ngon quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 loại là qua màn. Muốn 3 sao phải đủ 3 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "Cháu sẽ cố gắng hết sức!", "color": Color(0.3, 0.8, 0.4)},
 		]
-	}
+	},
+	4: {
+		"scene_text": "Thu hoạch lớn...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level 4 - Thu hoạch lớn! Bắt đầu thử thách thực sự rồi đây.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 4 loại: Táo, Cherry, Cam và Xoài trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Minh", "text": "4 loại trái cây luôn! Nhiều hơn rồi đó!", "color": Color(0.2, 0.7, 0.9)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì phải đủ 4 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Thử thách lớn nhưng cháu không sợ!", "color": Color(0.9, 0.5, 0.7)},
+		]
+	},
+	5: {
+		"scene_text": "Thử thách trái cây...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level 5 - Thử thách trái cây! Đây là màn khó nhất!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 5 loại: Chuối, Chanh, Nho, Dâu và Dưa lưới trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "5 loại! Phải chạy nhanh lắm mới kịp!", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Minh", "text": "Cháu sẽ chinh phục thử thách này!", "color": Color(0.2, 0.7, 0.9)},
+		]
+	},
+	6: {
+		"scene_text": "Siêu thu hoạch...",
+		"data": [
+			{"speaker": "Bác Bảo Vệ", "text": "Level cuối - Siêu thu hoạch! Đây là thử thách cuối cùng!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 7 loại trái cây: Táo, Cherry, Cam, Xoài, Nho, Dưa lưới và Dâu!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "7 loại trong 3 phút?! Căng quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 4 loại là qua màn. Muốn 3 sao thì đủ cả 7 loại trong 2 phút rưỡi!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Hùng", "text": "Thử thách cuối cùng! Cháu sẽ hoàn thành!", "color": Color(0.3, 0.8, 0.4)},
+		]
+	},
 }
 
 var dialogue_data: Array = []
@@ -183,7 +213,7 @@ func finish_dialogue():
 	if Global.dialogue_mode == "tutorial":
 		get_tree().change_scene_to_file("res://scene/character_select.tscn")
 	else:
-		get_tree().change_scene_to_file("res://scene/main.tscn")
+		Global.go_to_scene("res://scene/main.tscn")
 
 
 func _on_skip_pressed():

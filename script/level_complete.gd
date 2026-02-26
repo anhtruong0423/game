@@ -33,7 +33,7 @@ func _ready():
 
 	score_label.text = "Điểm: " + str(Global.last_score)
 
-	var is_last_level = level >= 3
+	var is_last_level = level >= 6
 	if is_last_level:
 		next_level_btn.text = "Hoàn thành game!"
 		next_level_btn.pressed.connect(_on_finish_game)

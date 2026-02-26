@@ -8,6 +8,9 @@ class_name Interactable
 @export var value: int = 1000
 @export var weight: float = 1.0
 
+func _ready():
+	add_to_group("interactable")
+
 func interact(player):
 	if player.has_method("is_inventory_full") and player.is_inventory_full():
 		return
