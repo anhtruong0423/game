@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dx4tc654rxy2t"]
+[gd_scene load_steps=4 format=3 uid="uid://cmilk12345678"]
 
 [ext_resource type="PackedScene" uid="uid://cwhek05r6lihj" path="res://assets/milk/milk_strawberry.glb" id="2_juuq0"]
 [ext_resource type="Script" uid="uid://dy30bpnqimfqo" path="res://script/milk.gd" id="2_script"]
