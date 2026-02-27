@@ -6,9 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://w18xq5ll0352" path="res://scene/FARM.tscn" id="6_k65ib"]
 [ext_resource type="Script" uid="uid://cbp4mivxk8aod" path="res://script/level_manager.gd" id="9_lvlmgr"]
 [ext_resource type="Script" uid="uid://bth6jstcb6lh1" path="res://script/day_night_cycle.gd" id="10_daynight"]
-[ext_resource type="PackedScene" uid="uid://dvqpin7a83o5n" path="res://dog.tscn" id="11_dog"]
-[ext_resource type="Script" path="res://script/npc_spawner.gd" id="12_npcspawn"]
-[ext_resource type="Script" path="res://script/fruit_spawner.gd" id="13_fruitspawn"]
+[ext_resource type="PackedScene" uid="uid://dvqpin7a83o5n" path="res://scene/dog.tscn" id="11_dog"]
+[ext_resource type="Script" uid="uid://dhm5fc6oeq55y" path="res://script/npc_spawner.gd" id="12_npcspawn"]
+[ext_resource type="Script" uid="uid://dfneiui1cwu6t" path="res://script/fruit_spawner.gd" id="13_fruitspawn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -57,7 +57,7 @@ shadow_enabled = true
 script = ExtResource("10_daynight")
 
 [node name="ProtoController" parent="." instance=ExtResource("1_wp4xf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112.549194, -133.6, 70.700005)
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 110.24919, -133.6, 77.200005)
 can_sprint = true
 can_freefly = true
 input_left = "move_left"
@@ -66,7 +66,7 @@ input_forward = "move_up"
 input_back = "move_down"
 
 [node name="FARM" parent="." instance=ExtResource("6_k65ib")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08073578, 0.07354736, -0.035266876)
 
 [node name="StartGate" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -135, 91)
@@ -813,7 +813,7 @@ script = ExtResource("9_lvlmgr")
 transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -134.1, 69.3)
 
 [node name="nhanvat" parent="." instance=ExtResource("6_4j5ol")]
-transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.00001, -133.20001, 74.600006)
+transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.00001, -133.23967, 74.600006)
 
 [node name="Dog" parent="." instance=ExtResource("11_dog")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115, -133.5, 72)

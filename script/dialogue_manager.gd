@@ -1,7 +1,7 @@
 extends Control
 
 ## Dialogue Manager - Visual Novel style
-## Hỗ trợ cả tutorial dialogue và level mission dialogue
+## Chỉ có 2 nhân vật: Lan và Bác Nông Dân
 
 signal dialogue_finished
 
@@ -12,67 +12,69 @@ signal dialogue_finished
 @onready var skip_button: Button = $SkipButton
 @onready var scene_label: Label = $SceneImage/SceneLabel
 
-
+## Avatar textures
+var avatar_lan: Texture2D = null
+var avatar_farmer: Texture2D = null
 
 const LEVEL_DIALOGUES: Dictionary = {
 	1: {
 		"scene_text": "Vườn trái cây...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 1 - Bắt đầu thu hoạch! Nhiệm vụ đầu tiên đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần tìm và nhặt 1 quả Táo và 1 quả Chuối, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Minh", "text": "Chỉ 2 loại trái cây thôi hả bác? Dễ quá!", "color": Color(0.2, 0.7, 0.9)},
-			{"speaker": "Bác Bảo Vệ", "text": "Đừng chủ quan nhé! Nhớ mang về điểm giao hàng mới tính. Không giới hạn thời gian đâu.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Level 1 - Bắt đầu thu hoạch! Nhiệm vụ đầu tiên đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cháu cần tìm và nhặt 1 quả Táo và 1 quả Chuối, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Chỉ 2 loại trái cây thôi hả bác? Dễ quá!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đừng chủ quan nhé! Nhớ mang về điểm giao hàng mới tính. Không giới hạn thời gian đâu.", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Lan", "text": "Vậy thì thoải mái rồi! Đi thôi nào!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	2: {
 		"scene_text": "Khu vườn cam chanh...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 2 - Vườn trái cây! Lần này khó hơn một chút đấy.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 3 loại: Cam, Chanh và Nho.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "3 loại trái cây! Cháu thích nho lắm!", "color": Color(0.3, 0.8, 0.4)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 3 loại trong 5 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Minh", "text": "5 phút thôi sao? Phải nhanh tay lên thôi!", "color": Color(0.2, 0.7, 0.9)},
+			{"speaker": "Bác Nông Dân", "text": "Level 2 - Vườn trái cây! Lần này khó hơn một chút đấy.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 3 loại: Cam, Chanh và Nho.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "3 loại trái cây! Cháu thích nho lắm!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 3 loại trong 5 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "5 phút thôi sao? Phải nhanh tay lên thôi!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	3: {
 		"scene_text": "Vườn trái cây mùa hè...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 3 - Mùa hè rực rỡ! Trái cây mùa hè chín rộ rồi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Các cháu cần thu thập Dâu, Xoài và Dưa lưới trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Level 3 - Mùa hè rực rỡ! Trái cây mùa hè chín rộ rồi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cháu cần thu thập Dâu, Xoài và Dưa lưới trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Lan", "text": "Dâu và Xoài! Nghe ngon quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 2 loại là qua màn. Muốn 3 sao phải đủ 3 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "Cháu sẽ cố gắng hết sức!", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn. Muốn 3 sao phải đủ 3 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Cháu sẽ cố gắng hết sức!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	4: {
 		"scene_text": "Thu hoạch lớn...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 4 - Thu hoạch lớn! Bắt đầu thử thách thực sự rồi đây.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 4 loại: Táo, Cherry, Cam và Xoài trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Minh", "text": "4 loại trái cây luôn! Nhiều hơn rồi đó!", "color": Color(0.2, 0.7, 0.9)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì phải đủ 4 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Level 4 - Thu hoạch lớn! Bắt đầu thử thách thực sự rồi đây.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 4 loại: Táo, Cherry, Cam và Xoài trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "4 loại trái cây luôn! Nhiều hơn rồi đó!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì phải đủ 4 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Lan", "text": "Thử thách lớn nhưng cháu không sợ!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	5: {
 		"scene_text": "Thử thách trái cây...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level 5 - Thử thách trái cây! Đây là màn khó nhất!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 5 loại: Chuối, Chanh, Nho, Dâu và Dưa lưới trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "5 loại! Phải chạy nhanh lắm mới kịp!", "color": Color(0.3, 0.8, 0.4)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Minh", "text": "Cháu sẽ chinh phục thử thách này!", "color": Color(0.2, 0.7, 0.9)},
+			{"speaker": "Bác Nông Dân", "text": "Level 5 - Thử thách trái cây! Đây là màn khó nhất!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 5 loại: Chuối, Chanh, Nho, Dâu và Dưa lưới trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "5 loại! Phải chạy nhanh lắm mới kịp!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Cháu sẽ chinh phục thử thách này!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 	6: {
 		"scene_text": "Siêu thu hoạch...",
 		"data": [
-			{"speaker": "Bác Bảo Vệ", "text": "Level cuối - Siêu thu hoạch! Đây là thử thách cuối cùng!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Bảo Vệ", "text": "Cần thu thập 7 loại trái cây: Táo, Cherry, Cam, Xoài, Nho, Dưa lưới và Dâu!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Level cuối - Siêu thu hoạch! Đây là thử thách cuối cùng!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 7 loại trái cây: Táo, Cherry, Cam, Xoài, Nho, Dưa lưới và Dâu!", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Lan", "text": "7 loại trong 3 phút?! Căng quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Bảo Vệ", "text": "Nhặt 4 loại là qua màn. Muốn 3 sao thì đủ cả 7 loại trong 2 phút rưỡi!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Hùng", "text": "Thử thách cuối cùng! Cháu sẽ hoàn thành!", "color": Color(0.3, 0.8, 0.4)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 4 loại là qua màn. Muốn 3 sao thì đủ cả 7 loại trong 2 phút rưỡi!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Thử thách cuối cùng! Cháu sẽ hoàn thành!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 }
@@ -96,8 +98,14 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	skip_button.pressed.connect(_on_skip_pressed)
 	_set_click_through(self)
+	_load_avatars()
 	_load_dialogue_data()
 	show_dialogue(current_index)
+
+
+func _load_avatars():
+	avatar_lan = load("res://assets/background/character.png")
+	avatar_farmer = load("res://assets/background/farmer.png")
 
 
 func _set_click_through(node: Node):
@@ -169,19 +177,33 @@ func show_dialogue(index: int):
 		return
 
 	var entry = dialogue_data[index]
-	name_label.text = entry.speaker
-	name_label.add_theme_color_override("font_color", entry.color)
+	if not entry:
+		finish_dialogue()
+		return
+
+	if name_label:
+		name_label.text = entry.speaker
+		name_label.add_theme_color_override("font_color", entry.color)
+
+	## Đổi avatar theo speaker
+	if avatar_texture:
+		if entry.speaker == "Lan" and avatar_lan:
+			avatar_texture.texture = avatar_lan
+		elif avatar_farmer:
+			avatar_texture.texture = avatar_farmer
 
 	full_text = entry.text
 	displayed_text = ""
 	char_index = 0
-	text_label.text = ""
+	if text_label:
+		text_label.text = ""
 
 	is_typing = true
 	waiting_for_advance = false
 	typing_timer = 0.0
 	auto_timer = 0.0
-	continue_hint.text = "..."
+	if continue_hint:
+		continue_hint.text = "..."
 
 
 func advance_dialogue():

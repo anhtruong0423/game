@@ -93,12 +93,13 @@ func _spawn_all_npcs():
 		model.transform = Transform3D(Basis(), Vector3(0.2, 0, 0.1))
 		npc.add_child(model)
 
-		# Đặt vị trí
+		# Thêm vào scene tree trước khi set global_position
+		add_child(npc)
+
+		# Đặt vị trí (phải sau add_child để có global transform)
 		npc.global_position = pos
 
 		# Quay mặt ngẫu nhiên ban đầu
 		npc.rotation.y = randf() * TAU
-
-		add_child(npc)
 
 	print("[NPCSpawner] Đã spawn %d NPC dog khắp map!" % SPAWN_POSITIONS.size())

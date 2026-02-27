@@ -155,5 +155,3 @@ func _spawn_milks():
 		milks_node.add_child(milk)
 
 	print("[FruitSpawner] Đã spawn %d sữa các loại khắp map!" % milk_count)
-
-

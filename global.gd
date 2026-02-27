@@ -12,6 +12,7 @@ var level_stars: Dictionary = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 var total_coins: int = 0
 var last_stars: int = 0
 var last_elapsed_time: float = 0.0
+var last_star_bonus: int = 0
 
 ## Tutorial và Pet Selection
 var tutorial_completed := false
@@ -30,7 +31,7 @@ const PET_BONUSES = {
 		"dog_damage_reduction": 0.0,
 		"passive_heal": 0.0,
 		"follow_speed_mult": 2.0,
-		"scene_path": "res://fox.tscn"
+		"scene_path": "res://scene/fox.tscn"
 	},
 	"turtle": {
 		"speed_bonus": 0.0,
@@ -39,7 +40,7 @@ const PET_BONUSES = {
 		"dog_damage_reduction": 0.5,
 		"passive_heal": 1.0,
 		"follow_speed_mult": 0.5,
-		"scene_path": "res://turtle.tscn"
+		"scene_path": "res://scene/turtle.tscn"
 	}
 }
 

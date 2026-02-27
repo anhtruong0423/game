@@ -66,11 +66,13 @@ func _physics_process(delta):
 		if dist_sq <= chase_radius_sq:
 			is_chasing = true
 			_play_chase_animation()
+			AudioManager.play_dog_bark()
 		return
 
 	if dist_sq > chase_radius_sq:
 		is_chasing = false
 		_stop_animation()
+		AudioManager.stop_dog_bark()
 		return
 
 	if dist_sq <= bite_range_sq:

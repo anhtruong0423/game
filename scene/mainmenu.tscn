@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://buhmiacmb70vr"]
+[gd_scene load_steps=3 format=3 uid="uid://buhmiacmb70vr"]
 
-[ext_resource type="Script" path="res://script/mainmenu.gd" id="1_mainmenu"]
+[ext_resource type="Script" uid="uid://cqg21gofprsir" path="res://script/mainmenu.gd" id="1_mainmenu"]
+[ext_resource type="Texture2D" uid="uid://cu321vq3y5vow" path="res://assets/background/background.png" id="2_h8uk4"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -11,6 +12,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mainmenu")
 
+[node name="BackgroundImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_h8uk4")
+expand_mode = 1
+stretch_mode = 6
+
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -18,7 +30,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.15, 0.2, 1)
+color = Color(0.02, 0.03, 0.08, 0.45)
 
 [node name="GradientOverlay" type="ColorRect" parent="."]
 layout_mode = 1
@@ -27,7 +39,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.4, 0.3, 0.3)
+color = Color(0.02, 0.08, 0.05, 0.3)
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -42,25 +54,25 @@ offset_right = 220.0
 offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
 theme_override_constants/separation = 14
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MenuContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
 theme_override_font_sizes/font_size = 72
+text = "PickMiUp"
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "PickMiUp"
 
 [node name="Subtitle" type="Label" parent="MenuContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/font_size = 16
-horizontal_alignment = 1
 text = "Thu thập trái cây · Giao hàng · Khám phá"
+horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="MenuContainer"]
 custom_minimum_size = Vector2(0, 15)
@@ -107,7 +119,6 @@ theme_override_font_sizes/font_size = 14
 text = "Reset Data (Test)"
 
 [node name="SettingsPanel" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -123,6 +134,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
+
+[node name="Background2" type="Sprite2D" parent="SettingsPanel/Overlay"]
+position = Vector2(625, 333)
+texture = ExtResource("2_h8uk4")
 
 [node name="Panel" type="Panel" parent="SettingsPanel"]
 layout_mode = 1
@@ -159,8 +174,8 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
 theme_override_font_sizes/font_size = 28
-horizontal_alignment = 1
 text = "⚙️ CÀI ĐẶT"
+horizontal_alignment = 1
 
 [node name="DisplaySection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -189,8 +204,8 @@ value = 100.0
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="FullscreenContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -236,15 +251,14 @@ text = "Master:"
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 100.0
 
 [node name="MasterValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MasterContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="MusicContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -259,15 +273,14 @@ text = "Nhạc nền:"
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 80.0
 
 [node name="MusicValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/MusicContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "80%"
+horizontal_alignment = 2
 
 [node name="SfxContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -282,15 +295,14 @@ text = "Hiệu ứng:"
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
 value = 100.0
 
 [node name="SfxValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SfxContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "100%"
+horizontal_alignment = 2
 
 [node name="ControlSection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -312,15 +324,14 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 10.0
-max_value = 100.0
 value = 40.0
 
 [node name="SensitivityValue" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer/SensitivityContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "40%"
+horizontal_alignment = 2
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="SettingsPanel/Panel"]
 layout_mode = 1
@@ -334,8 +345,8 @@ offset_right = -15.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
 theme_override_constants/separation = 20
+alignment = 1
 
 [node name="SaveButton" type="Button" parent="SettingsPanel/Panel/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 35)
@@ -356,7 +367,6 @@ theme_override_font_sizes/font_size = 16
 text = "Đóng"
 
 [node name="TutorialPanel" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -372,6 +382,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
+
+[node name="Background2" type="Sprite2D" parent="TutorialPanel"]
+position = Vector2(623, 331)
+texture = ExtResource("2_h8uk4")
 
 [node name="Panel" type="Panel" parent="TutorialPanel"]
 layout_mode = 1
@@ -404,8 +418,8 @@ theme_override_constants/separation = 10
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
 theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
 text = "Hướng Dẫn Chơi"
+horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TutorialPanel/Panel/VBoxContainer"]
 layout_mode = 2
@@ -495,4 +509,3 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
 text = "Đóng"
-

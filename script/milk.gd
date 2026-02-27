@@ -32,6 +32,7 @@ func pickup_milk(player):
 			return  # Không nhặt nếu năng lượng đã đầy
 		
 		player.add_energy(energy_value)
+		AudioManager.play_pick_sfx()
 		_cleanup_and_free()
 
 

@@ -277,12 +277,19 @@ class MinimapOverlay extends Control:
 				draw_rect(Rect2(pos2d - Vector2(3.5, 3.5), Vector2(7, 7)),
 					Color(1.0, 0.85, 0.1, 0.9))
 
-		# === Vẽ Fruits (cam nhỏ) ===
+		# === Vẽ Fruits (nổi bật, có viền phát sáng) ===
 		for pos3d in minimap_ref._fruit_positions:
 			var pos2d = minimap_ref.world_to_minimap(pos3d)
 			if minimap_ref.is_in_minimap(pos2d):
-				draw_circle(pos2d, minimap_ref.ICON_SIZE * 0.6,
-					Color(1.0, 0.6, 0.1, 0.7))
+				# Viền phát sáng bên ngoài
+				draw_circle(pos2d, minimap_ref.ICON_SIZE * 1.8,
+					Color(1.0, 1.0, 0.2, 0.3))
+				# Viền trắng
+				draw_circle(pos2d, minimap_ref.ICON_SIZE * 1.2,
+					Color(1.0, 1.0, 1.0, 0.7))
+				# Lõi cam sáng
+				draw_circle(pos2d, minimap_ref.ICON_SIZE,
+					Color(1.0, 0.5, 0.0, 1.0))
 
 		# === Vẽ Milk (trắng nhỏ) ===
 		for pos3d in minimap_ref._milk_positions:

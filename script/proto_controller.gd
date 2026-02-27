@@ -85,7 +85,7 @@ var upgrade_levels : Dictionary = {"inventory": 0, "speed": 0, "energy": 0}
 var coin_value_multiplier : float = 1.0  ## Dự phòng cho tương lai
 var upgrade_menu_open : bool = false
 var pause_menu_open : bool = false
-const UPGRADE_PRICES : Dictionary = {"inventory": 100, "speed": 50, "energy": 200}
+const UPGRADE_BASE_PRICES : Dictionary = {"inventory": 500, "speed": 300, "energy": 800}
 const BASE_INVENTORY_CAPACITY : int = 1
 const BASE_SPEED : float = 7.0
 const BASE_ENERGY_DRAIN : float = 5.0
@@ -104,6 +104,7 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var inventory_upgrade_btn: Button = $HUD/UpgradeMenu/VBoxContainer/InventoryUpgrade
 @onready var speed_upgrade_btn: Button = $HUD/UpgradeMenu/VBoxContainer/SpeedUpgrade
 @onready var energy_upgrade_btn: Button = $HUD/UpgradeMenu/VBoxContainer/EnergyUpgrade
+var coin_display_label: Label = null  ## Hiển thị số xu trên bảng upgrade
 
 ## Pause Menu references
 @onready var pause_panel: Control = $HUD/PausePanel
@@ -445,6 +446,7 @@ func add_to_inventory_typed(item_type: String, item_value: int, item_weight: flo
 	inventory.append({"type": item_type, "value": final_value, "weight": item_weight})
 	total_weight += item_weight
 	update_inventory_ui()
+	AudioManager.play_pick_sfx()
 	return true
 
 
@@ -848,24 +850,22 @@ func calculate_inventory_capacity() -> int:
 	return BASE_INVENTORY_CAPACITY + upgrade_levels["inventory"] + pet_inv_bonus
 
 
-## Lấy giá nâng cấp tiếp theo
+## Lấy giá nâng cấp tiếp theo (tăng theo level hiện tại)
 func get_upgrade_price(upgrade_type: String) -> int:
-	return UPGRADE_PRICES.get(upgrade_type, 0)
+	var base = UPGRADE_BASE_PRICES.get(upgrade_type, 0)
+	var level = upgrade_levels.get(upgrade_type, 0)
+	return base * (level + 1)
 
 
-## Mua nâng cấp
+## Mua nâng cấp (tất cả dùng Global.total_coins)
 func buy_upgrade(upgrade_type: String) -> bool:
 	var price = get_upgrade_price(upgrade_type)
 
-	if upgrade_type == "inventory":
-		if Global.total_coins < price:
-			return false
-		Global.total_coins -= price
-		Global.save_data()
-	else:
-		if score < price:
-			return false
-		score -= price
+	if Global.total_coins < price:
+		return false
+	Global.total_coins -= price
+	Global.save_data()
+	AudioManager.play_upgrade_sfx()
 
 	upgrade_levels[upgrade_type] += 1
 
@@ -902,15 +902,21 @@ func update_upgrade_ui():
 	if not upgrade_menu:
 		return
 	
-	# Cập nhật nút Inventory (dùng total_coins từ qua màn)
+	# Hiển thị số xu đang có
+	if not coin_display_label:
+		_create_coin_display()
+	if coin_display_label:
+		coin_display_label.text = "💰 Xu: %d" % Global.total_coins
+
+	# Cập nhật nút Inventory
 	if inventory_upgrade_btn:
 		var inv_level = upgrade_levels["inventory"]
 		var inv_price = get_upgrade_price("inventory")
-		inventory_upgrade_btn.text = "Túi đồ Lv.%d → Lv.%d\n(%d slot → %d slot)\nGiá: %d xu (có: %d xu)" % [
+		inventory_upgrade_btn.text = "Túi đồ Lv.%d → Lv.%d\n(%d slot → %d slot)\nGiá: %d xu" % [
 			inv_level, inv_level + 1,
 			BASE_INVENTORY_CAPACITY + inv_level,
 			BASE_INVENTORY_CAPACITY + inv_level + 1,
-			inv_price, Global.total_coins
+			inv_price
 		]
 		inventory_upgrade_btn.disabled = Global.total_coins < inv_price
 	
@@ -920,12 +926,12 @@ func update_upgrade_ui():
 		var speed_price = get_upgrade_price("speed")
 		var current_bonus = speed_level * 10
 		var next_bonus = (speed_level + 1) * 10
-		speed_upgrade_btn.text = "Tốc độ Lv.%d → Lv.%d\n(+%d%% → +%d%%)\nGiá: %d điểm" % [
+		speed_upgrade_btn.text = "Tốc độ Lv.%d → Lv.%d\n(+%d%% → +%d%%)\nGiá: %d xu" % [
 			speed_level, speed_level + 1,
 			current_bonus, next_bonus,
 			speed_price
 		]
-		speed_upgrade_btn.disabled = score < speed_price
+		speed_upgrade_btn.disabled = Global.total_coins < speed_price
 	
 	# Cập nhật nút Energy
 	if energy_upgrade_btn:
@@ -933,12 +939,26 @@ func update_upgrade_ui():
 		var energy_price = get_upgrade_price("energy")
 		var current_reduction = energy_level * 10
 		var next_reduction = (energy_level + 1) * 10
-		energy_upgrade_btn.text = "Năng lượng Lv.%d → Lv.%d\n(-%d%% → -%d%% tiêu hao)\nGiá: %d điểm" % [
+		energy_upgrade_btn.text = "Năng lượng Lv.%d → Lv.%d\n(-%d%% → -%d%% tiêu hao)\nGiá: %d xu" % [
 			energy_level, energy_level + 1,
 			current_reduction, next_reduction,
 			energy_price
 		]
-		energy_upgrade_btn.disabled = score < energy_price
+		energy_upgrade_btn.disabled = Global.total_coins < energy_price
+
+
+## Tạo label hiển thị số xu ở đầu bảng upgrade
+func _create_coin_display():
+	var vbox = upgrade_menu.get_node_or_null("VBoxContainer")
+	if not vbox:
+		return
+	coin_display_label = Label.new()
+	coin_display_label.name = "CoinDisplay"
+	coin_display_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	coin_display_label.add_theme_font_size_override("font_size", 22)
+	coin_display_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.1))
+	vbox.add_child(coin_display_label)
+	vbox.move_child(coin_display_label, 0)  # Đặt lên đầu
 
 
 ## Callback khi nhấn nút nâng cấp Inventory

@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://dialogue_scene_2024"]
+[gd_scene load_steps=2 format=3 uid="uid://k5a0k08i1qsr"]
 
-[ext_resource type="Script" path="res://script/dialogue_manager.gd" id="1_dialogue"]
+[ext_resource type="Script" uid="uid://ba3j7v6uksm8" path="res://script/dialogue_manager.gd" id="1_dialogue"]
 
 [node name="Dialogue" type="Control"]
 layout_mode = 3
@@ -18,9 +18,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.12, 0.18, 1)
+color = Color(0.08, 0.1, 0.15, 1)
 
-[node name="SceneImage" type="ColorRect" parent="."]
+[node name="SceneImage" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,7 +28,17 @@ anchor_bottom = 1.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.15, 0.2, 0.25, 1)
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SceneOverlay" type="ColorRect" parent="SceneImage"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.3)
 
 [node name="SceneLabel" type="Label" parent="SceneImage"]
 layout_mode = 1
@@ -43,11 +53,14 @@ offset_right = 200.0
 offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 28
+text = "Vườn trái cây..."
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "🏢 Trước cổng công ty..."
 
 [node name="DialogueBox" type="Panel" parent="."]
 layout_mode = 1
@@ -56,7 +69,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -180.0
+offset_top = -200.0
 offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
@@ -76,9 +89,11 @@ grow_vertical = 2
 theme_override_constants/separation = 20
 
 [node name="Avatar" type="TextureRect" parent="DialogueBox/HBoxContainer"]
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
 
 [node name="AvatarPlaceholder" type="ColorRect" parent="DialogueBox/HBoxContainer/Avatar"]
 layout_mode = 1
@@ -87,9 +102,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.3, 0.35, 0.4, 1)
+color = Color(0.25, 0.3, 0.35, 0.5)
 
 [node name="AvatarLabel" type="Label" parent="DialogueBox/HBoxContainer/Avatar/AvatarPlaceholder"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,9 +113,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 48
+text = "👤"
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "👤"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="DialogueBox/HBoxContainer"]
 layout_mode = 2
@@ -135,8 +151,8 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.6, 0.6, 0.7, 1)
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 2
 text = "Click hoặc đợi để tiếp tục..."
+horizontal_alignment = 2
 
 [node name="SkipButton" type="Button" parent="."]
 layout_mode = 1
@@ -150,4 +166,3 @@ offset_bottom = 55.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 16
 text = "Bỏ qua >>"
-

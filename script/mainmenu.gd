@@ -39,6 +39,16 @@ func _ready() -> void:
 	# Áp dụng style premium
 	_style_premium_menu()
 	
+	# Scale background sprites vừa màn hình
+	var vp_size = get_viewport_rect().size
+	for bg_sprite in _find_bg_sprites(self):
+		if bg_sprite.texture:
+			var tex_size = bg_sprite.texture.get_size()
+			if tex_size.x > 0 and tex_size.y > 0:
+				var s = max(vp_size.x / tex_size.x, vp_size.y / tex_size.y)
+				bg_sprite.scale = Vector2(s, s)
+				bg_sprite.position = vp_size / 2.0
+	
 	# Kết nối signals cho menu buttons
 	play_button.pressed.connect(_on_play_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
@@ -91,13 +101,38 @@ const FRUIT_COUNT = 12
 const PARTICLE_DOT_COUNT = 25
 
 
+func _find_bg_sprites(node: Node) -> Array:
+	var result := []
+	for child in node.get_children():
+		if child is Sprite2D and child.name.begins_with("Background"):
+			result.append(child)
+		result.append_array(_find_bg_sprites(child))
+	return result
+
+
 func _style_premium_menu():
 	# === Deep dark gradient background ===
-	_bg_rect = $Background
-	_bg_rect.color = Color(0.04, 0.05, 0.12, 1)  # Deep navy
+	_bg_rect = get_node_or_null("Background")
+	if not _bg_rect:
+		_bg_rect = ColorRect.new()
+		_bg_rect.name = "Background"
+		_bg_rect.anchors_preset = Control.PRESET_FULL_RECT
+		_bg_rect.anchor_right = 1.0
+		_bg_rect.anchor_bottom = 1.0
+		add_child(_bg_rect)
+		move_child(_bg_rect, 0)
+	_bg_rect.color = Color(0.02, 0.03, 0.08, 0.45)  # Dark overlay
 	
-	_overlay_rect = $GradientOverlay
-	_overlay_rect.color = Color(0.02, 0.12, 0.08, 0.5)
+	_overlay_rect = get_node_or_null("GradientOverlay")
+	if not _overlay_rect:
+		_overlay_rect = ColorRect.new()
+		_overlay_rect.name = "GradientOverlay"
+		_overlay_rect.anchors_preset = Control.PRESET_FULL_RECT
+		_overlay_rect.anchor_right = 1.0
+		_overlay_rect.anchor_bottom = 1.0
+		add_child(_overlay_rect)
+		move_child(_overlay_rect, 1)
+	_overlay_rect.color = Color(0.02, 0.08, 0.05, 0.3)
 	
 	# Thêm vignette overlay tối hơn ở viền
 	var vignette = ColorRect.new()
@@ -422,17 +457,17 @@ func _process(delta):
 	var bg_pulse = (sin(_bg_timer * 0.5) + 1.0) / 2.0
 	if _bg_rect:
 		_bg_rect.color = Color(
-			0.04 + bg_pulse * 0.02,
-			0.05 + bg_pulse * 0.015,
-			0.12 + bg_pulse * 0.03,
-			1.0
+			0.02 + bg_pulse * 0.01,
+			0.03 + bg_pulse * 0.01,
+			0.08 + bg_pulse * 0.02,
+			0.45
 		)
 	if _overlay_rect:
 		_overlay_rect.color = Color(
-			0.02 + bg_pulse * 0.03,
-			0.12 + bg_pulse * 0.04,
+			0.02 + bg_pulse * 0.02,
 			0.08 + bg_pulse * 0.02,
-			0.4 + bg_pulse * 0.1
+			0.05 + bg_pulse * 0.01,
+			0.25 + bg_pulse * 0.05
 		)
 	
 	# === Float fruit emojis ===

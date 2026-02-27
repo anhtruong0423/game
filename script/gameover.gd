@@ -27,6 +27,10 @@ func _ready() -> void:
 	
 	# Bắt đầu animation fade in
 	play_fade_in_animation()
+	
+	# Phát SFX game over và dừng nhạc nền
+	AudioManager.stop_music()
+	AudioManager.play_gameover_sfx()
 
 
 func play_fade_in_animation() -> void:
@@ -61,10 +65,12 @@ func play_fade_in_animation() -> void:
 
 
 func _on_restart_pressed() -> void:
+	AudioManager.play_music()
 	Global.go_to_scene("res://scene/main.tscn")
 
 
 func _on_main_menu_pressed() -> void:
+	AudioManager.play_music()
 	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
 
 

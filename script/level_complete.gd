@@ -34,6 +34,12 @@ func _ready():
 
 	score_label.text = "Điểm: " + str(Global.last_score)
 
+	# Hiển thị bonus xu theo sao
+	var bonus = Global.last_star_bonus
+	if bonus > 0:
+		score_label.text += "\n⭐ Thưởng sao: +" + str(bonus) + " xu"
+	score_label.text += "\n💰 Tổng xu: " + str(Global.total_coins)
+
 	var is_last_level = level >= 6
 	if is_last_level:
 		next_level_btn.text = "Hoàn thành game!"
@@ -47,6 +53,9 @@ func _ready():
 	menu_btn.pressed.connect(_on_menu)
 
 	play_fade_in()
+	
+	# Phát SFX hoàn thành level
+	AudioManager.play_levelup_sfx()
 
 
 func play_fade_in():

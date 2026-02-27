@@ -129,6 +129,9 @@ const MILK_SPAWN_POSITIONS = [
 
 var current_level: int = 1
 var delivered_items: Dictionary = {}
+
+## Thưởng xu bonus theo số sao
+const STAR_BONUS = {1: 500, 2: 1200, 3: 2500}
 var elapsed_time: float = 0.0
 var level_active: bool = true
 var can_pass: bool = false
@@ -600,6 +603,12 @@ func complete_level():
 	var player = _find_player()
 	if player:
 		Global.save_game_result(player.score)
+
+	# Thưởng xu bonus theo số sao
+	var star_bonus = STAR_BONUS.get(stars, 0)
+	Global.total_coins += star_bonus
+	Global.last_star_bonus = star_bonus
+	Global.save_data()
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	Global.last_elapsed_time = elapsed_time
