@@ -253,8 +253,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			if minimap_instance and minimap_instance.has_method("toggle"):
 				minimap_instance.toggle()
 
-	# Flashlight (press F) - nhặt hoặc bật/tắt đèn pin
-	if event is InputEventKey and event.pressed and event.keycode == KEY_F:
+	# Flashlight (press P) - nhặt hoặc bật/tắt đèn pin
+	if event is InputEventKey and event.pressed and event.keycode == KEY_P:
 		if not pause_menu_open and not upgrade_menu_open:
 			if has_flashlight:
 				toggle_flashlight()
@@ -571,10 +571,10 @@ func _check_flashlight_proximity():
 		var dist = global_position.distance_to(pickup.global_position)
 		if dist <= FLASHLIGHT_PICKUP_RANGE:
 			if interact_prompt:
-				interact_prompt.text = "🔦 Nhấn F để nhặt đèn pin"
+				interact_prompt.text = "🔦 Nhấn P để nhặt đèn pin"
 			return
 	# Không có đèn pin gần → xóa prompt (nếu đang hiển thị prompt đèn pin)
-	if interact_prompt and interact_prompt.text.begins_with("🔦 Nhấn F"):
+	if interact_prompt and interact_prompt.text.begins_with("🔦 Nhấn P"):
 		interact_prompt.text = ""
 
 
@@ -611,7 +611,7 @@ func pickup_flashlight():
 
 	# Hiển thị thông báo
 	if interact_prompt:
-		interact_prompt.text = "🔦 Đã nhặt đèn pin! Nhấn F để bật/tắt"
+		interact_prompt.text = "🔦 Đã nhặt đèn pin! Nhấn P để bật/tắt"
 		# Auto ẩn sau 3 giây
 		get_tree().create_timer(3.0).timeout.connect(func():
 			if interact_prompt and interact_prompt.text.begins_with("🔦"):

@@ -72,11 +72,11 @@ const LEVEL_DATA = {
 			3: {"items": 5, "time": 180}
 		},
 		"spawn_items": [
-			{"type": "strawberry", "position": Vector3(106, -133.5, 74)},
-			{"type": "mango", "position": Vector3(119, -133.5, 67)},
-			{"type": "melon", "position": Vector3(112, -133.5, 80)},
-			{"type": "apple", "position": Vector3(104, -133.5, 65)},
-			{"type": "banana", "position": Vector3(116, -133.5, 76)},
+			{"type": "strawberry", "position": Vector3(80, -133.5, 85)},
+			{"type": "mango", "position": Vector3(-80, -133.5, 70)},
+			{"type": "melon", "position": Vector3(200, -133.5, 80)},
+			{"type": "apple", "position": Vector3(-30, -133.5, 50)},
+			{"type": "banana", "position": Vector3(130, -133.5, 40)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -301,14 +301,13 @@ func _apply_level_features():
 	var dog_node = parent.get_node_or_null("Dog")
 	var npc_spawner = parent.get_node_or_null("NPCSpawner")
 	if data.get("enable_dog", true):
-		# Cần chó — giữ Dog gốc và NPCSpawner
-		if not dog_node:
-			var dog_scene = load("res://scene/dog.tscn")
-			if dog_scene:
-				var new_dog = dog_scene.instantiate()
-				new_dog.name = "Dog"
-				new_dog.global_position = Vector3(115, -133.5, 72)
-				parent.add_child(new_dog)
+		# Cần chó — giữ NPCSpawner
+		# Level 3+: xóa Dog gốc (gần FrumiShop) nhưng giữ NPC dogs còn lại
+		if dog_node:
+			dog_node.queue_free()
+		# Xóa NPC dog gần FrumiShop sau khi spawn xong
+		if npc_spawner:
+			call_deferred("_remove_dogs_near_shop", npc_spawner)
 	else:
 		# Không cần chó — XÓA TẤT CẢ chó khỏi scene
 		# 1. Xóa Dog gốc
@@ -356,6 +355,19 @@ func _apply_level_features():
 		var sc_milks = parent.get_node_or_null("scattered_milks")
 		if sc_milks:
 			sc_milks.queue_free()
+
+
+## Xóa NPC dogs gần FrumiShop (gọi deferred sau khi NPCSpawner spawn xong)
+const SHOP_POSITION := Vector3(109.6, -134.1, 69.3)
+const SHOP_DOG_REMOVE_RADIUS := 15.0
+
+func _remove_dogs_near_shop(spawner: Node):
+	if not is_instance_valid(spawner):
+		return
+	for child in spawner.get_children():
+		if is_instance_valid(child) and child.global_position.distance_to(SHOP_POSITION) <= SHOP_DOG_REMOVE_RADIUS:
+			child.queue_free()
+			print("[LevelManager] Xóa NPC dog gần FrumiShop: %s" % child.name)
 
 
 ## Thông báo cho minimap về chế độ nhấp nháy trái cây
