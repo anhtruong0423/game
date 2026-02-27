@@ -142,6 +142,8 @@ const FLASHLIGHT_PICKUP_RANGE := 3.0
 
 func _ready() -> void:
 	add_to_group("player")
+	# Đảm bảo game không bị kẹt ở trạng thái pause
+	get_tree().paused = false
 	check_input_mappings()
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
@@ -154,6 +156,7 @@ func _ready() -> void:
 	_setup_turtle_hint()
 	_spawn_pet.call_deferred()
 	_setup_minimap.call_deferred()
+	_restore_flashlight.call_deferred()
 
 	apply_upgrades()
 	if upgrade_menu:
@@ -309,7 +312,7 @@ func _physics_process(delta: float) -> void:
 			velocity.z = move_toward(velocity.z, 0, move_speed)
 	else:
 		velocity.x = 0
-		velocity.y = 0
+		velocity.z = 0
 	
 	# Use velocity to actually move
 	move_and_slide()
@@ -597,6 +600,8 @@ func try_pickup_flashlight():
 func pickup_flashlight():
 	has_flashlight = true
 	flashlight_on = true
+	Global.has_flashlight = true
+	Global.save_data()
 
 	flashlight_node = SpotLight3D.new()
 	flashlight_node.name = "PlayerFlashlight"
@@ -631,6 +636,29 @@ func toggle_flashlight():
 		print("[Player] Đèn pin: BẬT")
 	else:
 		print("[Player] Đèn pin: TẮT")
+
+
+## Khôi phục đèn pin nếu đã nhặt từ trước (Global.has_flashlight)
+func _restore_flashlight():
+	if not Global.has_flashlight:
+		return
+	if has_flashlight:
+		return  # Đã có rồi
+	# Tạo lại đèn pin
+	has_flashlight = true
+	flashlight_on = true
+
+	flashlight_node = SpotLight3D.new()
+	flashlight_node.name = "PlayerFlashlight"
+	flashlight_node.light_energy = 3.0
+	flashlight_node.light_color = Color(1.0, 0.95, 0.8)
+	flashlight_node.spot_range = 20.0
+	flashlight_node.spot_angle = 25.0
+	flashlight_node.spot_attenuation = 0.8
+	flashlight_node.shadow_enabled = true
+	flashlight_node.position = Vector3(0.2, -0.1, -0.3)
+	head.add_child(flashlight_node)
+	print("[Player] Đèn pin đã được khôi phục từ save!")
 
 
 ## Kích hoạt màn hình Game Over

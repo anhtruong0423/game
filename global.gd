@@ -13,6 +13,7 @@ var total_coins: int = 0
 var last_stars: int = 0
 var last_elapsed_time: float = 0.0
 var last_star_bonus: int = 0
+var has_flashlight: bool = false  ## Đèn pin giữ từ Level 3+
 
 ## Tutorial và Pet Selection
 var tutorial_completed := false
@@ -131,6 +132,7 @@ func save_data():
 	config.set_value("game", "selected_pet", selected_pet)
 	config.set_value("game", "current_level", current_level)
 	config.set_value("game", "total_coins", total_coins)
+	config.set_value("game", "has_flashlight", has_flashlight)
 	for level in level_stars:
 		config.set_value("level_stars", str(level), level_stars[level])
 	for key in settings:
@@ -148,6 +150,7 @@ func load_data():
 		selected_pet = config.get_value("game", "selected_pet", config.get_value("game", "selected_character", ""))
 		current_level = config.get_value("game", "current_level", 1)
 		total_coins = config.get_value("game", "total_coins", 0)
+		has_flashlight = config.get_value("game", "has_flashlight", false)
 		for level in level_stars:
 			level_stars[level] = config.get_value("level_stars", str(level), 0)
 		for key in settings:
@@ -162,10 +165,13 @@ func reset_all_data():
 	selected_pet = ""
 	current_level = 1
 	total_coins = 0
+	has_flashlight = false
 	level_stars = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 	settings = DEFAULT_SETTINGS.duplicate()
 	save_data()
 	apply_all_settings()
+	# Đảm bảo game không bị kẹt ở trạng thái pause
+	get_tree().paused = false
 	print("[Global] Data reset!")
 
 
