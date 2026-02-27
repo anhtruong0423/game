@@ -36,6 +36,7 @@ const LEVEL_DATA = {
 		"enable_day_night": false,
 		"enable_flashlight": false,
 		"blink_minimap": true,
+		"only_mission_fruits": true,
 	},
 	## ===== Level 2: Thử Thách — thêm chó + sữa =====
 	2: {
@@ -48,16 +49,17 @@ const LEVEL_DATA = {
 			3: {"items": 4, "time": 240}
 		},
 		"spawn_items": [
-			{"type": "orange", "position": Vector3(105, -133.5, 66)},
-			{"type": "lemon", "position": Vector3(118, -133.5, 72)},
-			{"type": "grape", "position": Vector3(110, -133.5, 78)},
-			{"type": "cherry", "position": Vector3(114, -133.5, 64)},
+			{"type": "orange", "position": Vector3(50, -133.5, 85)},
+			{"type": "lemon", "position": Vector3(-20, -133.5, 80)},
+			{"type": "grape", "position": Vector3(5, -133.5, 55)},
+			{"type": "cherry", "position": Vector3(116, -133.5, 73)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
 		"enable_day_night": false,
 		"enable_flashlight": false,
 		"blink_minimap": true,
+		"only_mission_fruits": true,
 	},
 	## ===== Level 3: Khám Phá Đêm — ngày đêm + đèn pin =====
 	3: {
@@ -342,10 +344,10 @@ func _apply_level_features():
 	if data.get("enable_flashlight", false):
 		_setup_flashlight_spawn()
 
-	## === FruitSpawner (tắt trái cây ngẫu nhiên ở Level 1) ===
+	## === FruitSpawner (tắt trái cây ngẫu nhiên khi chỉ cần trái nhiệm vụ) ===
 	var fruit_spawner = parent.get_node_or_null("FruitSpawner")
-	if fruit_spawner and not data.get("enable_dog", true):
-		# Level không có chó = level 1 → tắt FruitSpawner hoàn toàn
+	if fruit_spawner and data.get("only_mission_fruits", false):
+		# Chỉ hiển thị trái cây nhiệm vụ — tắt FruitSpawner
 		fruit_spawner.process_mode = Node.PROCESS_MODE_DISABLED
 		# Xóa trái cây đã scatter
 		var sc_fruits = parent.get_node_or_null("scattered_fruits")

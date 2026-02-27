@@ -80,9 +80,9 @@ const MILK_SPAWN_ZONES = [
 
 
 func _ready():
-	# Level 1: chỉ có trái cây nhiệm vụ (2 quả), không spawn thêm
-	if Global.current_level <= 1:
-		print("[FruitSpawner] Level 1: không spawn trái cây/sữa ngẫu nhiên.")
+	# Level 1-2: chỉ có trái cây nhiệm vụ, không spawn thêm
+	if Global.current_level <= 2:
+		print("[FruitSpawner] Level %d: không spawn trái cây/sữa ngẫu nhiên." % Global.current_level)
 		return
 	call_deferred("_spawn_all")
 
