@@ -12,19 +12,7 @@ signal dialogue_finished
 @onready var skip_button: Button = $SkipButton
 @onready var scene_label: Label = $SceneImage/SceneLabel
 
-const TUTORIAL_DIALOGUE: Array = [
-	{"speaker": "Bác Bảo Vệ", "text": "Chào các cháu! Hôm nay là ngày đầu tiên các cháu làm việc ở đây nhỉ?", "color": Color(0.8, 0.6, 0.2)},
-	{"speaker": "Minh", "text": "Dạ vâng ạ! Cháu háo hức quá!", "color": Color(0.2, 0.7, 0.9)},
-	{"speaker": "Lan", "text": "Bác ơi, công việc của tụi cháu là gì ạ?", "color": Color(0.9, 0.5, 0.7)},
-	{"speaker": "Bác Bảo Vệ", "text": "Đơn giản thôi! Các cháu cần thu thập trái cây trong vườn và mang đến điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
-	{"speaker": "Hùng", "text": "Nghe dễ quá vậy bác!", "color": Color(0.3, 0.8, 0.4)},
-	{"speaker": "Bác Bảo Vệ", "text": "Khoan đã! Các cháu cần chú ý năng lượng. Di chuyển sẽ tiêu hao năng lượng đấy.", "color": Color(0.8, 0.6, 0.2)},
-	{"speaker": "Lan", "text": "Vậy hết năng lượng thì sao ạ?", "color": Color(0.9, 0.5, 0.7)},
-	{"speaker": "Bác Bảo Vệ", "text": "Thì các cháu sẽ đi rất chậm! Nhưng đừng lo, uống sữa FRUMI sẽ hồi phục năng lượng.", "color": Color(0.8, 0.6, 0.2)},
-	{"speaker": "Minh", "text": "Cháu hiểu rồi! WASD để di chuyển, E để nhặt đồ, Q để uống sữa!", "color": Color(0.2, 0.7, 0.9)},
-	{"speaker": "Bác Bảo Vệ", "text": "Đúng rồi! Giữ Shift để chạy nhanh nhưng tốn gấp đôi năng lượng. Còn Tab để mở menu nâng cấp.", "color": Color(0.8, 0.6, 0.2)},
-	{"speaker": "Hùng", "text": "Cảm ơn bác! Để cháu xem ai làm giỏi nhất nào!", "color": Color(0.3, 0.8, 0.4)},
-]
+
 
 const LEVEL_DIALOGUES: Dictionary = {
 	1: {
@@ -122,19 +110,14 @@ func _set_click_through(node: Node):
 
 
 func _load_dialogue_data():
-	if Global.dialogue_mode == "tutorial":
-		dialogue_data = TUTORIAL_DIALOGUE.duplicate()
+	var level = Global.current_level
+	var level_data = LEVEL_DIALOGUES.get(level, null)
+	if level_data:
+		dialogue_data = level_data["data"].duplicate()
 		if scene_label:
-			scene_label.text = "Trước cổng công ty..."
+			scene_label.text = level_data["scene_text"]
 	else:
-		var level = Global.current_level
-		var level_data = LEVEL_DIALOGUES.get(level, null)
-		if level_data:
-			dialogue_data = level_data["data"].duplicate()
-			if scene_label:
-				scene_label.text = level_data["scene_text"]
-		else:
-			dialogue_data = LEVEL_DIALOGUES[1]["data"].duplicate()
+		dialogue_data = LEVEL_DIALOGUES[1]["data"].duplicate()
 
 
 func _process(delta):
@@ -210,10 +193,7 @@ func advance_dialogue():
 
 func finish_dialogue():
 	dialogue_finished.emit()
-	if Global.dialogue_mode == "tutorial":
-		get_tree().change_scene_to_file("res://scene/character_select.tscn")
-	else:
-		Global.go_to_scene("res://scene/main.tscn")
+	Global.go_to_scene("res://scene/main.tscn")
 
 
 func _on_skip_pressed():

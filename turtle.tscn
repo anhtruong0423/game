@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctgam14xfviya"]
+
+[ext_resource type="PackedScene" uid="uid://cgrjnr2bpjonf" path="res://assets/character/TURTLE.glb" id="1_c7qbt"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="TURTLE" parent="." instance=ExtResource("1_c7qbt")]
+
+[editable path="TURTLE"]

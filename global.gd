@@ -13,19 +13,34 @@ var total_coins: int = 0
 var last_stars: int = 0
 var last_elapsed_time: float = 0.0
 
-## Tutorial và Character Selection
+## Tutorial và Pet Selection
 var tutorial_completed := false
-var selected_character := ""  ## "minh", "lan", "hung"
+var selected_pet := ""  ## "fox" hoặc "turtle"
 var dialogue_mode := "tutorial"  ## "tutorial" hoặc "level"
 
 ## Loading screen
 var next_scene_path := ""
 
-## Character bonuses
-const CHARACTER_BONUSES = {
-	"minh": {"speed_bonus": 0.1, "energy_bonus": 0.0, "inventory_bonus": 0},
-	"lan": {"speed_bonus": 0.0, "energy_bonus": 0.1, "inventory_bonus": 0},
-	"hung": {"speed_bonus": 0.0, "energy_bonus": 0.0, "inventory_bonus": 1}
+## Pet bonuses
+const PET_BONUSES = {
+	"fox": {
+		"speed_bonus": 0.2,
+		"sprint_drain_reduction": 0.3,
+		"inventory_bonus": 0,
+		"dog_damage_reduction": 0.0,
+		"passive_heal": 0.0,
+		"follow_speed_mult": 2.0,
+		"scene_path": "res://fox.tscn"
+	},
+	"turtle": {
+		"speed_bonus": 0.0,
+		"sprint_drain_reduction": 0.0,
+		"inventory_bonus": 2,
+		"dog_damage_reduction": 0.5,
+		"passive_heal": 1.0,
+		"follow_speed_mult": 0.5,
+		"scene_path": "res://turtle.tscn"
+	}
 }
 
 ## Settings
@@ -83,9 +98,9 @@ func complete_tutorial():
 	save_data()
 
 
-## Chọn nhân vật
-func select_character(character_name: String):
-	selected_character = character_name
+## Chọn thú cưng
+func select_pet(pet_name: String):
+	selected_pet = pet_name
 	save_data()
 
 
@@ -95,11 +110,16 @@ func go_to_scene(scene_path: String):
 	get_tree().change_scene_to_file("res://scene/loading.tscn")
 
 
-## Lấy bonus của nhân vật hiện tại
-func get_character_bonus(bonus_type: String) -> float:
-	if selected_character in CHARACTER_BONUSES:
-		return CHARACTER_BONUSES[selected_character].get(bonus_type, 0.0)
+## Lấy bonus của thú cưng hiện tại
+func get_pet_bonus(bonus_type: String) -> float:
+	if selected_pet in PET_BONUSES:
+		return float(PET_BONUSES[selected_pet].get(bonus_type, 0.0))
 	return 0.0
+
+func get_pet_string_bonus(bonus_type: String) -> String:
+	if selected_pet in PET_BONUSES:
+		return str(PET_BONUSES[selected_pet].get(bonus_type, ""))
+	return ""
 
 
 ## Lưu dữ liệu vào file
@@ -107,7 +127,7 @@ func save_data():
 	var config = ConfigFile.new()
 	config.set_value("game", "best_score", best_score)
 	config.set_value("game", "tutorial_completed", tutorial_completed)
-	config.set_value("game", "selected_character", selected_character)
+	config.set_value("game", "selected_pet", selected_pet)
 	config.set_value("game", "current_level", current_level)
 	config.set_value("game", "total_coins", total_coins)
 	for level in level_stars:
@@ -124,21 +144,21 @@ func load_data():
 	if err == OK:
 		best_score = config.get_value("game", "best_score", 0)
 		tutorial_completed = config.get_value("game", "tutorial_completed", false)
-		selected_character = config.get_value("game", "selected_character", "")
+		selected_pet = config.get_value("game", "selected_pet", config.get_value("game", "selected_character", ""))
 		current_level = config.get_value("game", "current_level", 1)
 		total_coins = config.get_value("game", "total_coins", 0)
 		for level in level_stars:
 			level_stars[level] = config.get_value("level_stars", str(level), 0)
 		for key in settings:
 			settings[key] = config.get_value("settings", key, DEFAULT_SETTINGS[key])
-	print("[Global] Loaded: level=", current_level, ", tutorial=", tutorial_completed, ", character=", selected_character)
+	print("[Global] Loaded: level=", current_level, ", tutorial=", tutorial_completed, ", pet=", selected_pet)
 
 
 ## Reset tất cả dữ liệu (dùng để test)
 func reset_all_data():
 	best_score = 0
 	tutorial_completed = false
-	selected_character = ""
+	selected_pet = ""
 	current_level = 1
 	total_coins = 0
 	level_stars = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}

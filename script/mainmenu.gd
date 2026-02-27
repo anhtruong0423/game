@@ -69,14 +69,8 @@ func _ready() -> void:
 
 
 func _on_play_pressed() -> void:
-	if not Global.tutorial_completed:
-		Global.dialogue_mode = "tutorial"
-		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
-	elif Global.selected_character == "":
-		get_tree().change_scene_to_file("res://scene/character_select.tscn")
-	else:
-		Global.dialogue_mode = "level"
-		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
+	# Luôn mở Character Select trước
+	get_tree().change_scene_to_file("res://scene/character_select.tscn")
 
 
 func _on_settings_pressed() -> void:

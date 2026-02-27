@@ -15,5 +15,22 @@ func pickup_milk(player):
 			return  # Không nhặt nếu năng lượng đã đầy
 		
 		player.add_energy(energy_value)
-		queue_free()  # Xóa milk sau khi nhặt
+		_cleanup_and_free()
+
+
+## Ẩn ngay + xóa khỏi group trước khi queue_free để giảm lag
+func _cleanup_and_free():
+	visible = false
+	set_process(false)
+	set_physics_process(false)
+	remove_from_group("milk")
+	for child in get_children():
+		if child is CollisionShape3D:
+			child.disabled = true
+		elif child is StaticBody3D or child is Area3D:
+			for sub in child.get_children():
+				if sub is CollisionShape3D:
+					sub.disabled = true
+	queue_free()
+
 

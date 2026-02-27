@@ -68,6 +68,10 @@ const MAX_WEIGHT_PENALTY : float = 0.5  ## Tối đa giảm 50% tốc độ
 ## Proximity detection range
 const INTERACT_RANGE : float = 3.0
 
+## Throttle cho proximity check (giảm lag)
+var _proximity_check_timer : float = 0.0
+const PROXIMITY_CHECK_INTERVAL : float = 0.15  ## Chỉ check mỗi 0.15 giây thay vì mỗi frame
+
 ## Energy system
 var energy : float = 100.0
 var max_energy : float = 100.0
@@ -125,6 +129,8 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var pause_settings_reset_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/ResetButton
 @onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/CloseButton
 
+var pet_instance: Node3D = null
+
 func _ready() -> void:
 	add_to_group("player")
 	check_input_mappings()
@@ -136,6 +142,7 @@ func _ready() -> void:
 
 	_setup_energy_bar_style()
 	_setup_transparent_buttons()
+	_spawn_pet.call_deferred()
 
 	apply_upgrades()
 	if upgrade_menu:
@@ -269,6 +276,8 @@ func _physics_process(delta: float) -> void:
 			velocity.z = move_dir.z * move_speed
 			if not is_exhausted:
 				var drain_multiplier = 2.0 if is_sprinting else 1.0
+				if is_sprinting:
+					drain_multiplier *= (1.0 - Global.get_pet_bonus("sprint_drain_reduction"))
 				drain_energy(calculate_energy_drain() * drain_multiplier * delta)
 		else:
 			velocity.x = move_toward(velocity.x, 0, move_speed)
@@ -347,11 +356,15 @@ func check_input_mappings():
 		can_freefly = false
 
 
-## Check for interactable objects every frame
+## Check for interactable objects (throttled để giảm lag)
 func _process(_delta: float) -> void:
-	check_interactable()
-	check_milk()
+	_proximity_check_timer += _delta
+	if _proximity_check_timer >= PROXIMITY_CHECK_INTERVAL:
+		_proximity_check_timer = 0.0
+		check_interactable()
+		check_milk()
 	update_energy_ui()
+	_pet_passive_heal(_delta)
 
 
 ## Check for nearby interactable objects (fruits, basket) using proximity
@@ -468,10 +481,36 @@ func update_inventory_ui():
 
 ## Tiêu hao năng lượng
 func drain_energy(amount: float):
-	energy = max(0, energy - amount)
+	var reduction := Global.get_pet_bonus("dog_damage_reduction")
+	var final_amount := amount * (1.0 - reduction)
+	energy = max(0, energy - final_amount)
 	if energy <= 0 and not is_exhausted:
 		is_exhausted = true
 		trigger_game_over()
+
+
+## Rùa hồi NL khi player đứng yên
+func _pet_passive_heal(delta: float):
+	var heal_rate := Global.get_pet_bonus("passive_heal")
+	if heal_rate <= 0.0 or is_exhausted:
+		return
+	if velocity.length_squared() < 0.1:
+		add_energy(heal_rate * delta)
+
+
+## Spawn thú cưng vào scene
+func _spawn_pet():
+	var scene_path := Global.get_pet_string_bonus("scene_path")
+	if scene_path == "":
+		return
+	var pet_scene := load(scene_path) as PackedScene
+	if not pet_scene:
+		return
+	pet_instance = pet_scene.instantiate()
+	var pet_script := load("res://script/pet_follow.gd")
+	pet_instance.set_script(pet_script)
+	pet_instance.global_position = global_position + Vector3(-2, 0, -2)
+	get_parent().add_child(pet_instance)
 
 
 ## Kích hoạt màn hình Game Over
@@ -671,9 +710,8 @@ func try_pickup_milk():
 
 ## Tính tốc độ di chuyển dựa trên upgrade level, bonus nhân vật và trọng lượng
 func calculate_speed() -> float:
-	# Base speed + upgrade bonus + character bonus (Minh: +10%)
-	var character_speed_bonus = Global.get_character_bonus("speed_bonus")
-	var base = BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"] + character_speed_bonus)
+	var pet_speed_bonus = Global.get_pet_bonus("speed_bonus")
+	var base = BASE_SPEED * (1.0 + 0.1 * upgrade_levels["speed"] + pet_speed_bonus)
 	# Tính penalty từ trọng lượng
 	var weight_penalty = min(total_weight * WEIGHT_SPEED_PENALTY, MAX_WEIGHT_PENALTY)
 	return base * (1.0 - weight_penalty)
@@ -681,17 +719,14 @@ func calculate_speed() -> float:
 
 ## Tính tốc độ tiêu hao năng lượng dựa trên upgrade level và bonus nhân vật
 func calculate_energy_drain() -> float:
-	# Character bonus (Lan: -10% tiêu hao = +0.1 energy_bonus)
-	var character_energy_bonus = Global.get_character_bonus("energy_bonus")
-	var drain = BASE_ENERGY_DRAIN * (1.0 - 0.1 * upgrade_levels["energy"] - character_energy_bonus)
+	var drain = BASE_ENERGY_DRAIN * (1.0 - 0.1 * upgrade_levels["energy"])
 	return max(0.1, drain)  ## Tối thiểu 0.1
 
 
 ## Tính dung lượng túi dựa trên upgrade level và bonus nhân vật
 func calculate_inventory_capacity() -> int:
-	# Character bonus (Hùng: +1 slot)
-	var character_inv_bonus = int(Global.get_character_bonus("inventory_bonus"))
-	return BASE_INVENTORY_CAPACITY + upgrade_levels["inventory"] + character_inv_bonus
+	var pet_inv_bonus = int(Global.get_pet_bonus("inventory_bonus"))
+	return BASE_INVENTORY_CAPACITY + upgrade_levels["inventory"] + pet_inv_bonus
 
 
 ## Lấy giá nâng cấp tiếp theo

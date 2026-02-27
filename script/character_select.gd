@@ -1,73 +1,53 @@
 extends Control
 
-## Character Selection Screen
-## Cho phép chọn 1 trong 3 nhân vật với bonus khác nhau
+## Pet Selection Screen - Chọn thú cưng đi cùng
 
-@onready var minh_btn: Button = $VBoxContainer/CharactersContainer/MinhContainer/SelectButton
-@onready var lan_btn: Button = $VBoxContainer/CharactersContainer/LanContainer/SelectButton
-@onready var hung_btn: Button = $VBoxContainer/CharactersContainer/HungContainer/SelectButton
+@onready var fox_btn: Button = $VBoxContainer/PetsContainer/FoxContainer/SelectButton
+@onready var turtle_btn: Button = $VBoxContainer/PetsContainer/TurtleContainer/SelectButton
 
-@onready var minh_container: VBoxContainer = $VBoxContainer/CharactersContainer/MinhContainer
-@onready var lan_container: VBoxContainer = $VBoxContainer/CharactersContainer/LanContainer
-@onready var hung_container: VBoxContainer = $VBoxContainer/CharactersContainer/HungContainer
+@onready var fox_container: VBoxContainer = $VBoxContainer/PetsContainer/FoxContainer
+@onready var turtle_container: VBoxContainer = $VBoxContainer/PetsContainer/TurtleContainer
 
-var selected_character := ""
+var selected_pet := ""
 
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	
-	minh_btn.pressed.connect(_on_minh_selected)
-	lan_btn.pressed.connect(_on_lan_selected)
-	hung_btn.pressed.connect(_on_hung_selected)
-	
-	# Nếu đã chọn nhân vật trước đó, highlight nó
-	if Global.selected_character != "":
-		selected_character = Global.selected_character
+
+	fox_btn.pressed.connect(_on_fox_selected)
+	turtle_btn.pressed.connect(_on_turtle_selected)
+
+	if Global.selected_pet != "":
+		selected_pet = Global.selected_pet
 		update_selection_ui()
 
 
-func _on_minh_selected():
-	selected_character = "minh"
+func _on_fox_selected():
+	selected_pet = "fox"
 	update_selection_ui()
 	start_game()
 
 
-func _on_lan_selected():
-	selected_character = "lan"
-	update_selection_ui()
-	start_game()
-
-
-func _on_hung_selected():
-	selected_character = "hung"
+func _on_turtle_selected():
+	selected_pet = "turtle"
 	update_selection_ui()
 	start_game()
 
 
 func update_selection_ui():
-	# Reset all
-	minh_container.modulate = Color(1, 1, 1, 0.7)
-	lan_container.modulate = Color(1, 1, 1, 0.7)
-	hung_container.modulate = Color(1, 1, 1, 0.7)
-	
-	# Highlight selected
-	match selected_character:
-		"minh":
-			minh_container.modulate = Color(1, 1, 1, 1)
-		"lan":
-			lan_container.modulate = Color(1, 1, 1, 1)
-		"hung":
-			hung_container.modulate = Color(1, 1, 1, 1)
+	fox_container.modulate = Color(1, 1, 1, 0.7)
+	turtle_container.modulate = Color(1, 1, 1, 0.7)
+
+	match selected_pet:
+		"fox":
+			fox_container.modulate = Color(1, 1, 1, 1)
+		"turtle":
+			turtle_container.modulate = Color(1, 1, 1, 1)
 
 
 func start_game():
-	if selected_character == "":
+	if selected_pet == "":
 		return
 
-	Global.select_character(selected_character)
-	Global.complete_tutorial()
-
-	Global.dialogue_mode = "level"
-	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
-
+	Global.select_pet(selected_pet)
+	get_tree().change_scene_to_file("res://scene/level_select.tscn")

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://clviqq5a10kvg"]
+
+[ext_resource type="PackedScene" uid="uid://cnia1m02f7q10" path="res://assets/character/fox.glb" id="1_8x0u3"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="fox" parent="." instance=ExtResource("1_8x0u3")]
+
+[editable path="fox"]

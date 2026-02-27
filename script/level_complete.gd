@@ -7,6 +7,7 @@ extends Control
 @onready var score_label: Label = $VBoxContainer/ScoreLabel
 @onready var next_level_btn: Button = $VBoxContainer/ButtonsContainer/NextLevelButton
 @onready var replay_btn: Button = $VBoxContainer/ButtonsContainer/ReplayButton
+@onready var level_select_btn: Button = $VBoxContainer/ButtonsContainer/LevelSelectButton
 @onready var menu_btn: Button = $VBoxContainer/ButtonsContainer/MenuButton
 
 
@@ -42,6 +43,7 @@ func _ready():
 		next_level_btn.pressed.connect(_on_next_level)
 
 	replay_btn.pressed.connect(_on_replay)
+	level_select_btn.pressed.connect(_on_level_select)
 	menu_btn.pressed.connect(_on_menu)
 
 	play_fade_in()
@@ -55,6 +57,7 @@ func play_fade_in():
 	score_label.modulate.a = 0
 	next_level_btn.modulate.a = 0
 	replay_btn.modulate.a = 0
+	level_select_btn.modulate.a = 0
 	menu_btn.modulate.a = 0
 
 	var tween = create_tween()
@@ -67,6 +70,7 @@ func play_fade_in():
 	tween.set_parallel(true)
 	tween.tween_property(next_level_btn, "modulate:a", 1.0, 0.3)
 	tween.tween_property(replay_btn, "modulate:a", 1.0, 0.3)
+	tween.tween_property(level_select_btn, "modulate:a", 1.0, 0.3)
 	tween.tween_property(menu_btn, "modulate:a", 1.0, 0.3)
 
 
@@ -83,6 +87,10 @@ func _on_finish_game():
 func _on_replay():
 	Global.dialogue_mode = "level"
 	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
+
+
+func _on_level_select():
+	get_tree().change_scene_to_file("res://scene/level_select.tscn")
 
 
 func _on_menu():

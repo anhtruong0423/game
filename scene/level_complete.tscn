@@ -77,6 +77,12 @@ custom_minimum_size = Vector2(120, 45)
 theme_override_font_sizes/font_size = 16
 text = "Chơi lại"
 
+[node name="LevelSelectButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 45)
+theme_override_font_sizes/font_size = 16
+text = "Bảng Level"
+
 [node name="MenuButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(120, 45)
