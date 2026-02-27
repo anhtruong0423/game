@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://ums2w3jcdrjc"]
+[gd_scene load_steps=17 format=3 uid="uid://ums2w3jcdrjc"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_wp4xf"]
 [ext_resource type="PackedScene" uid="uid://unyj76hq8g4e" path="res://scene/frumishop.tscn" id="5_0ha60"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://cbp4mivxk8aod" path="res://script/level_manager.gd" id="9_lvlmgr"]
 [ext_resource type="Script" uid="uid://bth6jstcb6lh1" path="res://script/day_night_cycle.gd" id="10_daynight"]
 [ext_resource type="PackedScene" uid="uid://dvqpin7a83o5n" path="res://dog.tscn" id="11_dog"]
+[ext_resource type="Script" path="res://script/npc_spawner.gd" id="12_npcspawn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1bvp3"]
 
@@ -811,7 +812,10 @@ script = ExtResource("9_lvlmgr")
 transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -134.1, 69.3)
 
 [node name="nhanvat" parent="." instance=ExtResource("6_4j5ol")]
-transform = Transform3D(3.8, 0, 0, 0, 3.8, 0, 0, 0, 3.8, 112.00001, -133.40001, 74.600006)
+transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.00001, -133.20001, 74.600006)
 
 [node name="Dog" parent="." instance=ExtResource("11_dog")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115, -133.5, 72)
+
+[node name="NPCSpawner" type="Node3D" parent="."]
+script = ExtResource("12_npcspawn")

@@ -17,6 +17,10 @@ var chase_radius_sq: float
 var bite_range_sq: float
 var home_position: Vector3
 
+## Throttle cho distance check khi không chase (giảm lag)
+var _idle_check_timer: float = 0.0
+const IDLE_CHECK_INTERVAL: float = 0.2
+
 
 func _ready():
 	chase_radius_sq = chase_radius * chase_radius
@@ -54,6 +58,11 @@ func _physics_process(delta):
 	var dist_sq := diff.x * diff.x + diff.z * diff.z
 
 	if not is_chasing:
+		# Throttle: chỉ check khoảng cách mỗi 0.2s khi không chase
+		_idle_check_timer += delta
+		if _idle_check_timer < IDLE_CHECK_INTERVAL:
+			return
+		_idle_check_timer = 0.0
 		if dist_sq <= chase_radius_sq:
 			is_chasing = true
 			_play_chase_animation()

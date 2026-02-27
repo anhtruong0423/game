@@ -16,6 +16,10 @@ var is_moving := false
 var pet_type := ""
 var fruit_detect_radius_sq: float = 100.0  # 10m squared
 
+## Throttle cho fox fruit scan (giảm lag)
+var _fox_scan_timer: float = 0.0
+const FOX_SCAN_INTERVAL: float = 0.3  ## Chỉ quét mỗi 0.3 giây
+
 
 func _ready():
 	pet_type = Global.selected_pet
@@ -80,7 +84,10 @@ func _physics_process(delta):
 			is_moving = false
 
 		if pet_type == "fox":
-			_fox_look_at_fruit(delta)
+			_fox_scan_timer += delta
+			if _fox_scan_timer >= FOX_SCAN_INTERVAL:
+				_fox_scan_timer = 0.0
+				_fox_look_at_fruit(delta)
 
 	if anim_player and not anim_player.is_playing():
 		_play_animation()

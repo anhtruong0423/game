@@ -511,6 +511,7 @@ func _spawn_pet():
 	pet_instance.set_script(pet_script)
 	pet_instance.global_position = global_position + Vector3(-2, 0, -2)
 	get_parent().add_child(pet_instance)
+	pet_instance.global_position = global_position + Vector3(-2, 0, -2)
 
 
 ## Kích hoạt màn hình Game Over
