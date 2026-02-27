@@ -24,6 +24,8 @@ var minimap_container: Control = null
 var overlay: Control = null
 var is_visible := true
 var _overlay_timer := 0.0
+var blink_fruits := false
+var _blink_timer := 0.0
 
 ## Các vị trí cần vẽ overlay
 var _basket_positions: Array = []
@@ -52,6 +54,9 @@ func _process(delta: float) -> void:
 		player.global_position.y + CAMERA_HEIGHT,
 		player.global_position.z
 	)
+
+	# Cập nhật blink timer
+	_blink_timer += delta
 
 	# Throttle overlay data update
 	_overlay_timer += delta
@@ -277,19 +282,27 @@ class MinimapOverlay extends Control:
 				draw_rect(Rect2(pos2d - Vector2(3.5, 3.5), Vector2(7, 7)),
 					Color(1.0, 0.85, 0.1, 0.9))
 
-		# === Vẽ Fruits (nổi bật, có viền phát sáng) ===
+		# === Vẽ Fruits (nổi bật, có viền phát sáng + nhấp nháy) ===
+		var fruit_blink_alpha := 1.0
+		var fruit_glow_scale := 1.0
+		if minimap_ref.blink_fruits:
+			# Hiệu ứng nhấp nháy: alpha dao động 0.4 - 1.0
+			fruit_blink_alpha = 0.4 + (sin(minimap_ref._blink_timer * 5.0) + 1.0) / 2.0 * 0.6
+			# Kích thước glow dao động 1.6 - 2.2
+			fruit_glow_scale = 1.6 + (sin(minimap_ref._blink_timer * 5.0) + 1.0) / 2.0 * 0.6
+
 		for pos3d in minimap_ref._fruit_positions:
 			var pos2d = minimap_ref.world_to_minimap(pos3d)
 			if minimap_ref.is_in_minimap(pos2d):
-				# Viền phát sáng bên ngoài
-				draw_circle(pos2d, minimap_ref.ICON_SIZE * 1.8,
-					Color(1.0, 1.0, 0.2, 0.3))
+				# Viền phát sáng bên ngoài (nhấp nháy)
+				draw_circle(pos2d, minimap_ref.ICON_SIZE * fruit_glow_scale,
+					Color(1.0, 1.0, 0.2, 0.3 * fruit_blink_alpha))
 				# Viền trắng
 				draw_circle(pos2d, minimap_ref.ICON_SIZE * 1.2,
-					Color(1.0, 1.0, 1.0, 0.7))
+					Color(1.0, 1.0, 1.0, 0.7 * fruit_blink_alpha))
 				# Lõi cam sáng
 				draw_circle(pos2d, minimap_ref.ICON_SIZE,
-					Color(1.0, 0.5, 0.0, 1.0))
+					Color(1.0, 0.5, 0.0, fruit_blink_alpha))
 
 		# === Vẽ Milk (trắng nhỏ) ===
 		for pos3d in minimap_ref._milk_positions:

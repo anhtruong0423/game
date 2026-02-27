@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://buhmiacmb70vr"]
+[gd_scene load_steps=4 format=3 uid="uid://buhmiacmb70vr"]
 
 [ext_resource type="Script" uid="uid://cqg21gofprsir" path="res://script/mainmenu.gd" id="1_mainmenu"]
 [ext_resource type="Texture2D" uid="uid://cu321vq3y5vow" path="res://assets/background/background.png" id="2_h8uk4"]
+
+[sub_resource type="SystemFont" id="SystemFont_h8uk4"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -83,6 +85,7 @@ custom_minimum_size = Vector2(250, 55)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("SystemFont_h8uk4")
 theme_override_font_sizes/font_size = 24
 text = "Bắt Đầu Chơi"
 

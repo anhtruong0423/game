@@ -134,6 +134,12 @@ var pet_instance: Node3D = null
 var turtle_hint_label: Label = null
 var minimap_instance: Node = null
 
+## Flashlight system
+var has_flashlight := false
+var flashlight_on := false
+var flashlight_node: SpotLight3D = null
+const FLASHLIGHT_PICKUP_RANGE := 3.0
+
 func _ready() -> void:
 	add_to_group("player")
 	check_input_mappings()
@@ -246,6 +252,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not pause_menu_open and not upgrade_menu_open:
 			if minimap_instance and minimap_instance.has_method("toggle"):
 				minimap_instance.toggle()
+
+	# Flashlight (press F) - nhặt hoặc bật/tắt đèn pin
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F:
+		if not pause_menu_open and not upgrade_menu_open:
+			if has_flashlight:
+				toggle_flashlight()
+			else:
+				try_pickup_flashlight()
 
 func _physics_process(delta: float) -> void:
 	# If freeflying, handle freefly and nothing else
@@ -374,6 +388,7 @@ func _process(_delta: float) -> void:
 		_proximity_check_timer = 0.0
 		check_interactable()
 		check_milk()
+		_check_flashlight_proximity()
 	update_energy_ui()
 	_pet_passive_heal(_delta)
 
@@ -541,6 +556,81 @@ func _setup_minimap():
 	minimap_instance.name = "Minimap"
 	add_child(minimap_instance)
 	minimap_instance.setup(self, hud)
+
+
+## ==================== FLASHLIGHT SYSTEM ====================
+
+## Kiểm tra đèn pin gần và hiện prompt
+func _check_flashlight_proximity():
+	if has_flashlight:
+		return
+	var pickups = get_tree().get_nodes_in_group("flashlight_pickup")
+	for pickup in pickups:
+		if not is_instance_valid(pickup):
+			continue
+		var dist = global_position.distance_to(pickup.global_position)
+		if dist <= FLASHLIGHT_PICKUP_RANGE:
+			if interact_prompt:
+				interact_prompt.text = "🔦 Nhấn F để nhặt đèn pin"
+			return
+	# Không có đèn pin gần → xóa prompt (nếu đang hiển thị prompt đèn pin)
+	if interact_prompt and interact_prompt.text.begins_with("🔦 Nhấn F"):
+		interact_prompt.text = ""
+
+
+## Thử nhặt đèn pin gần đó
+func try_pickup_flashlight():
+	if has_flashlight:
+		return
+	var pickups = get_tree().get_nodes_in_group("flashlight_pickup")
+	for pickup in pickups:
+		if not is_instance_valid(pickup):
+			continue
+		var dist = global_position.distance_to(pickup.global_position)
+		if dist <= FLASHLIGHT_PICKUP_RANGE:
+			pickup_flashlight()
+			pickup.queue_free()
+			return
+
+
+## Nhặt đèn pin — tạo SpotLight3D gắn vào Head
+func pickup_flashlight():
+	has_flashlight = true
+	flashlight_on = true
+
+	flashlight_node = SpotLight3D.new()
+	flashlight_node.name = "PlayerFlashlight"
+	flashlight_node.light_energy = 3.0
+	flashlight_node.light_color = Color(1.0, 0.95, 0.8)
+	flashlight_node.spot_range = 20.0
+	flashlight_node.spot_angle = 25.0
+	flashlight_node.spot_attenuation = 0.8
+	flashlight_node.shadow_enabled = true
+	flashlight_node.position = Vector3(0.2, -0.1, -0.3)
+	head.add_child(flashlight_node)
+
+	# Hiển thị thông báo
+	if interact_prompt:
+		interact_prompt.text = "🔦 Đã nhặt đèn pin! Nhấn F để bật/tắt"
+		# Auto ẩn sau 3 giây
+		get_tree().create_timer(3.0).timeout.connect(func():
+			if interact_prompt and interact_prompt.text.begins_with("🔦"):
+				interact_prompt.text = ""
+		)
+
+	print("[Player] Đã nhặt đèn pin!")
+
+
+## Bật/tắt đèn pin
+func toggle_flashlight():
+	if not has_flashlight or not flashlight_node:
+		return
+	flashlight_on = not flashlight_on
+	flashlight_node.visible = flashlight_on
+	if flashlight_on:
+		print("[Player] Đèn pin: BẬT")
+	else:
+		print("[Player] Đèn pin: TẮT")
 
 
 ## Kích hoạt màn hình Game Over

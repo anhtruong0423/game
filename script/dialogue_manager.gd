@@ -15,6 +15,8 @@ signal dialogue_finished
 ## Avatar textures
 var avatar_lan: Texture2D = null
 var avatar_farmer: Texture2D = null
+var bg_lan: Texture2D = null
+var bg_farmer: Texture2D = null
 
 const LEVEL_DIALOGUES: Dictionary = {
 	1: {
@@ -106,6 +108,8 @@ func _ready():
 func _load_avatars():
 	avatar_lan = load("res://assets/background/character.png")
 	avatar_farmer = load("res://assets/background/farmer.png")
+	bg_lan = load("res://assets/background/farm_girl.png")
+	bg_farmer = load("res://assets/background/farm_farmer.png")
 
 
 func _set_click_through(node: Node):
@@ -191,6 +195,14 @@ func show_dialogue(index: int):
 			avatar_texture.texture = avatar_lan
 		elif avatar_farmer:
 			avatar_texture.texture = avatar_farmer
+
+	## Đổi background theo speaker
+	var scene_image = get_node_or_null("SceneImage")
+	if scene_image and scene_image is TextureRect:
+		if entry.speaker == "Lan" and bg_lan:
+			scene_image.texture = bg_lan
+		elif bg_farmer:
+			scene_image.texture = bg_farmer
 
 	full_text = entry.text
 	displayed_text = ""

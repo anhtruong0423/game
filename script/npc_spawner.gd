@@ -59,6 +59,10 @@ const CHASE_CONFIGS = [
 
 
 func _ready():
+	# Level 1: không có chó — không spawn NPC dog
+	if Global.current_level <= 1:
+		print("[NPCSpawner] Level %d: chó bị tắt, không spawn NPC dog." % Global.current_level)
+		return
 	call_deferred("_spawn_all_npcs")
 
 

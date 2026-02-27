@@ -17,9 +17,10 @@ const ITEM_DISPLAY_NAMES = {
 }
 
 const LEVEL_DATA = {
+	## ===== Level 1: Làm Quen — chỉ nhặt trái cây, không chướng ngại =====
 	1: {
 		"required_items": ["apple", "banana"],
-		"min_to_pass": 1,
+		"min_to_pass": 2,
 		"time_limit": 0,
 		"star_conditions": {
 			1: {"items": 1, "time": 0},
@@ -27,40 +28,61 @@ const LEVEL_DATA = {
 			3: {"items": 2, "time": 0}
 		},
 		"spawn_items": [
-			{"type": "apple", "position": Vector3(108, -133.5, 68)},
-			{"type": "banana", "position": Vector3(116, -133.5, 73)},
-		]
+			{"type": "apple", "position": Vector3(105, -133.5, 85)},
+			{"type": "banana", "position": Vector3(115, -133.5, 87)},
+		],
+		"enable_dog": false,
+		"enable_milk": true,
+		"enable_day_night": false,
+		"enable_flashlight": false,
+		"blink_minimap": true,
 	},
+	## ===== Level 2: Thử Thách — thêm chó + sữa =====
 	2: {
-		"required_items": ["orange", "lemon", "grape"],
+		"required_items": ["orange", "lemon", "grape", "cherry"],
 		"min_to_pass": 2,
 		"time_limit": 300,
 		"star_conditions": {
 			1: {"items": 2, "time": 0},
 			2: {"items": 3, "time": 0},
-			3: {"items": 3, "time": 300}
+			3: {"items": 4, "time": 240}
 		},
 		"spawn_items": [
 			{"type": "orange", "position": Vector3(105, -133.5, 66)},
 			{"type": "lemon", "position": Vector3(118, -133.5, 72)},
 			{"type": "grape", "position": Vector3(110, -133.5, 78)},
-		]
+			{"type": "cherry", "position": Vector3(114, -133.5, 64)},
+		],
+		"enable_dog": true,
+		"enable_milk": true,
+		"enable_day_night": false,
+		"enable_flashlight": false,
+		"blink_minimap": true,
 	},
+	## ===== Level 3: Khám Phá Đêm — ngày đêm + đèn pin =====
 	3: {
-		"required_items": ["strawberry", "mango", "melon"],
-		"min_to_pass": 2,
+		"required_items": ["strawberry", "mango", "melon", "apple", "banana"],
+		"min_to_pass": 3,
 		"time_limit": 240,
 		"star_conditions": {
-			1: {"items": 2, "time": 0},
-			2: {"items": 3, "time": 0},
-			3: {"items": 3, "time": 180}
+			1: {"items": 3, "time": 0},
+			2: {"items": 4, "time": 0},
+			3: {"items": 5, "time": 180}
 		},
 		"spawn_items": [
 			{"type": "strawberry", "position": Vector3(106, -133.5, 74)},
 			{"type": "mango", "position": Vector3(119, -133.5, 67)},
 			{"type": "melon", "position": Vector3(112, -133.5, 80)},
-		]
+			{"type": "apple", "position": Vector3(104, -133.5, 65)},
+			{"type": "banana", "position": Vector3(116, -133.5, 76)},
+		],
+		"enable_dog": true,
+		"enable_milk": true,
+		"enable_day_night": true,
+		"enable_flashlight": true,
+		"blink_minimap": true,
 	},
+	## ===== Levels 4-6: giữ nguyên gameplay gốc =====
 	4: {
 		"required_items": ["apple", "cherry", "orange", "mango"],
 		"min_to_pass": 3,
@@ -75,7 +97,12 @@ const LEVEL_DATA = {
 			{"type": "cherry", "position": Vector3(120, -133.5, 74)},
 			{"type": "orange", "position": Vector3(108, -133.5, 64)},
 			{"type": "mango", "position": Vector3(117, -133.5, 80)},
-		]
+		],
+		"enable_dog": true,
+		"enable_milk": true,
+		"enable_day_night": true,
+		"enable_flashlight": true,
+		"blink_minimap": true,
 	},
 	5: {
 		"required_items": ["banana", "lemon", "grape", "strawberry", "melon"],
@@ -92,7 +119,12 @@ const LEVEL_DATA = {
 			{"type": "grape", "position": Vector3(106, -133.5, 78)},
 			{"type": "strawberry", "position": Vector3(118, -133.5, 64)},
 			{"type": "melon", "position": Vector3(110, -133.5, 82)},
-		]
+		],
+		"enable_dog": true,
+		"enable_milk": true,
+		"enable_day_night": true,
+		"enable_flashlight": true,
+		"blink_minimap": true,
 	},
 	6: {
 		"required_items": ["apple", "cherry", "orange", "mango", "grape", "melon", "strawberry"],
@@ -111,7 +143,12 @@ const LEVEL_DATA = {
 			{"type": "grape", "position": Vector3(110, -133.5, 82)},
 			{"type": "melon", "position": Vector3(115, -133.5, 63)},
 			{"type": "strawberry", "position": Vector3(108, -133.5, 71)},
-		]
+		],
+		"enable_dog": true,
+		"enable_milk": true,
+		"enable_day_night": true,
+		"enable_flashlight": true,
+		"blink_minimap": true,
 	},
 }
 
@@ -173,14 +210,20 @@ func _process(delta):
 		play_warning_shown = true
 		show_play_time_warning()
 
+	# Kiểm tra spawn đèn pin khi trời tối (Level 3+)
+	var data_check = LEVEL_DATA.get(current_level, null)
+	if data_check and data_check.get("enable_flashlight", false):
+		_check_flashlight_spawn()
+
 
 func _setup_level():
 	clear_existing_items()
 	spawn_level_items()
-	spawn_milk_items()
+	_apply_level_features()
 	setup_basket()
 	setup_hud()
 	update_mission_hud()
+	_notify_minimap_blink()
 
 
 func clear_existing_items():
@@ -193,6 +236,14 @@ func clear_existing_items():
 	if milks_node:
 		for child in milks_node.get_children():
 			child.queue_free()
+
+	# Xóa trái cây/sữa scatter (từ FruitSpawner)
+	var scattered = get_parent().get_node_or_null("scattered_fruits")
+	if scattered:
+		scattered.queue_free()
+	var scattered_m = get_parent().get_node_or_null("scattered_milks")
+	if scattered_m:
+		scattered_m.queue_free()
 
 
 func spawn_level_items():
@@ -232,6 +283,158 @@ func spawn_milk_items():
 			var instance = scene.instantiate()
 			instance.position = MILK_SPAWN_POSITIONS[i]
 			milks_node.add_child(instance)
+
+
+## ==================== LEVEL FEATURE FLAGS ====================
+
+## Bật/tắt các cơ chế gameplay theo level
+func _apply_level_features():
+	var data = LEVEL_DATA.get(current_level, null)
+	if not data:
+		return
+
+	var parent = get_parent()
+
+	## === Dog + NPCSpawner ===
+	var dog_node = parent.get_node_or_null("Dog")
+	var npc_spawner = parent.get_node_or_null("NPCSpawner")
+	if data.get("enable_dog", true):
+		# Cần chó — giữ Dog gốc và NPCSpawner
+		if not dog_node:
+			var dog_scene = load("res://scene/dog.tscn")
+			if dog_scene:
+				var new_dog = dog_scene.instantiate()
+				new_dog.name = "Dog"
+				new_dog.global_position = Vector3(115, -133.5, 72)
+				parent.add_child(new_dog)
+	else:
+		# Không cần chó — XÓA TẤT CẢ chó khỏi scene
+		# 1. Xóa Dog gốc
+		if dog_node:
+			dog_node.queue_free()
+		# 2. Tắt NPCSpawner (ngăn spawn thêm chó)
+		if npc_spawner:
+			npc_spawner.process_mode = Node.PROCESS_MODE_DISABLED
+			# Xóa tất cả NPC dog đã spawn bởi NPCSpawner
+			for child in npc_spawner.get_children():
+				child.queue_free()
+
+	## === Day/Night Cycle ===
+	var day_night = parent.get_node_or_null("DayNightCycle")
+	if day_night:
+		if data.get("enable_day_night", true):
+			day_night.set_process(true)
+			# Level 3: bắt đầu từ hoàng hôn (0.7 = ~5h chiều)
+			if current_level == 3:
+				day_night.time_of_day = 0.7
+				day_night.cycle_duration = 90.0  # Chậm hơn để có thời gian chơi
+		else:
+			day_night.set_process(false)
+			# Reset về ban ngày
+			day_night.time_of_day = 0.25  # 6h sáng
+			day_night._update_cycle()
+
+	## === Milk ===
+	if data.get("enable_milk", true):
+		spawn_milk_items()
+
+	## === Flashlight ===
+	if data.get("enable_flashlight", false):
+		_setup_flashlight_spawn()
+
+	## === FruitSpawner (tắt trái cây ngẫu nhiên ở Level 1) ===
+	var fruit_spawner = parent.get_node_or_null("FruitSpawner")
+	if fruit_spawner and not data.get("enable_dog", true):
+		# Level không có chó = level 1 → tắt FruitSpawner hoàn toàn
+		fruit_spawner.process_mode = Node.PROCESS_MODE_DISABLED
+		# Xóa trái cây đã scatter
+		var sc_fruits = parent.get_node_or_null("scattered_fruits")
+		if sc_fruits:
+			sc_fruits.queue_free()
+		var sc_milks = parent.get_node_or_null("scattered_milks")
+		if sc_milks:
+			sc_milks.queue_free()
+
+
+## Thông báo cho minimap về chế độ nhấp nháy trái cây
+func _notify_minimap_blink():
+	var data = LEVEL_DATA.get(current_level, null)
+	if not data:
+		return
+	var blink = data.get("blink_minimap", false)
+	# Tìm minimap instance qua player
+	var player = _find_player()
+	if player and player.get("minimap_instance"):
+		var minimap = player.minimap_instance
+		if minimap:
+			minimap.set("blink_fruits", blink)
+
+
+## Spawn đèn pin khi trời tối (Level 3+)
+var _flashlight_spawned := false
+var _flashlight_pickup_node: Node3D = null
+
+func _setup_flashlight_spawn():
+	_flashlight_spawned = false
+	# Sẽ kiểm tra trong _process và spawn khi trời bắt đầu tối
+
+
+func _check_flashlight_spawn():
+	if _flashlight_spawned:
+		return
+	var parent = get_parent()
+	var day_night = parent.get_node_or_null("DayNightCycle")
+	if not day_night:
+		return
+	# Spawn khi trời bắt đầu tối (sun_height < 0.1)
+	var sun_angle = day_night.time_of_day * TAU - PI / 2.0
+	var sun_height = sin(sun_angle + PI / 2.0)
+	if sun_height < 0.1 and not _flashlight_spawned:
+		_flashlight_spawned = true
+		_spawn_flashlight_pickup()
+
+
+func _spawn_flashlight_pickup():
+	var player = _find_player()
+	if not player:
+		return
+
+	# Tạo đèn pin pickup trước mặt player (3m)
+	var forward = -player.transform.basis.z.normalized()
+	var spawn_pos = player.global_position + forward * 3.0
+
+	_flashlight_pickup_node = Node3D.new()
+	_flashlight_pickup_node.name = "FlashlightPickup"
+	_flashlight_pickup_node.global_position = spawn_pos
+	_flashlight_pickup_node.add_to_group("flashlight_pickup")
+
+	# Thêm ánh sáng nhỏ để player thấy trong bóng tối
+	var glow = OmniLight3D.new()
+	glow.name = "PickupGlow"
+	glow.light_energy = 2.0
+	glow.light_color = Color(1.0, 0.9, 0.5)
+	glow.omni_range = 3.0
+	glow.omni_attenuation = 1.5
+	_flashlight_pickup_node.add_child(glow)
+
+	# Thêm MeshInstance3D để hiển thị hình đèn pin
+	var mesh_instance = MeshInstance3D.new()
+	var cylinder = CylinderMesh.new()
+	cylinder.top_radius = 0.05
+	cylinder.bottom_radius = 0.08
+	cylinder.height = 0.3
+	mesh_instance.mesh = cylinder
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = Color(0.8, 0.8, 0.2)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.9, 0.4)
+	mat.emission_energy_multiplier = 2.0
+	mesh_instance.material_override = mat
+	mesh_instance.rotation_degrees.x = 90  # Nằm ngang
+	_flashlight_pickup_node.add_child(mesh_instance)
+
+	get_parent().add_child(_flashlight_pickup_node)
+	print("[LevelManager] Đèn pin xuất hiện! Nhấn F để nhặt.")
 
 
 func setup_basket():
@@ -447,6 +650,12 @@ func check_mission_progress():
 		return
 
 	var count = get_delivered_count()
+	var all_done = count >= data["required_items"].size()
+
+	# Level 1: auto-complete ngay khi nhặt đủ (không hỏi)
+	if all_done and current_level == 1:
+		complete_level()
+		return
 
 	if count >= data["min_to_pass"] and not can_pass:
 		can_pass = true
@@ -454,7 +663,6 @@ func check_mission_progress():
 		show_choice_panel()
 		level_can_pass.emit()
 
-	var all_done = count >= data["required_items"].size()
 	if all_done and not choice_shown:
 		# Nếu hoàn thành tất cả mà chưa hiện panel thì auto complete
 		complete_level()
