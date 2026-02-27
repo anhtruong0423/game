@@ -130,6 +130,7 @@ const BASE_ENERGY_DRAIN : float = 5.0
 @onready var pause_settings_close_btn: Button = $HUD/PausePanel/PauseSettingsPanel/Panel/ButtonsContainer/CloseButton
 
 var pet_instance: Node3D = null
+var turtle_hint_label: Label = null
 
 func _ready() -> void:
 	add_to_group("player")
@@ -142,6 +143,7 @@ func _ready() -> void:
 
 	_setup_energy_bar_style()
 	_setup_transparent_buttons()
+	_setup_turtle_hint()
 	_spawn_pet.call_deferred()
 
 	apply_upgrades()
@@ -489,13 +491,16 @@ func drain_energy(amount: float):
 		trigger_game_over()
 
 
-## Rùa hồi NL khi player đứng yên
+## Rùa hồi NL khi player đứng yên (chỉ hồi tới 30% max)
 func _pet_passive_heal(delta: float):
 	var heal_rate := Global.get_pet_bonus("passive_heal")
 	if heal_rate <= 0.0 or is_exhausted:
 		return
+	var heal_cap := max_energy * 0.3
+	if energy >= heal_cap:
+		return
 	if velocity.length_squared() < 0.1:
-		add_energy(heal_rate * delta)
+		energy = min(heal_cap, energy + heal_rate * delta)
 
 
 ## Spawn thú cưng vào scene
@@ -557,6 +562,25 @@ func _setup_energy_bar_style():
 	_energy_bg_style.corner_radius_bottom_left = 3
 	_energy_bg_style.corner_radius_bottom_right = 3
 	energy_bar.add_theme_stylebox_override("background", _energy_bg_style)
+
+
+func _setup_turtle_hint():
+	if Global.selected_pet != "turtle":
+		return
+	var hud = get_node_or_null("HUD")
+	if not hud:
+		return
+	turtle_hint_label = Label.new()
+	turtle_hint_label.name = "TurtleHint"
+	turtle_hint_label.text = "🐢 Hãy đi chậm lại chờ rùa của bạn để hồi năng lượng!"
+	turtle_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	turtle_hint_label.add_theme_font_size_override("font_size", 16)
+	turtle_hint_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.4))
+	turtle_hint_label.anchors_preset = Control.PRESET_CENTER_BOTTOM
+	turtle_hint_label.position = Vector2(-250, -60)
+	turtle_hint_label.size = Vector2(500, 30)
+	turtle_hint_label.visible = false
+	hud.add_child(turtle_hint_label)
 
 
 func _setup_transparent_buttons():
@@ -676,6 +700,13 @@ func update_energy_ui():
 	else:
 		_energy_fill_style.bg_color = Color(0.2, 0.8, 0.2)
 		energy_blink_timer = 0.0
+
+	# Hiển thị gợi ý rùa khi năng lượng thấp
+	if turtle_hint_label:
+		if ratio <= 0.25 and Global.selected_pet == "turtle":
+			turtle_hint_label.visible = true
+		else:
+			turtle_hint_label.visible = false
 
 
 ## Kiểm tra milk gần nhất bằng proximity

@@ -3,10 +3,27 @@ extends Node3D
 ## Script cho vật phẩm Milk - nhặt bằng phím Q để tăng năng lượng
 
 @export var energy_value: int = 10  ## Năng lượng tăng khi nhặt (1 milk = 10 năng lượng)
-@export var prompt_message: String = "Nhấn Q để nhặt sữa"
+@export var milk_flavor: String = ""  ## Vị sữa: "Nho", "Dưa Lưới", "Dâu"
+var prompt_message: String = "Nhấn Q để nhặt sữa"
+
+## Map tên node → vị sữa (tự detect nếu không set export)
+const FLAVOR_MAP = {
+	"MilkGrape": "Nho",
+	"MilkMelon": "Dưa Lưới",
+	"MilkStrawberry": "Dâu",
+	"Milk": "",
+}
 
 func _ready():
 	add_to_group("milk")
+	# Tự detect vị sữa từ tên node nếu chưa được set
+	if milk_flavor == "":
+		milk_flavor = FLAVOR_MAP.get(name, "")
+	# Cập nhật prompt theo vị
+	if milk_flavor != "":
+		prompt_message = "Nhấn Q để nhặt sữa Frumi vị " + milk_flavor
+	else:
+		prompt_message = "Nhấn Q để nhặt sữa Frumi"
 
 func pickup_milk(player):
 	if player.has_method("add_energy"):

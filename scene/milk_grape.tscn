@@ -16,4 +16,4 @@ collision_mask = 0
 shape = SubResource("SphereShape3D_milk")
 
 [node name="milk_grape" parent="." instance=ExtResource("2_d62ot")]
-transform = Transform3D(0.05399998, 0, 0, 0, 0.05399998, 0, 0, 0, 0.05399998, 0, 0, 0)
+transform = Transform3D(0.10799996, 0, 0, 0, 0.10799996, 0, 0, 0, 0.10799996, 0, 0, 0)

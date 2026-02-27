@@ -139,6 +139,11 @@ var timer_label: Label = null
 var mission_container: VBoxContainer = null
 var mission_items_ui: Dictionary = {}
 var pass_notification: Label = null
+var choice_panel: PanelContainer = null
+var choice_shown: bool = false
+var play_warning_label: Label = null
+var play_warning_shown: bool = false
+var total_play_time: float = 0.0
 
 
 func _ready():
@@ -152,12 +157,18 @@ func _process(delta):
 		return
 
 	elapsed_time += delta
+	total_play_time += delta
 
 	var data = LEVEL_DATA.get(current_level, null)
 	if not data:
 		return
 
 	update_timer_display(data)
+
+	# Cảnh báo chơi quá 180 phút (10800 giây)
+	if total_play_time >= 10800.0 and not play_warning_shown:
+		play_warning_shown = true
+		show_play_time_warning()
 
 
 func _setup_level():
@@ -253,16 +264,56 @@ func _create_timer_label(hud: CanvasLayer):
 	timer_label = Label.new()
 	timer_label.name = "TimerLabel"
 	timer_label.text = ""
-	timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	timer_label.add_theme_font_size_override("font_size", 24)
-	timer_label.anchors_preset = Control.PRESET_CENTER_TOP
-	timer_label.position = Vector2(-60, 10)
-	timer_label.size = Vector2(120, 40)
+	timer_label.anchors_preset = Control.PRESET_TOP_LEFT
+	timer_label.position = Vector2(15, 10)
+	timer_label.size = Vector2(200, 40)
 	hud.add_child(timer_label)
 
 	var data = LEVEL_DATA.get(current_level, null)
 	if data and data["time_limit"] == 0:
 		timer_label.visible = false
+
+	# Tạo label cảnh báo thời gian chơi
+	_create_play_warning(hud)
+
+
+func _create_play_warning(hud: CanvasLayer):
+	var panel = PanelContainer.new()
+	panel.name = "PlayWarningPanel"
+	panel.anchors_preset = Control.PRESET_CENTER_TOP
+	panel.anchor_left = 0.5
+	panel.anchor_right = 0.5
+	panel.offset_left = -200
+	panel.offset_right = 200
+	panel.offset_top = 5
+	panel.offset_bottom = 40
+
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.6, 0.0, 0.0, 0.85)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_color = Color(1.0, 0.2, 0.2, 1.0)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 5
+	style.content_margin_bottom = 5
+	panel.add_theme_stylebox_override("panel", style)
+	hud.add_child(panel)
+
+	play_warning_label = Label.new()
+	play_warning_label.text = "⚠️ Cảnh báo: Không chơi game quá 180 phút!"
+	play_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	play_warning_label.add_theme_font_size_override("font_size", 15)
+	play_warning_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+	panel.add_child(play_warning_label)
 
 
 func _create_mission_panel(hud: CanvasLayer):
@@ -398,10 +449,12 @@ func check_mission_progress():
 	if count >= data["min_to_pass"] and not can_pass:
 		can_pass = true
 		show_pass_notification()
+		show_choice_panel()
 		level_can_pass.emit()
 
 	var all_done = count >= data["required_items"].size()
-	if all_done:
+	if all_done and not choice_shown:
+		# Nếu hoàn thành tất cả mà chưa hiện panel thì auto complete
 		complete_level()
 
 
@@ -439,24 +492,117 @@ func show_pass_notification():
 	if not pass_notification:
 		return
 
-	var data = LEVEL_DATA.get(current_level, null)
-	var all_done = get_delivered_count() >= data["required_items"].size()
-
-	if all_done:
-		pass_notification.text = "Hoàn thành! Đang chuyển màn..."
-	else:
-		pass_notification.text = "Có thể qua màn! Tiếp tục nhặt để đạt sao cao hơn."
+	var stars = calculate_stars()
+	pass_notification.text = "Đạt %d sao! Tiếp tục nhặt để đạt 3 sao." % stars
 	pass_notification.visible = true
+
+
+func show_choice_panel():
+	if choice_shown:
+		return
+	choice_shown = true
+
+	var player = _find_player()
+	if not player:
+		return
+	var hud = player.get_node_or_null("HUD")
+	if not hud:
+		return
+
+	# Tạo panel chọn
+	choice_panel = PanelContainer.new()
+	choice_panel.name = "ChoicePanel"
+	choice_panel.anchors_preset = Control.PRESET_CENTER
+	choice_panel.anchor_left = 0.5
+	choice_panel.anchor_right = 0.5
+	choice_panel.anchor_top = 0.5
+	choice_panel.anchor_bottom = 0.5
+	choice_panel.offset_left = -180
+	choice_panel.offset_right = 180
+	choice_panel.offset_top = -80
+	choice_panel.offset_bottom = 80
+
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.92)
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_color = Color(0.3, 0.8, 0.4, 0.8)
+	choice_panel.add_theme_stylebox_override("panel", style)
+	hud.add_child(choice_panel)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	choice_panel.add_child(vbox)
+
+	var stars = calculate_stars()
+	var title = Label.new()
+	title.text = "⭐ Đạt %d sao! Bạn muốn..." % stars
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(1, 0.9, 0.3))
+	vbox.add_child(title)
+
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 16)
+	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(hbox)
+
+	# Nút "Màn tiếp theo"
+	var btn_next = Button.new()
+	btn_next.text = "Màn tiếp theo ▶"
+	btn_next.custom_minimum_size = Vector2(150, 40)
+	btn_next.add_theme_font_size_override("font_size", 16)
+	btn_next.pressed.connect(_on_next_level_pressed)
+	hbox.add_child(btn_next)
+
+	# Nút "Ở lại chơi tiếp"
+	var btn_stay = Button.new()
+	btn_stay.text = "Ở lại đạt 3 sao ⭐"
+	btn_stay.custom_minimum_size = Vector2(150, 40)
+	btn_stay.add_theme_font_size_override("font_size", 16)
+	btn_stay.pressed.connect(_on_stay_pressed)
+	hbox.add_child(btn_stay)
+
+	# Unlock chuột để bấm nút
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+
+func _on_next_level_pressed():
+	# Chuyển sang màn tiếp theo
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	complete_level()
+
+
+func _on_stay_pressed():
+	# Ẩn panel, tiếp tục chơi
+	if choice_panel:
+		choice_panel.queue_free()
+		choice_panel = null
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if pass_notification:
+		pass_notification.text = "Tiếp tục nhặt để đạt 3 sao!"
 
 
 func complete_level():
 	level_active = false
 	var stars = calculate_stars()
 
+	if choice_panel:
+		choice_panel.queue_free()
+		choice_panel = null
+
 	var player = _find_player()
 	if player:
 		Global.save_game_result(player.score)
 
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	Global.last_elapsed_time = elapsed_time
 	Global.save_level_result(current_level, stars)
 	level_completed.emit(stars)
@@ -473,3 +619,14 @@ func _find_player() -> Node:
 		if child.has_method("deliver_items"):
 			return child
 	return null
+
+
+## Hiển thị cảnh báo khi chơi quá 180 phút
+func show_play_time_warning():
+	if play_warning_label:
+		play_warning_label.text = "⚠️ Cảnh báo: Bạn đã chơi quá 180 phút!\nHãy nghỉ ngơi để bảo vệ sức khỏe!"
+		play_warning_label.visible = true
+		# Tự ẩn sau 10 giây
+		await get_tree().create_timer(10.0).timeout
+		if is_instance_valid(play_warning_label):
+			play_warning_label.visible = false
