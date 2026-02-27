@@ -131,6 +131,7 @@ const BASE_ENERGY_DRAIN : float = 5.0
 
 var pet_instance: Node3D = null
 var turtle_hint_label: Label = null
+var minimap_instance: Node = null
 
 func _ready() -> void:
 	add_to_group("player")
@@ -145,6 +146,7 @@ func _ready() -> void:
 	_setup_transparent_buttons()
 	_setup_turtle_hint()
 	_spawn_pet.call_deferred()
+	_setup_minimap.call_deferred()
 
 	apply_upgrades()
 	if upgrade_menu:
@@ -237,6 +239,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_TAB:
 		if not upgrade_menu_open and not pause_menu_open:
 			toggle_upgrade_menu()
+	
+	# Toggle minimap (press M)
+	if event is InputEventKey and event.pressed and event.keycode == KEY_M:
+		if not pause_menu_open and not upgrade_menu_open:
+			if minimap_instance and minimap_instance.has_method("toggle"):
+				minimap_instance.toggle()
 
 func _physics_process(delta: float) -> void:
 	# If freeflying, handle freefly and nothing else
@@ -514,9 +522,23 @@ func _spawn_pet():
 	pet_instance = pet_scene.instantiate()
 	var pet_script := load("res://script/pet_follow.gd")
 	pet_instance.set_script(pet_script)
-	pet_instance.global_position = global_position + Vector3(-2, 0, -2)
 	get_parent().add_child(pet_instance)
 	pet_instance.global_position = global_position + Vector3(-2, 0, -2)
+
+
+func _setup_minimap():
+	var hud = get_node_or_null("HUD")
+	if not hud:
+		return
+	var minimap_script = load("res://script/minimap.gd")
+	if not minimap_script:
+		push_warning("[Minimap] Không load được minimap.gd")
+		return
+	minimap_instance = Node.new()
+	minimap_instance.set_script(minimap_script)
+	minimap_instance.name = "Minimap"
+	add_child(minimap_instance)
+	minimap_instance.setup(self, hud)
 
 
 ## Kích hoạt màn hình Game Over
@@ -539,29 +561,94 @@ func _setup_energy_bar_style():
 	if not energy_bar:
 		return
 
-	energy_bar.anchor_left = 1.0
-	energy_bar.anchor_right = 1.0
-	energy_bar.offset_left = -220.0
-	energy_bar.offset_top = 20.0
-	energy_bar.offset_right = -20.0
-	energy_bar.offset_bottom = 50.0
-	energy_bar.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	# Đặt energy bar ở trên trái, dưới ScoreLabel
+	energy_bar.anchor_left = 0.0
+	energy_bar.anchor_right = 0.0
+	energy_bar.offset_left = 20.0
+	energy_bar.offset_top = 52.0
+	energy_bar.offset_right = 200.0
+	energy_bar.offset_bottom = 74.0
+	energy_bar.grow_horizontal = Control.GROW_DIRECTION_END
 
 	_energy_fill_style = StyleBoxFlat.new()
 	_energy_fill_style.bg_color = Color(0.2, 0.8, 0.2)
-	_energy_fill_style.corner_radius_top_left = 3
-	_energy_fill_style.corner_radius_top_right = 3
-	_energy_fill_style.corner_radius_bottom_left = 3
-	_energy_fill_style.corner_radius_bottom_right = 3
+	_energy_fill_style.corner_radius_top_left = 4
+	_energy_fill_style.corner_radius_top_right = 4
+	_energy_fill_style.corner_radius_bottom_left = 4
+	_energy_fill_style.corner_radius_bottom_right = 4
 	energy_bar.add_theme_stylebox_override("fill", _energy_fill_style)
 
 	_energy_bg_style = StyleBoxFlat.new()
-	_energy_bg_style.bg_color = Color(0.15, 0.15, 0.15, 0.8)
-	_energy_bg_style.corner_radius_top_left = 3
-	_energy_bg_style.corner_radius_top_right = 3
-	_energy_bg_style.corner_radius_bottom_left = 3
-	_energy_bg_style.corner_radius_bottom_right = 3
+	_energy_bg_style.bg_color = Color(0.1, 0.1, 0.12, 0.85)
+	_energy_bg_style.corner_radius_top_left = 4
+	_energy_bg_style.corner_radius_top_right = 4
+	_energy_bg_style.corner_radius_bottom_left = 4
+	_energy_bg_style.corner_radius_bottom_right = 4
+	_energy_bg_style.border_color = Color(0.3, 0.5, 0.3, 0.4)
+	_energy_bg_style.border_width_top = 1
+	_energy_bg_style.border_width_bottom = 1
+	_energy_bg_style.border_width_left = 1
+	_energy_bg_style.border_width_right = 1
 	energy_bar.add_theme_stylebox_override("background", _energy_bg_style)
+
+	# UpgradeIndicator - nhỏ gọn dưới energy bar
+	if upgrade_indicator:
+		upgrade_indicator.anchor_left = 0.0
+		upgrade_indicator.anchor_right = 0.0
+		upgrade_indicator.offset_left = 20.0
+		upgrade_indicator.offset_top = 76.0
+		upgrade_indicator.offset_right = 200.0
+		upgrade_indicator.offset_bottom = 92.0
+		upgrade_indicator.grow_horizontal = Control.GROW_DIRECTION_END
+		upgrade_indicator.add_theme_font_size_override("font_size", 11)
+
+	# Làm đẹp inventory label (góc dưới trái)
+	_setup_inventory_style()
+
+
+func _setup_inventory_style():
+	if not inventory_label:
+		return
+	# Đặt lại vị trí góc dưới trái đẹp hơn
+	inventory_label.anchor_left = 0.0
+	inventory_label.anchor_top = 1.0
+	inventory_label.anchor_right = 0.0
+	inventory_label.anchor_bottom = 1.0
+	inventory_label.offset_left = 15.0
+	inventory_label.offset_top = -55.0
+	inventory_label.offset_right = 210.0
+	inventory_label.offset_bottom = -15.0
+	inventory_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	inventory_label.grow_horizontal = Control.GROW_DIRECTION_END
+	inventory_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	inventory_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	# Style background
+	var inv_style = StyleBoxFlat.new()
+	inv_style.bg_color = Color(0.08, 0.1, 0.15, 0.8)
+	inv_style.corner_radius_top_left = 8
+	inv_style.corner_radius_top_right = 8
+	inv_style.corner_radius_bottom_left = 8
+	inv_style.corner_radius_bottom_right = 8
+	inv_style.border_color = Color(0.3, 0.7, 0.9, 0.4)
+	inv_style.border_width_top = 1
+	inv_style.border_width_bottom = 1
+	inv_style.border_width_left = 1
+	inv_style.border_width_right = 1
+	inv_style.content_margin_left = 12
+	inv_style.content_margin_right = 12
+	inv_style.content_margin_top = 6
+	inv_style.content_margin_bottom = 6
+	inventory_label.add_theme_stylebox_override("normal", inv_style)
+
+	# Font đẹp hơn
+	inventory_label.add_theme_font_size_override("font_size", 18)
+	inventory_label.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0))
+	inventory_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.7))
+	inventory_label.add_theme_constant_override("shadow_offset_x", 1)
+	inventory_label.add_theme_constant_override("shadow_offset_y", 1)
+
+	update_inventory_ui()
 
 
 func _setup_turtle_hint():

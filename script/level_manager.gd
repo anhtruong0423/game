@@ -319,16 +319,15 @@ func _create_play_warning(hud: CanvasLayer):
 func _create_mission_panel(hud: CanvasLayer):
 	var panel = PanelContainer.new()
 	panel.name = "MissionPanel"
-	panel.anchors_preset = Control.PRESET_TOP_RIGHT
-	panel.anchor_left = 1.0
-	panel.anchor_right = 1.0
+	panel.anchor_left = 0.0
+	panel.anchor_right = 0.0
 	panel.anchor_top = 0.0
 	panel.anchor_bottom = 0.0
-	panel.offset_left = -220
-	panel.offset_right = -10
-	panel.offset_top = 60
-	panel.offset_bottom = 250
-	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	panel.offset_left = 10
+	panel.offset_right = 220
+	panel.offset_top = 100
+	panel.offset_bottom = 290
+	panel.grow_horizontal = Control.GROW_DIRECTION_END
 	hud.add_child(panel)
 
 	var margin = MarginContainer.new()
