@@ -2,9 +2,13 @@ extends Node3D
 
 ## Tự động spawn NPC (dog) khắp map khi game bắt đầu
 ## NPC dùng model DOG.glb + dog_chase.gd để tấn công player khi đến gần
+## Tối ưu: phân tán spawn qua nhiều frame
 
 const DOG_MODEL_PATH = "res://assets/dog/DOG.glb"
 const NPC_SCRIPT_PATH = "res://script/dog_chase.gd"
+
+## Batch size — số NPC spawn mỗi frame
+const SPAWN_BATCH_SIZE := 3
 
 ## Vị trí spawn NPC phân bố khắp map
 ## Y = -133.5 (mặt đất)
@@ -105,5 +109,9 @@ func _spawn_all_npcs():
 
 		# Quay mặt ngẫu nhiên ban đầu
 		npc.rotation.y = randf() * TAU
+
+		# Chờ 1 frame sau mỗi batch để tránh lag spike
+		if (i + 1) % SPAWN_BATCH_SIZE == 0 and i < SPAWN_POSITIONS.size() - 1:
+			await get_tree().process_frame
 
 	print("[NPCSpawner] Đã spawn %d NPC dog khắp map!" % SPAWN_POSITIONS.size())

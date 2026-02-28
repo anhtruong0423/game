@@ -18,65 +18,93 @@ var avatar_farmer: Texture2D = null
 var bg_lan: Texture2D = null
 var bg_farmer: Texture2D = null
 
+## Hình nền riêng theo level {level: {"lan": Texture2D, "farmer": Texture2D}}
+var level_backgrounds: Dictionary = {}
+
 const LEVEL_DIALOGUES: Dictionary = {
+	## ===== Level 1: Làm quen — nhặt trái cây + giới thiệu sữa & minimap =====
 	1: {
-		"scene_text": "Vườn trái cây...",
+		"scene_text": "🌿 Vườn trái cây yên bình...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 1 - Bắt đầu thu hoạch! Nhiệm vụ đầu tiên đơn giản thôi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cháu cần tìm và nhặt 1 quả Táo và 1 quả Chuối, rồi mang về điểm giao hàng.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Chỉ 2 loại trái cây thôi hả bác? Dễ quá!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Đừng chủ quan nhé! Nhớ mang về điểm giao hàng mới tính. Không giới hạn thời gian đâu.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Vậy thì thoải mái rồi! Đi thôi nào!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Chào cháu Lan! Chào mừng cháu đến nông trại của bác. Hôm nay bác cần cháu giúp thu hoạch trái cây!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Dạ, cháu sẵn sàng rồi bác! Cháu cần làm gì ạ?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhiệm vụ đầu tiên đơn giản thôi. Cháu nhặt 1 quả Táo và 1 quả Chuối, rồi mang về rổ giao hàng.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Nhấn E để nhặt trái cây khi đứng gần. Mang về rổ rồi nhấn E lần nữa để giao hàng nhé!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "À, cháu thấy có mấy hộp sữa Frumi nữa kìa! Cháu có thể nhặt không bác?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Được chứ! Nhấn Q để nhặt sữa Frumi. Uống sữa sẽ hồi năng lượng, rất cần khi chạy nhiều đấy!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Nhớ dùng bản đồ nhỏ ở góc màn hình. Trái cây nhiệm vụ sẽ nhấp nháy để cháu dễ tìm!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Tuyệt vời! Không giới hạn thời gian thì thoải mái rồi. Đi thôi nào!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
+	## ===== Level 2: Thêm thử thách — chó + năng lượng + chạy nhanh =====
 	2: {
-		"scene_text": "Khu vườn cam chanh...",
+		"scene_text": "🍊 Khu vườn cam chanh rộng lớn...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 2 - Vườn trái cây! Lần này khó hơn một chút đấy.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 3 loại: Cam, Chanh và Nho.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "3 loại trái cây! Cháu thích nho lắm!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 3 loại trong 5 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "5 phút thôi sao? Phải nhanh tay lên thôi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Tốt lắm cháu! Level 2 sẽ khó hơn đấy. Lần này cần nhặt Cam, Chanh, Nho và Cherry.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "4 loại luôn hả bác? Nhiều hơn rồi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 4 loại trong 4 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Cẩn thận nhé! Trong vườn có mấy con chó canh giữ. Nếu đến quá gần, chúng sẽ đuổi theo và làm cháu mất năng lượng!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Chó?! Cháu sợ chó lắm! Làm sao tránh được ạ?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Giữ khoảng cách là được. Còn nếu bị đuổi, nhấn Shift để chạy nhanh thoát thân!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Nhưng nhớ là chạy nhanh sẽ tốn năng lượng gấp đôi. Hết năng lượng là ngã luôn đấy! Uống sữa Frumi để hồi nhé.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Hiểu rồi! Tránh chó, chạy nhanh khi cần, và nhớ uống sữa. Đi thôi!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
+	## ===== Level 3: Ngày/đêm + đèn pin =====
 	3: {
-		"scene_text": "Vườn trái cây mùa hè...",
+		"scene_text": "🌅 Hoàng hôn buông xuống nông trại...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 3 - Mùa hè rực rỡ! Trái cây mùa hè chín rộ rồi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cháu cần thu thập Dâu, Xoài và Dưa lưới trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Dâu và Xoài! Nghe ngon quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn. Muốn 3 sao phải đủ 3 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Cháu sẽ cố gắng hết sức!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Level 3 rồi! Lần này cháu cần nhặt Dâu, Xoài, Dưa lưới, Táo và Chuối trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "5 loại trái cây! Nhưng... sao trời tối dần vậy bác?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đúng rồi! Từ level này trở đi, trời sẽ có chu kỳ ngày và đêm. Khi trời tối, cháu sẽ rất khó nhìn đường!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Trời ơi, vậy làm sao mà nhặt trái cây trong bóng tối?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đừng lo! Khi trời bắt đầu tối, một cây đèn pin sẽ xuất hiện gần cháu. Nhấn P để nhặt nó!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Sau khi nhặt, nhấn P lần nữa để bật/tắt đèn pin. Đèn sẽ giúp cháu soi đường trong đêm tối.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại trái cây là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Ngày đêm, đèn pin... thú vị quá! Cháu sẽ chinh phục bóng tối!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
+	## ===== Level 4: Trọng lượng + nâng cấp =====
 	4: {
-		"scene_text": "Thu hoạch lớn...",
+		"scene_text": "🏪 Mùa thu hoạch lớn...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 4 - Thu hoạch lớn! Bắt đầu thử thách thực sự rồi đây.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 4 loại: Táo, Cherry, Cam và Xoài trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "4 loại trái cây luôn! Nhiều hơn rồi đó!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Level 4 - Mùa thu hoạch lớn! Cần nhặt Táo, Cherry, Cam và Xoài trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Cháu thấy túi đồ hơi nặng khi mang nhiều trái cây quá bác ơi...", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đúng rồi! Mỗi trái cây đều có trọng lượng. Mang càng nặng, cháu sẽ đi càng chậm!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Mẹo nhé: giao hàng thường xuyên để giảm tải. Đừng ôm hết rồi mới mang về!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "À, cháu thấy có bảng nâng cấp nữa kìa! Ấn phím gì vậy bác?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nhấn Tab để mở menu nâng cấp! Dùng xu thu hoạch được để nâng cấp 3 thứ:", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Túi đồ: mang được nhiều trái hơn. Tốc độ: chạy nhanh hơn. Năng lượng: bền bỉ hơn!", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì phải đủ 4 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Thử thách lớn nhưng cháu không sợ!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Lan", "text": "Nâng cấp rồi sẽ mạnh hơn! Cháu phải đầu tư thông minh!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
+	## ===== Level 5: Mẹo chuyên nghiệp =====
 	5: {
-		"scene_text": "Thử thách trái cây...",
+		"scene_text": "🌙 Đêm trăng trên nông trại...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 5 - Thử thách trái cây! Đây là màn khó nhất!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 5 loại: Chuối, Chanh, Nho, Dâu và Dưa lưới trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "5 loại! Phải chạy nhanh lắm mới kịp!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Level 5! Cần nhặt Chuối, Chanh, Nho, Dâu và Dưa lưới trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "5 loại trái cây, thời gian ít hơn... Bác có mẹo gì không ạ?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Có chứ! Đầu tiên, nhấn M để mở bản đồ lớn. Xem vị trí trái cây rồi lên kế hoạch đường đi!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Thứ hai, nhớ uống sữa Frumi trước khi chạy nhanh. Sữa rải khắp nơi, kể cả trong nhà và trên đồi!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Thứ ba, thú cưng của cháu rất hữu ích! Cáo giúp chạy nhanh hơn, còn rùa giúp hồi năng lượng khi đứng yên gần nó.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Ồ, cháu chưa biết thú cưng có nhiều khả năng vậy!", "color": Color(0.9, 0.5, 0.7)},
 			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Cháu sẽ chinh phục thử thách này!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Lan", "text": "Lên kế hoạch, tận dụng thú cưng, uống sữa đều đặn. Cháu tự tin lắm!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
+	## ===== Level 6: Thử thách cuối cùng =====
 	6: {
-		"scene_text": "Siêu thu hoạch...",
+		"scene_text": "🏆 Thử thách siêu thu hoạch cuối cùng!",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level cuối - Siêu thu hoạch! Đây là thử thách cuối cùng!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cần thu thập 7 loại trái cây: Táo, Cherry, Cam, Xoài, Nho, Dưa lưới và Dâu!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "7 loại trong 3 phút?! Căng quá bác ơi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Cháu Lan, đây là thử thách cuối cùng! Siêu thu hoạch — bác rất tự hào về cháu!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Cháu đã đi một chặng đường dài! Thử thách cuối cùng gì vậy bác?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Thu thập TẤT CẢ 7 loại trái cây: Táo, Cherry, Cam, Xoài, Nho, Dưa lưới và Dâu!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "7 loại trong 3 phút?! Đó là tất cả trái cây trong vườn luôn!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đúng vậy! Cháu sẽ cần dùng mọi kỹ năng đã học: tránh chó, dùng đèn pin, uống sữa, nâng cấp thiết bị...", "color": Color(0.8, 0.6, 0.2)},
 			{"speaker": "Bác Nông Dân", "text": "Nhặt 4 loại là qua màn. Muốn 3 sao thì đủ cả 7 loại trong 2 phút rưỡi!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Thử thách cuối cùng! Cháu sẽ hoàn thành!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Hoàn thành thử thách này, cháu sẽ trở thành người thu hoạch giỏi nhất nông trại!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Tất cả những gì cháu đã học, hôm nay sẽ phát huy. Đi thôi, lần cuối cùng!", "color": Color(0.9, 0.5, 0.7)},
 		]
 	},
 }
@@ -108,8 +136,19 @@ func _ready():
 func _load_avatars():
 	avatar_lan = load("res://assets/background/character.png")
 	avatar_farmer = load("res://assets/background/farmer.png")
+	## Hình nền mặc định (Level 1, 4, 5, 6)
 	bg_lan = load("res://assets/background/farm_girl.png")
 	bg_farmer = load("res://assets/background/farm_farmer.png")
+	## Hình nền riêng cho Level 2 (chó canh giữ)
+	var bg_lan_lv2 = load("res://assets/background/girl_dog.png")
+	var bg_farmer_lv2 = load("res://assets/background/famer_girl.png")
+	if bg_lan_lv2 and bg_farmer_lv2:
+		level_backgrounds[2] = {"lan": bg_lan_lv2, "farmer": bg_farmer_lv2}
+	## Hình nền riêng cho Level 3 (ngày/đêm + đèn pin)
+	var bg_lan_lv3 = load("res://assets/background/girl_pin.png")
+	var bg_farmer_lv3 = load("res://assets/background/farmer_girl_pin.png")
+	if bg_lan_lv3 and bg_farmer_lv3:
+		level_backgrounds[3] = {"lan": bg_lan_lv3, "farmer": bg_farmer_lv3}
 
 
 func _set_click_through(node: Node):
@@ -196,13 +235,21 @@ func show_dialogue(index: int):
 		elif avatar_farmer:
 			avatar_texture.texture = avatar_farmer
 
-	## Đổi background theo speaker
+	## Đổi background theo speaker và level
 	var scene_image = get_node_or_null("SceneImage")
 	if scene_image and scene_image is TextureRect:
-		if entry.speaker == "Lan" and bg_lan:
-			scene_image.texture = bg_lan
-		elif bg_farmer:
-			scene_image.texture = bg_farmer
+		var level = Global.current_level
+		var lvl_bg = level_backgrounds.get(level, null)
+		if entry.speaker == "Lan":
+			if lvl_bg and lvl_bg.get("lan"):
+				scene_image.texture = lvl_bg["lan"]
+			elif bg_lan:
+				scene_image.texture = bg_lan
+		else:
+			if lvl_bg and lvl_bg.get("farmer"):
+				scene_image.texture = lvl_bg["farmer"]
+			elif bg_farmer:
+				scene_image.texture = bg_farmer
 
 	full_text = entry.text
 	displayed_text = ""

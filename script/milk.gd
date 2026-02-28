@@ -33,6 +33,9 @@ func pickup_milk(player):
 		
 		player.add_energy(energy_value)
 		AudioManager.play_pick_sfx()
+		# Notify tutorial system
+		if player.has_signal("milk_picked_up"):
+			player.milk_picked_up.emit()
 		_cleanup_and_free()
 
 

@@ -5,6 +5,11 @@
 
 extends CharacterBody3D
 
+## Tutorial signals
+signal fruit_picked_up(item_type: String)
+signal milk_picked_up()
+signal inventory_full_attempted()
+
 ## Can we move around?
 @export var can_move : bool = true
 ## Are we affected by gravity?
@@ -70,7 +75,7 @@ const INTERACT_RANGE : float = 3.0
 
 ## Throttle cho proximity check (giảm lag)
 var _proximity_check_timer : float = 0.0
-const PROXIMITY_CHECK_INTERVAL : float = 0.15  ## Chỉ check mỗi 0.15 giây thay vì mỗi frame
+const PROXIMITY_CHECK_INTERVAL : float = 0.25  ## Chỉ check mỗi 0.25 giây thay vì mỗi frame
 
 ## Energy system
 var energy : float = 100.0
@@ -397,18 +402,25 @@ func _process(_delta: float) -> void:
 
 
 ## Check for nearby interactable objects (fruits, basket) using proximity
+## Tối ưu: dùng distance_squared_to để tránh sqrt
 func check_interactable():
+	const INTERACT_RANGE_SQ := INTERACT_RANGE * INTERACT_RANGE
+	const EARLY_EXIT_SQ := 2.25  ## 1.5m — đủ gần, không cần tìm thêm
+
 	# Check for nearby fruits first
 	var nearest_fruit = null
-	var nearest_fruit_dist = INTERACT_RANGE
+	var nearest_fruit_dist_sq = INTERACT_RANGE_SQ
 
 	for node in get_tree().get_nodes_in_group("interactable"):
 		if not is_instance_valid(node):
 			continue
-		var dist = global_position.distance_to(node.global_position)
-		if dist < nearest_fruit_dist:
-			nearest_fruit_dist = dist
+		var dist_sq = global_position.distance_squared_to(node.global_position)
+		if dist_sq < nearest_fruit_dist_sq:
+			nearest_fruit_dist_sq = dist_sq
 			nearest_fruit = node
+			# Early exit nếu rất gần
+			if dist_sq < EARLY_EXIT_SQ:
+				break
 
 	if nearest_fruit:
 		current_interactable = nearest_fruit
@@ -419,14 +431,14 @@ func check_interactable():
 	# No fruit nearby → check basket (only if player has items)
 	if inventory.size() > 0:
 		var nearest_basket = null
-		var nearest_basket_dist = INTERACT_RANGE
+		var nearest_basket_dist_sq = INTERACT_RANGE_SQ
 
 		for node in get_tree().get_nodes_in_group("basket"):
 			if not is_instance_valid(node):
 				continue
-			var dist = global_position.distance_to(node.global_position)
-			if dist < nearest_basket_dist:
-				nearest_basket_dist = dist
+			var dist_sq = global_position.distance_squared_to(node.global_position)
+			if dist_sq < nearest_basket_dist_sq:
+				nearest_basket_dist_sq = dist_sq
 				nearest_basket = node
 
 		if nearest_basket:
@@ -459,12 +471,14 @@ func add_to_inventory_with_weight(item_value: int, item_weight: float) -> bool:
 ## Add item to inventory with type and weight (returns true if successful)
 func add_to_inventory_typed(item_type: String, item_value: int, item_weight: float) -> bool:
 	if inventory.size() >= max_capacity:
+		inventory_full_attempted.emit()
 		return false
 	var final_value = int(item_value * coin_value_multiplier)
 	inventory.append({"type": item_type, "value": final_value, "weight": item_weight})
 	total_weight += item_weight
 	update_inventory_ui()
 	AudioManager.play_pick_sfx()
+	fruit_picked_up.emit(item_type)
 	return true
 
 
@@ -917,17 +931,24 @@ func update_energy_ui():
 
 
 ## Kiểm tra milk gần nhất bằng proximity
+## Tối ưu: dùng distance_squared_to để tránh sqrt
 func check_milk():
+	const INTERACT_RANGE_SQ := INTERACT_RANGE * INTERACT_RANGE
+	const EARLY_EXIT_SQ := 2.25  ## 1.5m — đủ gần
+
 	var nearest = null
-	var nearest_dist = INTERACT_RANGE
+	var nearest_dist_sq = INTERACT_RANGE_SQ
 
 	for node in get_tree().get_nodes_in_group("milk"):
 		if not is_instance_valid(node):
 			continue
-		var dist = global_position.distance_to(node.global_position)
-		if dist < nearest_dist:
-			nearest_dist = dist
+		var dist_sq = global_position.distance_squared_to(node.global_position)
+		if dist_sq < nearest_dist_sq:
+			nearest_dist_sq = dist_sq
 			nearest = node
+			# Early exit nếu rất gần
+			if dist_sq < EARLY_EXIT_SQ:
+				break
 
 	if nearest:
 		current_milk = nearest

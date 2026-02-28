@@ -1,6 +1,7 @@
 extends Node3D
 
 ## Spawn trái cây và sữa ngẫu nhiên khắp map
+## Tối ưu: preload scenes + phân tán spawn qua nhiều frame
 
 const FRUIT_SCENES = [
 	"res://scene/items/apple.tscn",
@@ -23,6 +24,9 @@ const MILK_SCENES = [
 ## Số lượng spawn
 @export var fruit_count: int = 50
 @export var milk_count: int = 80
+
+## Batch size — số item spawn mỗi frame
+const SPAWN_BATCH_SIZE := 10
 
 ## Vùng spawn cho TRÁI CÂY (đường đi chính)
 const SPAWN_ZONES = [
@@ -78,30 +82,44 @@ const MILK_SPAWN_ZONES = [
 	{"x_min": -130.0, "x_max": -80.0, "z_min": 100.0, "z_max": 115.0, "y": -133.5},
 ]
 
+## Cache preloaded scenes
+var _fruit_scenes_cache: Array = []
+var _milk_scenes_cache: Array = []
+
 
 func _ready():
 	# Level 1-2: chỉ có trái cây nhiệm vụ, không spawn thêm
 	if Global.current_level <= 2:
 		print("[FruitSpawner] Level %d: không spawn trái cây/sữa ngẫu nhiên." % Global.current_level)
 		return
+	# Preload tất cả scenes trước
+	_preload_scenes()
 	call_deferred("_spawn_all")
 
 
-func _spawn_all():
-	_spawn_fruits()
-	_spawn_milks()
-
-
-func _spawn_fruits():
-	var loaded_scenes = []
+func _preload_scenes():
 	for path in FRUIT_SCENES:
 		var scene = load(path)
 		if scene:
-			loaded_scenes.append(scene)
+			_fruit_scenes_cache.append(scene)
 		else:
 			push_warning("[FruitSpawner] Không load được: " + path)
 
-	if loaded_scenes.is_empty():
+	for path in MILK_SCENES:
+		var scene = load(path)
+		if scene:
+			_milk_scenes_cache.append(scene)
+		else:
+			push_warning("[FruitSpawner] Không load được sữa: " + path)
+
+
+func _spawn_all():
+	await _spawn_fruits()
+	await _spawn_milks()
+
+
+func _spawn_fruits():
+	if _fruit_scenes_cache.is_empty():
 		push_error("[FruitSpawner] Không có scene trái cây nào!")
 		return
 
@@ -117,25 +135,21 @@ func _spawn_fruits():
 		var z = randf_range(zone["z_min"], zone["z_max"])
 		var pos = Vector3(x, -133.5, z)
 
-		var scene = loaded_scenes[randi() % loaded_scenes.size()]
+		var scene = _fruit_scenes_cache[randi() % _fruit_scenes_cache.size()]
 		var fruit = scene.instantiate()
 		fruit.position = pos
 		fruit.rotation.y = randf() * TAU
 		fruits_node.add_child(fruit)
 
+		# Chờ 1 frame sau mỗi batch
+		if (i + 1) % SPAWN_BATCH_SIZE == 0:
+			await get_tree().process_frame
+
 	print("[FruitSpawner] Đã spawn %d trái cây khắp map!" % fruit_count)
 
 
 func _spawn_milks():
-	var loaded_scenes = []
-	for path in MILK_SCENES:
-		var scene = load(path)
-		if scene:
-			loaded_scenes.append(scene)
-		else:
-			push_warning("[FruitSpawner] Không load được sữa: " + path)
-
-	if loaded_scenes.is_empty():
+	if _milk_scenes_cache.is_empty():
 		push_error("[FruitSpawner] Không có scene sữa nào!")
 		return
 
@@ -152,10 +166,14 @@ func _spawn_milks():
 		var y = zone["y"]
 		var pos = Vector3(x, y, z)
 
-		var scene = loaded_scenes[randi() % loaded_scenes.size()]
+		var scene = _milk_scenes_cache[randi() % _milk_scenes_cache.size()]
 		var milk = scene.instantiate()
 		milk.position = pos
 		milk.rotation.y = randf() * TAU
 		milks_node.add_child(milk)
+
+		# Chờ 1 frame sau mỗi batch
+		if (i + 1) % SPAWN_BATCH_SIZE == 0:
+			await get_tree().process_frame
 
 	print("[FruitSpawner] Đã spawn %d sữa các loại khắp map!" % milk_count)

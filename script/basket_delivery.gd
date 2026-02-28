@@ -2,11 +2,15 @@ extends Node3D
 
 ## Script cho rổ trái cây - nơi player mang trái cây đến bỏ vào
 ## Khi trái cây được bỏ vào, hiển thị đúng hình dạng 3D model của trái cây trong rổ
+## Tối ưu: preload tất cả scene 1 lần thay vì load mỗi khi nhặt
 
 @export var prompt_message: String = "Nhấn E để bỏ trái cây vào rổ"
 
 var delivered_fruits: Array = []
 var fruit_visuals: Node3D = null
+
+## Preloaded fruit scene cache
+var _scene_cache: Dictionary = {}
 
 const FRUIT_SCENE_PATHS = {
 	"apple": "res://scene/items/apple.tscn",
@@ -39,6 +43,15 @@ func _ready():
 	fruit_visuals = Node3D.new()
 	fruit_visuals.name = "FruitVisuals"
 	add_child(fruit_visuals)
+	# Preload tất cả fruit scenes để tránh lag khi nhặt
+	_preload_scenes()
+
+
+func _preload_scenes():
+	for fruit_type in FRUIT_SCENE_PATHS:
+		var scene = load(FRUIT_SCENE_PATHS[fruit_type])
+		if scene:
+			_scene_cache[fruit_type] = scene
 
 
 func interact(player):
@@ -60,11 +73,8 @@ func interact(player):
 func _add_fruit_visual(fruit_type: String):
 	delivered_fruits.append(fruit_type)
 
-	var scene_path = FRUIT_SCENE_PATHS.get(fruit_type, "")
-	if scene_path == "":
-		return
-
-	var scene = load(scene_path)
+	# Dùng scene từ cache thay vì load mỗi lần
+	var scene = _scene_cache.get(fruit_type, null)
 	if not scene:
 		return
 

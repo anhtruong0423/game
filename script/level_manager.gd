@@ -187,6 +187,9 @@ var play_warning_label: Label = null
 var play_warning_shown: bool = false
 var total_play_time: float = 0.0
 
+## Tutorial guide (Level 1 only)
+var tutorial_guide: Node = null
+
 
 func _ready():
 	add_to_group("level_manager")
@@ -226,6 +229,7 @@ func _setup_level():
 	setup_hud()
 	update_mission_hud()
 	_notify_minimap_blink()
+	_setup_tutorial()
 
 
 func clear_existing_items():
@@ -656,6 +660,9 @@ func on_items_delivered(types: Array):
 	update_mission_hud()
 	check_mission_progress()
 	mission_updated.emit(delivered_items)
+	# Notify tutorial guide
+	if tutorial_guide and tutorial_guide.has_method("on_items_delivered"):
+		tutorial_guide.on_items_delivered()
 
 
 func check_mission_progress():
@@ -671,15 +678,16 @@ func check_mission_progress():
 		complete_level()
 		return
 
+	# Hoàn thành tất cả trái cây → auto complete (kể cả khi đã chọn "Ở lại")
+	if all_done:
+		complete_level()
+		return
+
 	if count >= data["min_to_pass"] and not can_pass:
 		can_pass = true
 		show_pass_notification()
 		show_choice_panel()
 		level_can_pass.emit()
-
-	if all_done and not choice_shown:
-		# Nếu hoàn thành tất cả mà chưa hiện panel thì auto complete
-		complete_level()
 
 
 func get_delivered_count() -> int:
@@ -809,6 +817,8 @@ func _on_stay_pressed():
 	if choice_panel:
 		choice_panel.queue_free()
 		choice_panel = null
+	# Cho phép hiện lại panel khi đạt điều kiện mới
+	choice_shown = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if pass_notification:
 		pass_notification.text = "Tiếp tục nhặt để đạt 3 sao!"
@@ -860,3 +870,24 @@ func show_play_time_warning():
 		await get_tree().create_timer(10.0).timeout
 		if is_instance_valid(play_warning_label):
 			play_warning_label.visible = false
+
+
+## ==================== TUTORIAL SYSTEM ====================
+
+## Tạo tutorial guide cho Level 1
+func _setup_tutorial():
+	if current_level != 1:
+		return
+	var player = _find_player()
+	if not player:
+		return
+	var tutorial_script = load("res://script/tutorial_guide.gd")
+	if not tutorial_script:
+		push_warning("[LevelManager] Không load được tutorial_guide.gd")
+		return
+	tutorial_guide = Node.new()
+	tutorial_guide.name = "TutorialGuide"
+	tutorial_guide.set_script(tutorial_script)
+	add_child(tutorial_guide)
+	tutorial_guide.setup(player)
+	print("[LevelManager] Tutorial guide đã được tạo cho Level 1")
