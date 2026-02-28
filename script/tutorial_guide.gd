@@ -1,34 +1,18 @@
 extends Node
 
-## Tutorial In-Game cho Level 1
+## Tutorial In-Game cho Level 1 & Level 2
 ## Bác Nông Dân popup hướng dẫn từng bước khi người chơi hoàn thành hành động
 
-## Tutorial steps
-enum Step {
-	WELCOME,           ## 0 - Vào màn chơi
-	FIRST_FRUIT,       ## 1 - Nhặt trái cây đầu tiên
-	SECOND_FRUIT,      ## 2 - Nhặt trái cây thứ hai
-	DELIVER_TO_BASKET, ## 3 - Giao hàng vào rổ
-	ENERGY_LOW,        ## 4 - Năng lượng thấp
-	MILK_PICKED,       ## 5 - Nhặt sữa
-	DONE,              ## 6 - Hoàn thành tutorial
-}
-
-const TUTORIAL_MESSAGES = {
-	Step.WELCOME: "Chào cháu! Trái cây nhiệm vụ đang nhấp nháy trên minimap. Hãy đi đến gần và nhấn E để nhặt!",
-	Step.FIRST_FRUIT: "Giỏi lắm cháu! Cháu đã nhặt được trái cây đầu tiên. Tiếp tục tìm trái cây tiếp theo nhé!",
-	Step.SECOND_FRUIT: "Tuyệt vời! Bây giờ hãy mang trái cây về rổ giao hàng. Đến gần rổ rồi nhấn E để bỏ vào!",
-	Step.DELIVER_TO_BASKET: "Xuất sắc! Cháu đã giao hàng thành công! Cứ tiếp tục nhặt và giao là được.",
-	Step.ENERGY_LOW: "Cẩn thận! Năng lượng đang thấp. Tìm hộp sữa Frumi gần đây và nhấn Q để uống hồi sức!",
-	Step.MILK_PICKED: "Tốt lắm! Sữa Frumi giúp hồi năng lượng. Nhớ uống thường xuyên khi chạy nhiều nhé!",
-}
-
-var current_step: int = Step.WELCOME
+var current_level: int = 1
 var player: Node = null
+
+## Tracking state
 var fruits_picked: int = 0
 var has_delivered: bool = false
 var energy_warned: bool = false
 var milk_picked_notified: bool = false
+var dog_warned: bool = false
+var upgrade_introduced: bool = false
 
 ## UI references
 var popup_panel: PanelContainer = null
@@ -37,17 +21,37 @@ var popup_avatar: TextureRect = null
 var popup_name: Label = null
 var popup_visible: bool = false
 var popup_timer: float = 0.0
-const POPUP_DURATION := 6.0
-const ENERGY_LOW_THRESHOLD := 0.4  ## 40% năng lượng
+var is_paused_for_popup: bool = false  ## Game đang tạm dừng cho popup
+
+const POPUP_DURATION := 7.0
+const ENERGY_LOW_THRESHOLD := 0.4
 
 ## Cooldown cho popup túi đầy (tránh spam)
 var _inventory_full_cooldown: float = 0.0
 const INVENTORY_FULL_COOLDOWN := 15.0
 
+## ==================== Level 1 Messages ====================
+const L1_MESSAGES = {
+	"welcome": "Chào cháu! Trái cây nhiệm vụ đang nhấp nháy trên minimap. Hãy đi đến gần và nhấn E để nhặt!",
+	"first_fruit": "Giỏi lắm cháu! Cháu đã nhặt được trái cây đầu tiên. Tiếp tục tìm trái cây tiếp theo nhé!",
+	"second_fruit": "Tuyệt vời! Bây giờ hãy mang trái cây về rổ giao hàng. Đến gần rổ rồi nhấn E để bỏ vào!",
+	"deliver": "Xuất sắc! Cháu đã giao hàng thành công! Cứ tiếp tục nhặt và giao là được.",
+	"energy_low": "Cẩn thận! Năng lượng đang thấp. Tìm hộp sữa Frumi gần đây và nhấn Q để uống hồi sức!",
+	"milk_picked": "Tốt lắm! Sữa Frumi giúp hồi năng lượng. Nhớ uống thường xuyên khi chạy nhiều nhé!",
+}
 
-func setup(p_player: Node):
+## ==================== Level 2 Messages ====================
+const L2_MESSAGES = {
+	"welcome": "Chào cháu! Level 2 có nhiều thử thách mới. Nhấn Tab để mở menu nâng cấp — cháu có thể nâng cấp túi đồ, tốc độ và năng lượng!",
+	"dog_warning": "⚠️ Cẩn thận cháu! Con chó đang đến gần! Nếu bị cắn sẽ mất năng lượng. Nhấn Shift để chạy nhanh thoát thân, nhưng nhớ là chạy nhanh cũng tốn năng lượng!",
+}
+
+
+func setup(p_player: Node, p_level: int = 1):
 	player = p_player
+	current_level = p_level
 	_create_popup_ui()
+
 	# Kết nối signals từ player
 	if player.has_signal("fruit_picked_up"):
 		player.fruit_picked_up.connect(_on_fruit_picked)
@@ -55,19 +59,32 @@ func setup(p_player: Node):
 		player.milk_picked_up.connect(_on_milk_picked)
 	if player.has_signal("inventory_full_attempted"):
 		player.inventory_full_attempted.connect(_on_inventory_full)
+
 	# Welcome message sau 2.5 giây
 	await get_tree().create_timer(2.5).timeout
-	_show_step(Step.WELCOME)
+	if current_level == 1:
+		_show_popup(L1_MESSAGES["welcome"])
+	elif current_level == 2:
+		_show_popup(L2_MESSAGES["welcome"])
+		upgrade_introduced = true
 
 
 func _process(delta):
+	# Giảm cooldown túi đầy
+	if _inventory_full_cooldown > 0:
+		_inventory_full_cooldown -= delta
+
+	# Nếu game đang pause cho popup, chỉ xử lý timer popup
+	if is_paused_for_popup:
+		return
+
 	if not popup_visible:
 		# Kiểm tra năng lượng thấp (chỉ 1 lần)
 		if not energy_warned and player and is_instance_valid(player):
 			var ratio = player.energy / player.max_energy
 			if ratio <= ENERGY_LOW_THRESHOLD:
 				energy_warned = true
-				_show_step(Step.ENERGY_LOW)
+				_show_popup(L1_MESSAGES["energy_low"])
 		return
 
 	# Auto ẩn popup sau thời gian
@@ -75,57 +92,59 @@ func _process(delta):
 	if popup_timer >= POPUP_DURATION:
 		_hide_popup()
 
-	# Giảm cooldown túi đầy
-	if _inventory_full_cooldown > 0:
-		_inventory_full_cooldown -= delta
-
 
 func _unhandled_input(event):
-	# Click để ẩn popup nhanh
 	if popup_visible:
 		if (event is InputEventMouseButton and event.pressed) or \
 		   (event is InputEventKey and event.pressed and event.keycode == KEY_SPACE):
 			_hide_popup()
 
 
+## ==================== Event Handlers ====================
+
 func _on_fruit_picked(_item_type: String):
+	if current_level != 1:
+		return
 	fruits_picked += 1
-	if fruits_picked == 1 and current_step <= Step.FIRST_FRUIT:
-		_show_step(Step.FIRST_FRUIT)
-	elif fruits_picked >= 2 and current_step <= Step.SECOND_FRUIT and not has_delivered:
-		_show_step(Step.SECOND_FRUIT)
+	if fruits_picked == 1:
+		_show_popup(L1_MESSAGES["first_fruit"])
+	elif fruits_picked >= 2 and not has_delivered:
+		_show_popup(L1_MESSAGES["second_fruit"])
 
 
 func on_items_delivered():
+	if current_level != 1:
+		return
 	if has_delivered:
 		return
 	has_delivered = true
-	if current_step <= Step.DELIVER_TO_BASKET:
-		_show_step(Step.DELIVER_TO_BASKET)
+	_show_popup(L1_MESSAGES["deliver"])
 
 
 func _on_milk_picked():
 	if milk_picked_notified:
 		return
 	milk_picked_notified = true
-	_show_step(Step.MILK_PICKED)
+	_show_popup(L1_MESSAGES["milk_picked"])
 
 
 func _on_inventory_full():
-	# Hiện mỗi lần túi đầy, nhưng có cooldown 15s tránh spam
 	if _inventory_full_cooldown > 0:
 		return
 	_inventory_full_cooldown = INVENTORY_FULL_COOLDOWN
 	_show_popup("Túi đồ đã đầy rồi cháu ơi! Hãy mang trái cây về rổ giao hàng (nhấn E) rồi quay lại nhặt tiếp. Hoặc nhấn Tab để nâng cấp túi đồ!")
 
 
-func _show_step(step: int):
-	current_step = step
-	var msg = TUTORIAL_MESSAGES.get(step, "")
-	if msg == "":
+## Gọi từ dog_chase.gd khi chó bắt đầu đuổi lần đầu (Level 2)
+func on_dog_first_chase():
+	if dog_warned:
 		return
-	_show_popup(msg)
+	dog_warned = true
+	# DỪNG GAME và hiển thị cảnh báo
+	_show_popup_paused(L2_MESSAGES["dog_warning"])
 
+
+## ==================== Popup System ====================
 
 func _show_popup(text: String):
 	if not popup_panel:
@@ -136,12 +155,32 @@ func _show_popup(text: String):
 	popup_timer = 0.0
 
 
+## Hiện popup VÀ DỪNG GAME — chỉ tiếp tục khi click/space
+func _show_popup_paused(text: String):
+	if not popup_panel:
+		return
+	popup_label.text = text
+	popup_panel.visible = true
+	popup_visible = true
+	popup_timer = 0.0
+	is_paused_for_popup = true
+	get_tree().paused = true
+	# Tutorial node cần không bị pause
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
 func _hide_popup():
 	if popup_panel:
 		popup_panel.visible = false
 	popup_visible = false
 	popup_timer = 0.0
+	# Resume game nếu đang pause
+	if is_paused_for_popup:
+		is_paused_for_popup = false
+		get_tree().paused = false
 
+
+## ==================== UI Creation ====================
 
 func _create_popup_ui():
 	if not player:

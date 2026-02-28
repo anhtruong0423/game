@@ -67,6 +67,8 @@ func _physics_process(delta):
 			is_chasing = true
 			_play_chase_animation()
 			AudioManager.play_dog_bark()
+			# Notify tutorial guide (Level 2) — lần đầu chó đuổi
+			_notify_tutorial_first_chase()
 		return
 
 	if dist_sq > chase_radius_sq:
@@ -102,3 +104,17 @@ func _play_chase_animation():
 func _stop_animation():
 	if anim_player and anim_player.is_playing():
 		anim_player.stop()
+
+
+## Thông báo tutorial guide khi chó bắt đầu đuổi lần đầu
+var _tutorial_notified := false
+func _notify_tutorial_first_chase():
+	if _tutorial_notified:
+		return
+	_tutorial_notified = true
+	# Tìm tutorial guide trong scene
+	var level_mgr = get_tree().get_first_node_in_group("level_manager")
+	if level_mgr and level_mgr.get("tutorial_guide"):
+		var guide = level_mgr.tutorial_guide
+		if guide and guide.has_method("on_dog_first_chase"):
+			guide.on_dog_first_chase()

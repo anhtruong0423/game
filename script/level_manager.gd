@@ -161,9 +161,30 @@ const MILK_SCENES = [
 ]
 
 const MILK_SPAWN_POSITIONS = [
+	## === Gần shop / khu trung tâm ===
 	Vector3(110.5, -133.5, 70),
 	Vector3(114, -133.5, 74),
 	Vector3(107, -133.5, 68),
+	Vector3(100, -133.5, 75),
+	## === Đường chính (Z ~87-89) ===
+	Vector3(0, -133.5, 88),
+	Vector3(-30, -133.5, 87),
+	Vector3(-70, -133.5, 88),
+	Vector3(40, -133.5, 87),
+	Vector3(80, -133.5, 89),
+	Vector3(-120, -133.5, 87),
+	Vector3(160, -133.5, 88),
+	## === Khu farm / đồng ===
+	Vector3(-50, -133.5, 55),
+	Vector3(50, -133.5, 50),
+	Vector3(0, -133.5, 45),
+	Vector3(-100, -133.5, 65),
+	## === Gần nhà cửa ===
+	Vector3(-15, -133.5, 22),
+	Vector3(130, -133.5, 35),
+	## === Khu xa ===
+	Vector3(-200, -133.5, 75),
+	Vector3(250, -133.5, 75),
 ]
 
 var current_level: int = 1
@@ -874,9 +895,9 @@ func show_play_time_warning():
 
 ## ==================== TUTORIAL SYSTEM ====================
 
-## Tạo tutorial guide cho Level 1
+## Tạo tutorial guide cho Level 1 và Level 2
 func _setup_tutorial():
-	if current_level != 1:
+	if current_level > 2:
 		return
 	var player = _find_player()
 	if not player:
@@ -889,5 +910,5 @@ func _setup_tutorial():
 	tutorial_guide.name = "TutorialGuide"
 	tutorial_guide.set_script(tutorial_script)
 	add_child(tutorial_guide)
-	tutorial_guide.setup(player)
-	print("[LevelManager] Tutorial guide đã được tạo cho Level 1")
+	tutorial_guide.setup(player, current_level)
+	print("[LevelManager] Tutorial guide đã được tạo cho Level %d" % current_level)

@@ -533,7 +533,8 @@ func drain_energy(amount: float):
 		trigger_game_over()
 
 
-## Rùa hồi NL khi player đứng yên (chỉ hồi tới 30% max)
+## Rùa hồi NL khi player ở gần rùa (bán kính 1m) và đứng yên (chỉ hồi tới 30% max)
+var _turtle_popup_shown := false
 func _pet_passive_heal(delta: float):
 	var heal_rate := Global.get_pet_bonus("passive_heal")
 	if heal_rate <= 0.0 or is_exhausted:
@@ -541,8 +542,31 @@ func _pet_passive_heal(delta: float):
 	var heal_cap := max_energy * 0.3
 	if energy >= heal_cap:
 		return
+	# Phải ở gần rùa (bán kính 1m) VÀ đứng yên
+	if not is_instance_valid(pet_instance):
+		return
+	var dist_sq := global_position.distance_squared_to(pet_instance.global_position)
+	if dist_sq > 1.0:  ## 1m bán kính
+		# Popup hướng dẫn lần đầu khi NL thấp
+		if not _turtle_popup_shown and energy / max_energy <= 0.4:
+			_turtle_popup_shown = true
+			_show_turtle_tutorial_popup()
+		return
 	if velocity.length_squared() < 0.1:
 		energy = min(heal_cap, energy + heal_rate * delta)
+
+
+func _show_turtle_tutorial_popup():
+	var level_mgr = get_tree().get_first_node_in_group("level_manager")
+	if level_mgr and level_mgr.get("tutorial_guide"):
+		var guide = level_mgr.tutorial_guide
+		if guide and guide.has_method("_show_popup"):
+			guide._show_popup("🐢 Năng lượng đang thấp! Hãy chờ rùa đi theo rồi đứng yên bên cạnh nó để hồi năng lượng. Rùa chỉ hồi khi cháu ở gần nó trong bán kính 1 mét!")
+			return
+	# Fallback: hiện hint label nếu không có tutorial guide
+	if turtle_hint_label:
+		turtle_hint_label.text = "🐢 Chờ rùa đến gần và đứng yên để hồi năng lượng!"
+		turtle_hint_label.visible = true
 
 
 ## Spawn thú cưng vào scene
