@@ -46,6 +46,11 @@ const L2_MESSAGES = {
 	"dog_warning": "⚠️ Cẩn thận cháu! Con chó đang đến gần! Nếu bị cắn sẽ mất năng lượng. Nhấn Shift để chạy nhanh thoát thân, nhưng nhớ là chạy nhanh cũng tốn năng lượng!",
 }
 
+## ==================== Level 3 Messages ====================
+const L3_MESSAGES = {
+	"welcome": "🌙 Level 3 có tính năng mới: chu kỳ ngày và đêm! Khi trời tối, cháu sẽ rất khó nhìn đường. Một cây đèn pin sẽ xuất hiện — nhấn P để nhặt và bật/tắt đèn pin!",
+}
+
 
 func setup(p_player: Node, p_level: int = 1):
 	player = p_player
@@ -67,6 +72,8 @@ func setup(p_player: Node, p_level: int = 1):
 	elif current_level == 2:
 		_show_popup(L2_MESSAGES["welcome"])
 		upgrade_introduced = true
+	elif current_level == 3:
+		_show_popup(L3_MESSAGES["welcome"])
 
 
 func _process(delta):

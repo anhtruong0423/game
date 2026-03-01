@@ -57,7 +57,7 @@ shadow_enabled = true
 script = ExtResource("10_daynight")
 
 [node name="ProtoController" parent="." instance=ExtResource("1_wp4xf")]
-transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 110.24919, -133.6, 77.200005)
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 111.24919, -133.6, 77.200005)
 can_sprint = true
 can_freefly = true
 input_left = "move_left"
@@ -810,10 +810,10 @@ omni_attenuation = 1.5
 script = ExtResource("9_lvlmgr")
 
 [node name="Node3D" parent="." instance=ExtResource("5_0ha60")]
-transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -134.1, 69.3)
+transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -133.90001, 68.600006)
 
 [node name="nhanvat" parent="." instance=ExtResource("6_4j5ol")]
-transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.00001, -133.23967, 74.600006)
+transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.30001, -133.03967, 74.200005)
 
 [node name="Dog" parent="." instance=ExtResource("11_dog")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115, -133.5, 72)

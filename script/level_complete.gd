@@ -26,6 +26,7 @@ func _ready():
 		else:
 			star_text += "☆ "
 	stars_label.text = star_text.strip_edges()
+	stars_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 
 	var elapsed = Global.last_elapsed_time
 	var minutes = int(elapsed) / 60

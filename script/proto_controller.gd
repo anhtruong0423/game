@@ -164,6 +164,8 @@ func _ready() -> void:
 	_restore_flashlight.call_deferred()
 
 	apply_upgrades()
+	update_inventory_ui()
+	print("[Player] Pet=%s, inventory_bonus=%d, max_capacity=%d" % [Global.selected_pet, int(Global.get_pet_bonus("inventory_bonus")), max_capacity])
 	if upgrade_menu:
 		upgrade_menu.visible = false
 	
@@ -250,9 +252,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed(input_pickup_milk):
 		try_pickup_milk()
 	
-	# Open upgrade menu (press Tab) - chỉ mở, không đóng, không cho mở khi pause
+	# Toggle upgrade menu (press Tab) - mở/đóng bằng Tab, không cho mở khi pause
 	if event is InputEventKey and event.pressed and event.keycode == KEY_TAB:
-		if not upgrade_menu_open and not pause_menu_open:
+		if not pause_menu_open:
 			toggle_upgrade_menu()
 	
 	# Toggle minimap (press M)
@@ -404,12 +406,13 @@ func _process(_delta: float) -> void:
 ## Check for nearby interactable objects (fruits, basket) using proximity
 ## Tối ưu: dùng distance_squared_to để tránh sqrt
 func check_interactable():
-	const INTERACT_RANGE_SQ := INTERACT_RANGE * INTERACT_RANGE
+	var effective_range := INTERACT_RANGE + Global.get_pet_bonus("interact_range_bonus")
+	var range_sq := effective_range * effective_range
 	const EARLY_EXIT_SQ := 2.25  ## 1.5m — đủ gần, không cần tìm thêm
 
 	# Check for nearby fruits first
 	var nearest_fruit = null
-	var nearest_fruit_dist_sq = INTERACT_RANGE_SQ
+	var nearest_fruit_dist_sq = range_sq
 
 	for node in get_tree().get_nodes_in_group("interactable"):
 		if not is_instance_valid(node):
@@ -431,7 +434,7 @@ func check_interactable():
 	# No fruit nearby → check basket (only if player has items)
 	if inventory.size() > 0:
 		var nearest_basket = null
-		var nearest_basket_dist_sq = INTERACT_RANGE_SQ
+		var nearest_basket_dist_sq = range_sq
 
 		for node in get_tree().get_nodes_in_group("basket"):
 			if not is_instance_valid(node):
@@ -829,33 +832,187 @@ func _setup_turtle_hint():
 
 
 func _setup_transparent_buttons():
-	var all_buttons: Array = []
+	var upgrade_buttons: Array = []
 
 	if inventory_upgrade_btn:
-		all_buttons.append(inventory_upgrade_btn)
+		upgrade_buttons.append(inventory_upgrade_btn)
 	if speed_upgrade_btn:
-		all_buttons.append(speed_upgrade_btn)
+		upgrade_buttons.append(speed_upgrade_btn)
 	if energy_upgrade_btn:
-		all_buttons.append(energy_upgrade_btn)
-	if pause_continue_btn:
-		all_buttons.append(pause_continue_btn)
-	if pause_restart_btn:
-		all_buttons.append(pause_restart_btn)
-	if pause_settings_btn:
-		all_buttons.append(pause_settings_btn)
-	if pause_mainmenu_btn:
-		all_buttons.append(pause_mainmenu_btn)
-	if pause_quit_btn:
-		all_buttons.append(pause_quit_btn)
-	if pause_settings_save_btn:
-		all_buttons.append(pause_settings_save_btn)
-	if pause_settings_reset_btn:
-		all_buttons.append(pause_settings_reset_btn)
-	if pause_settings_close_btn:
-		all_buttons.append(pause_settings_close_btn)
+		upgrade_buttons.append(energy_upgrade_btn)
 
-	for btn in all_buttons:
+	for btn in upgrade_buttons:
 		_apply_transparent_style(btn)
+
+	# Pause settings buttons (giữ style cũ)
+	var settings_buttons: Array = []
+	if pause_settings_save_btn:
+		settings_buttons.append(pause_settings_save_btn)
+	if pause_settings_reset_btn:
+		settings_buttons.append(pause_settings_reset_btn)
+	if pause_settings_close_btn:
+		settings_buttons.append(pause_settings_close_btn)
+
+	for btn in settings_buttons:
+		_apply_transparent_style(btn)
+
+	# Casual game style cho pause menu buttons
+	_setup_pause_casual_style()
+
+
+func _setup_pause_casual_style():
+	# Nút xanh lá: Tiếp Tục, Chơi Lại
+	if pause_continue_btn:
+		_apply_casual_green_style(pause_continue_btn)
+	if pause_restart_btn:
+		_apply_casual_green_style(pause_restart_btn)
+	# Nút xanh dương: Cài Đặt, Bản Đồ, Thoát
+	if pause_settings_btn:
+		_apply_casual_blue_style(pause_settings_btn)
+	if pause_mainmenu_btn:
+		_apply_casual_blue_style(pause_mainmenu_btn)
+	if pause_quit_btn:
+		_apply_casual_blue_style(pause_quit_btn)
+
+
+func _apply_casual_green_style(btn: Button):
+	# Normal: xanh lá sáng
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.45, 0.75, 0.15, 1.0)
+	normal.border_color = Color(0.55, 0.85, 0.25, 1.0)
+	normal.border_width_top = 3
+	normal.border_width_bottom = 4
+	normal.border_width_left = 2
+	normal.border_width_right = 2
+	normal.corner_radius_top_left = 16
+	normal.corner_radius_top_right = 16
+	normal.corner_radius_bottom_left = 16
+	normal.corner_radius_bottom_right = 16
+	normal.content_margin_left = 20
+	normal.content_margin_right = 20
+	normal.content_margin_top = 10
+	normal.content_margin_bottom = 10
+	normal.shadow_color = Color(0.2, 0.45, 0.05, 0.6)
+	normal.shadow_size = 4
+	normal.shadow_offset = Vector2(0, 3)
+	btn.add_theme_stylebox_override("normal", normal)
+
+	# Hover: xanh lá sáng hơn
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = Color(0.55, 0.85, 0.2, 1.0)
+	hover.border_color = Color(0.65, 0.95, 0.35, 1.0)
+	hover.border_width_top = 3
+	hover.border_width_bottom = 4
+	hover.border_width_left = 2
+	hover.border_width_right = 2
+	hover.corner_radius_top_left = 16
+	hover.corner_radius_top_right = 16
+	hover.corner_radius_bottom_left = 16
+	hover.corner_radius_bottom_right = 16
+	hover.content_margin_left = 20
+	hover.content_margin_right = 20
+	hover.content_margin_top = 10
+	hover.content_margin_bottom = 10
+	hover.shadow_color = Color(0.25, 0.5, 0.08, 0.7)
+	hover.shadow_size = 5
+	hover.shadow_offset = Vector2(0, 4)
+	btn.add_theme_stylebox_override("hover", hover)
+
+	# Pressed: xanh lá tối hơn
+	var pressed = StyleBoxFlat.new()
+	pressed.bg_color = Color(0.35, 0.6, 0.1, 1.0)
+	pressed.border_color = Color(0.45, 0.7, 0.2, 1.0)
+	pressed.border_width_top = 2
+	pressed.border_width_bottom = 2
+	pressed.border_width_left = 2
+	pressed.border_width_right = 2
+	pressed.corner_radius_top_left = 16
+	pressed.corner_radius_top_right = 16
+	pressed.corner_radius_bottom_left = 16
+	pressed.corner_radius_bottom_right = 16
+	pressed.content_margin_left = 20
+	pressed.content_margin_right = 20
+	pressed.content_margin_top = 12
+	pressed.content_margin_bottom = 8
+	btn.add_theme_stylebox_override("pressed", pressed)
+
+	# Font style
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 0.9, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.9, 0.95, 0.85, 1))
+	btn.add_theme_color_override("font_shadow_color", Color(0.15, 0.3, 0.05, 0.8))
+	btn.add_theme_constant_override("shadow_offset_x", 1)
+	btn.add_theme_constant_override("shadow_offset_y", 2)
+
+
+func _apply_casual_blue_style(btn: Button):
+	# Normal: xanh dương nhạt
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.25, 0.7, 0.8, 1.0)
+	normal.border_color = Color(0.35, 0.8, 0.9, 1.0)
+	normal.border_width_top = 3
+	normal.border_width_bottom = 4
+	normal.border_width_left = 2
+	normal.border_width_right = 2
+	normal.corner_radius_top_left = 16
+	normal.corner_radius_top_right = 16
+	normal.corner_radius_bottom_left = 16
+	normal.corner_radius_bottom_right = 16
+	normal.content_margin_left = 20
+	normal.content_margin_right = 20
+	normal.content_margin_top = 10
+	normal.content_margin_bottom = 10
+	normal.shadow_color = Color(0.1, 0.35, 0.45, 0.6)
+	normal.shadow_size = 4
+	normal.shadow_offset = Vector2(0, 3)
+	btn.add_theme_stylebox_override("normal", normal)
+
+	# Hover: xanh dương sáng hơn
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = Color(0.3, 0.8, 0.9, 1.0)
+	hover.border_color = Color(0.4, 0.9, 1.0, 1.0)
+	hover.border_width_top = 3
+	hover.border_width_bottom = 4
+	hover.border_width_left = 2
+	hover.border_width_right = 2
+	hover.corner_radius_top_left = 16
+	hover.corner_radius_top_right = 16
+	hover.corner_radius_bottom_left = 16
+	hover.corner_radius_bottom_right = 16
+	hover.content_margin_left = 20
+	hover.content_margin_right = 20
+	hover.content_margin_top = 10
+	hover.content_margin_bottom = 10
+	hover.shadow_color = Color(0.12, 0.4, 0.5, 0.7)
+	hover.shadow_size = 5
+	hover.shadow_offset = Vector2(0, 4)
+	btn.add_theme_stylebox_override("hover", hover)
+
+	# Pressed: xanh dương tối hơn
+	var pressed = StyleBoxFlat.new()
+	pressed.bg_color = Color(0.2, 0.55, 0.65, 1.0)
+	pressed.border_color = Color(0.3, 0.65, 0.75, 1.0)
+	pressed.border_width_top = 2
+	pressed.border_width_bottom = 2
+	pressed.border_width_left = 2
+	pressed.border_width_right = 2
+	pressed.corner_radius_top_left = 16
+	pressed.corner_radius_top_right = 16
+	pressed.corner_radius_bottom_left = 16
+	pressed.corner_radius_bottom_right = 16
+	pressed.content_margin_left = 20
+	pressed.content_margin_right = 20
+	pressed.content_margin_top = 12
+	pressed.content_margin_bottom = 8
+	btn.add_theme_stylebox_override("pressed", pressed)
+
+	# Font style
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 0.95, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.85, 0.95, 1.0, 1))
+	btn.add_theme_color_override("font_shadow_color", Color(0.05, 0.2, 0.3, 0.8))
+	btn.add_theme_constant_override("shadow_offset_x", 1)
+	btn.add_theme_constant_override("shadow_offset_y", 2)
 
 
 func _apply_transparent_style(btn: Button):
@@ -1156,8 +1313,41 @@ func toggle_pause_menu():
 		# Đóng settings panel nếu đang mở
 		if pause_settings_panel:
 			pause_settings_panel.visible = false
+		# Ẩn tất cả UI gameplay để không hiện trên overlay
+		_set_gameplay_ui_visible(false)
 	else:
 		capture_mouse()
+		# Khôi phục UI gameplay
+		_set_gameplay_ui_visible(true)
+
+
+## Ẩn/hiện toàn bộ HUD (trừ PausePanel) khi pause
+var _hud_visibility_backup: Dictionary = {}
+
+func _set_gameplay_ui_visible(visible_state: bool):
+	var hud = get_node_or_null("HUD")
+	if not hud:
+		return
+	
+	if not visible_state:
+		# Lưu trạng thái visible của tất cả children trước khi ẩn
+		_hud_visibility_backup.clear()
+		for child in hud.get_children():
+			if child == pause_panel:
+				continue  # Không ẩn PausePanel
+			if child is CanvasItem:
+				_hud_visibility_backup[child.name] = child.visible
+				child.visible = false
+		# Đóng upgrade menu nếu đang mở
+		if upgrade_menu_open:
+			upgrade_menu_open = false
+	else:
+		# Khôi phục trạng thái visible trước đó
+		for child in hud.get_children():
+			if child == pause_panel:
+				continue
+			if child is CanvasItem:
+				child.visible = _hud_visibility_backup.get(child.name, true)
 
 
 ## Continue button - tiếp tục chơi
@@ -1259,10 +1449,10 @@ func _on_pause_sensitivity_changed(value: float):
 	Global.set_setting("mouse_sensitivity", sens)
 
 
-## Main Menu button - về menu chính
+## Bản Đồ button - chuyển đến chọn level
 func _on_pause_mainmenu_pressed():
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
+	get_tree().change_scene_to_file("res://scene/level_select.tscn")
 
 
 ## Quit button - thoát game

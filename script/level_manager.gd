@@ -895,9 +895,9 @@ func show_play_time_warning():
 
 ## ==================== TUTORIAL SYSTEM ====================
 
-## Tạo tutorial guide cho Level 1 và Level 2
+## Tạo tutorial guide cho Level 1, 2 và 3
 func _setup_tutorial():
-	if current_level > 2:
+	if current_level > 3:
 		return
 	var player = _find_player()
 	if not player:

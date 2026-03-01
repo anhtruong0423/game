@@ -88,7 +88,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
 theme_override_font_sizes/font_size = 15
-text = "Nhanh nhẹn - Tốc độ"
+text = "Nhanh nhẹn - Thu hoạch"
 horizontal_alignment = 1
 
 [node name="Bonus1" type="Label" parent="VBoxContainer/PetsContainer/FoxContainer"]
@@ -102,14 +102,14 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 14
-text = "-30% Tiêu hao NL khi sprint"
+text = "Nhặt trái cây xa hơn (+2m)"
 horizontal_alignment = 1
 
 [node name="Bonus3" type="Label" parent="VBoxContainer/PetsContainer/FoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 14
-text = "Phát hiện trái cây gần nhất"
+text = "+2 Slot túi đồ"
 horizontal_alignment = 1
 
 [node name="Speed" type="Label" parent="VBoxContainer/PetsContainer/FoxContainer"]
@@ -166,7 +166,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 14
-text = "+2 Slot túi đồ"
+text = "Hồi NL khi đứng yên gần rùa"
 horizontal_alignment = 1
 
 [node name="Bonus2" type="Label" parent="VBoxContainer/PetsContainer/TurtleContainer"]

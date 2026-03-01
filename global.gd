@@ -28,18 +28,20 @@ const PET_BONUSES = {
 	"fox": {
 		"speed_bonus": 0.2,
 		"sprint_drain_reduction": 0.3,
-		"inventory_bonus": 0,
+		"inventory_bonus": 2,
 		"dog_damage_reduction": 0.0,
 		"passive_heal": 0.0,
+		"interact_range_bonus": 2.0,
 		"follow_speed_mult": 2.0,
 		"scene_path": "res://scene/fox.tscn"
 	},
 	"turtle": {
 		"speed_bonus": 0.0,
 		"sprint_drain_reduction": 0.0,
-		"inventory_bonus": 2,
+		"inventory_bonus": 0,
 		"dog_damage_reduction": 0.5,
 		"passive_heal": 1.0,
+		"interact_range_bonus": 0.0,
 		"follow_speed_mult": 0.5,
 		"scene_path": "res://scene/turtle.tscn"
 	}

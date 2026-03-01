@@ -53,7 +53,7 @@ func _build_ui():
 	# Title
 	var title = Label.new()
 	title.name = "TitleLabel"
-	title.text = "CHỌN LEVEL"
+	title.text = "🗺  BẢN ĐỒ"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 42)
 	title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
@@ -99,18 +99,34 @@ func _create_level_button(level: int) -> Button:
 	var stars = Global.level_stars.get(level, 0)
 	var level_name = LEVEL_NAMES.get(level, "Level %d" % level)
 
-	# Nội dung nút
+	# Nội dung nút - tạo star text với màu vàng cho sao đã đạt
 	var star_text = ""
 	for s in range(3):
 		if s < stars:
-			star_text += "★"
+			star_text += "[color=#FFD700]★[/color]"
 		else:
-			star_text += "☆"
+			star_text += "[color=#888888]☆[/color]"
 
 	if unlocked:
-		btn.text = "Level %d\n%s\n%s" % [level, level_name, star_text]
+		btn.text = "Level %d\n%s" % [level, level_name]
 		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_level_selected.bind(level))
+		# Thêm RichTextLabel cho ngôi sao màu vàng
+		var star_label = RichTextLabel.new()
+		star_label.bbcode_enabled = true
+		star_label.text = star_text
+		star_label.fit_content = true
+		star_label.scroll_active = false
+		star_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		star_label.anchors_preset = Control.PRESET_BOTTOM_WIDE
+		star_label.anchor_top = 1.0
+		star_label.anchor_bottom = 1.0
+		star_label.offset_top = -30.0
+		star_label.offset_bottom = -5.0
+		star_label.add_theme_font_size_override("normal_font_size", 22)
+		# Căn giữa text
+		star_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		btn.add_child(star_label)
 	else:
 		btn.text = "Level %d\n🔒\nChưa mở khóa" % level
 		btn.add_theme_font_size_override("font_size", 16)
