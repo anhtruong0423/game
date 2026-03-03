@@ -235,15 +235,8 @@ func _create_popup_ui():
 	hbox.add_theme_constant_override("separation", 18)
 	popup_panel.add_child(hbox)
 
-	## Avatar bác nông dân
-	popup_avatar = TextureRect.new()
-	popup_avatar.custom_minimum_size = Vector2(96, 96)
-	popup_avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	popup_avatar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	var farmer_tex = load("res://assets/background/farmer.png")
-	if farmer_tex:
-		popup_avatar.texture = farmer_tex
-	hbox.add_child(popup_avatar)
+	## Avatar bác nông dân - đã bỏ
+	popup_avatar = null
 
 	## VBox: Tên + Nội dung
 	var vbox = VBoxContainer.new()

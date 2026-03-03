@@ -122,6 +122,7 @@ theme_override_font_sizes/font_size = 14
 text = "Reset Data (Test)"
 
 [node name="SettingsPanel" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -137,10 +138,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
-
-[node name="Background2" type="Sprite2D" parent="SettingsPanel/Overlay"]
-position = Vector2(625, 333)
-texture = ExtResource("2_h8uk4")
 
 [node name="Panel" type="Panel" parent="SettingsPanel"]
 layout_mode = 1
@@ -370,6 +367,7 @@ theme_override_font_sizes/font_size = 16
 text = "Đóng"
 
 [node name="TutorialPanel" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -385,10 +383,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
-
-[node name="Background2" type="Sprite2D" parent="TutorialPanel"]
-position = Vector2(623, 331)
-texture = ExtResource("2_h8uk4")
 
 [node name="Panel" type="Panel" parent="TutorialPanel"]
 layout_mode = 1

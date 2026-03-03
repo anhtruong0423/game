@@ -29,7 +29,7 @@ func _build_ui():
 	bg.anchors_preset = Control.PRESET_FULL_RECT
 	bg.anchor_right = 1.0
 	bg.anchor_bottom = 1.0
-	bg.color = Color(0.05, 0.08, 0.15, 1.0)
+	bg.color = Color(0.72, 0.55, 0.40, 1.0)  # Pastel brown
 	add_child(bg)
 
 	# Main container
@@ -53,10 +53,10 @@ func _build_ui():
 	# Title
 	var title = Label.new()
 	title.name = "TitleLabel"
-	title.text = "🗺  BẢN ĐỒ"
+	title.text = "CHỌN LEVEL"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 42)
-	title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
+	title.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	main_vbox.add_child(title)
 
 	# Grid container cho các level buttons (3 cột x 2 hàng)
@@ -87,6 +87,7 @@ func _build_ui():
 	menu_btn.add_theme_font_size_override("font_size", 18)
 	menu_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	menu_btn.pressed.connect(_on_menu_pressed)
+	_style_brown_button(menu_btn)
 	main_vbox.add_child(menu_btn)
 
 
@@ -133,7 +134,66 @@ func _create_level_button(level: int) -> Button:
 		btn.disabled = true
 		btn.modulate = Color(1, 1, 1, 0.5)
 
+	_style_brown_button(btn)
 	return btn
+
+
+func _style_brown_button(btn: Button):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.55, 0.35, 0.12)
+	normal.corner_radius_top_left = 14
+	normal.corner_radius_top_right = 14
+	normal.corner_radius_bottom_left = 14
+	normal.corner_radius_bottom_right = 14
+	normal.border_width_top = 3
+	normal.border_width_bottom = 3
+	normal.border_width_left = 3
+	normal.border_width_right = 3
+	normal.border_color = Color(0.25, 0.15, 0.05)  # Dark brown
+	normal.content_margin_left = 10
+	normal.content_margin_right = 10
+	normal.content_margin_top = 8
+	normal.content_margin_bottom = 8
+	normal.anti_aliasing = true
+	btn.add_theme_stylebox_override("normal", normal)
+	
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = Color(0.65, 0.42, 0.18)
+	hover.corner_radius_top_left = 14
+	hover.corner_radius_top_right = 14
+	hover.corner_radius_bottom_left = 14
+	hover.corner_radius_bottom_right = 14
+	hover.border_width_top = 3
+	hover.border_width_bottom = 3
+	hover.border_width_left = 3
+	hover.border_width_right = 3
+	hover.border_color = Color(0.3, 0.18, 0.06)
+	hover.content_margin_left = 10
+	hover.content_margin_right = 10
+	hover.content_margin_top = 8
+	hover.content_margin_bottom = 8
+	hover.anti_aliasing = true
+	btn.add_theme_stylebox_override("hover", hover)
+	
+	var disabled_style = StyleBoxFlat.new()
+	disabled_style.bg_color = Color(0.4, 0.3, 0.2, 0.5)
+	disabled_style.corner_radius_top_left = 14
+	disabled_style.corner_radius_top_right = 14
+	disabled_style.corner_radius_bottom_left = 14
+	disabled_style.corner_radius_bottom_right = 14
+	disabled_style.border_width_top = 2
+	disabled_style.border_width_bottom = 2
+	disabled_style.border_width_left = 2
+	disabled_style.border_width_right = 2
+	disabled_style.border_color = Color(0.25, 0.15, 0.05, 0.4)
+	disabled_style.content_margin_left = 10
+	disabled_style.content_margin_right = 10
+	disabled_style.content_margin_top = 8
+	disabled_style.content_margin_bottom = 8
+	disabled_style.anti_aliasing = true
+	btn.add_theme_stylebox_override("disabled", disabled_style)
+	
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
 
 
 func _is_level_unlocked(level: int) -> bool:

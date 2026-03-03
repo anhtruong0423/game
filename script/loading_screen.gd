@@ -32,9 +32,12 @@ func _ready():
 
 func _build_ui():
 	var bg = ColorRect.new()
-	bg.color = Color(0.05, 0.05, 0.1, 1.0)
+	bg.color = Color(0.72, 0.55, 0.40, 1.0)  # Pastel brown
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	
+	# Load font Melon Pop
+	var melon_font = load("res://assets/font/Melon Pop.ttf")
 
 	var vbox = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -48,8 +51,10 @@ func _build_ui():
 	var title = Label.new()
 	title.text = "PickMiUp"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 48)
-	title.add_theme_color_override("font_color", Color(0.3, 0.85, 0.4))
+	title.add_theme_font_size_override("font_size", 64)
+	title.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06))  # Dark brown
+	if melon_font:
+		title.add_theme_font_override("font", melon_font)
 	vbox.add_child(title)
 
 	var spacer_mid = Control.new()
@@ -66,8 +71,8 @@ func _build_ui():
 	dots_label = Label.new()
 	dots_label.text = "Đang tải"
 	dots_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	dots_label.add_theme_font_size_override("font_size", 18)
-	dots_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
+	dots_label.add_theme_font_size_override("font_size", 20)
+	dots_label.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06))  # Dark brown
 	bar_box.add_child(dots_label)
 
 	var spacer = Control.new()
@@ -82,26 +87,31 @@ func _build_ui():
 	bar_box.add_child(progress_bar)
 
 	_bar_fill_style = StyleBoxFlat.new()
-	_bar_fill_style.bg_color = Color(0.2, 0.75, 0.3)
-	_bar_fill_style.corner_radius_top_left = 3
-	_bar_fill_style.corner_radius_top_right = 3
-	_bar_fill_style.corner_radius_bottom_left = 3
-	_bar_fill_style.corner_radius_bottom_right = 3
+	_bar_fill_style.bg_color = Color(0.55, 0.35, 0.12)  # Brown
+	_bar_fill_style.corner_radius_top_left = 6
+	_bar_fill_style.corner_radius_top_right = 6
+	_bar_fill_style.corner_radius_bottom_left = 6
+	_bar_fill_style.corner_radius_bottom_right = 6
 	progress_bar.add_theme_stylebox_override("fill", _bar_fill_style)
 
 	var bg_style = StyleBoxFlat.new()
-	bg_style.bg_color = Color(0.15, 0.15, 0.2, 0.8)
-	bg_style.corner_radius_top_left = 3
-	bg_style.corner_radius_top_right = 3
-	bg_style.corner_radius_bottom_left = 3
-	bg_style.corner_radius_bottom_right = 3
+	bg_style.bg_color = Color(0.85, 0.72, 0.58, 0.6)  # Pastel brown nhạt
+	bg_style.corner_radius_top_left = 6
+	bg_style.corner_radius_top_right = 6
+	bg_style.corner_radius_bottom_left = 6
+	bg_style.corner_radius_bottom_right = 6
+	bg_style.border_width_top = 2
+	bg_style.border_width_bottom = 2
+	bg_style.border_width_left = 2
+	bg_style.border_width_right = 2
+	bg_style.border_color = Color(0.25, 0.15, 0.05)  # Dark brown border
 	progress_bar.add_theme_stylebox_override("background", bg_style)
 
 	percent_label = Label.new()
 	percent_label.text = "1%"
 	percent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	percent_label.add_theme_font_size_override("font_size", 14)
-	percent_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	percent_label.add_theme_color_override("font_color", Color(0.35, 0.22, 0.1))
 	bar_box.add_child(percent_label)
 
 	var spacer_tip = Control.new()
@@ -111,7 +121,7 @@ func _build_ui():
 	var tip = Label.new()
 	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tip.add_theme_font_size_override("font_size", 13)
-	tip.add_theme_color_override("font_color", Color(0.45, 0.45, 0.55))
+	tip.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 	var tips = [
 		"Giữ Shift để chạy nhanh, nhưng tốn gấp đôi năng lượng!",
 		"Uống sữa FRUMI để hồi phục năng lượng.",

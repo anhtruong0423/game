@@ -94,6 +94,7 @@ var _fruit_labels: Array = []
 var _particle_dots: Array = []
 var _menu_buttons: Array = []
 var _button_base_scales: Dictionary = {}
+var _play_btn_base_y: float = 0.0
 
 # Floating fruit config
 const FRUIT_EMOJIS = ["🍎", "🍊", "🍇", "🍋", "🍓", "🍌", "🍒", "🍈", "🥭"]
@@ -153,13 +154,16 @@ func _style_premium_menu():
 	
 	# === Style Title ===
 	_title_label = $MenuContainer/TitleLabel
-	_title_label.text = "🌿 PickMiUp 🌿"
+	_title_label.text = "PickMiUp"
 	_title_label.add_theme_font_size_override("font_size", 86)
-	_title_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.45, 1))
-	_title_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.6, 0.2, 0.7))
-	_title_label.add_theme_constant_override("shadow_offset_x", 4)
-	_title_label.add_theme_constant_override("shadow_offset_y", 4)
-	_title_label.add_theme_color_override("font_outline_color", Color(0.1, 0.3, 0.15, 0.5))
+	_title_label.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06))  # Dark brown
+	var melon_font = load("res://assets/font/Melon Pop.ttf")
+	if melon_font:
+		_title_label.add_theme_font_override("font", melon_font)
+	_title_label.add_theme_color_override("font_shadow_color", Color(0.2, 0.12, 0.04, 0.5))
+	_title_label.add_theme_constant_override("shadow_offset_x", 3)
+	_title_label.add_theme_constant_override("shadow_offset_y", 3)
+	_title_label.add_theme_color_override("font_outline_color", Color(0.5, 0.35, 0.15, 0.4))
 	_title_label.add_theme_constant_override("outline_size", 3)
 	
 	# === Style Subtitle ===
@@ -192,10 +196,10 @@ func _style_premium_menu():
 	
 	# === Style tất cả buttons (cùng kích thước) ===
 	var btn_size = Vector2(320, 55)
-	_style_menu_button(play_button, Color(0.1, 0.6, 0.25), Color(0.15, 0.75, 0.35), "▶  Bắt Đầu Chơi", 26, btn_size)
-	_style_menu_button(settings_button, Color(0.2, 0.3, 0.55), Color(0.25, 0.4, 0.7), "⚙️  Cài Đặt", 22, btn_size)
-	_style_menu_button(tutorial_button, Color(0.18, 0.4, 0.48), Color(0.22, 0.52, 0.6), "📖  Hướng Dẫn", 22, btn_size)
-	_style_menu_button(quit_button, Color(0.5, 0.15, 0.15), Color(0.6, 0.2, 0.2), "✖  Thoát", 22, btn_size)
+	_style_menu_button(play_button, Color(0.55, 0.35, 0.12), Color(0.65, 0.42, 0.18), "▶  Bắt Đầu Chơi", 26, btn_size)
+	_style_menu_button(settings_button, Color(0.50, 0.30, 0.10), Color(0.60, 0.38, 0.16), "⚙️  Cài Đặt", 22, btn_size)
+	_style_menu_button(tutorial_button, Color(0.48, 0.32, 0.12), Color(0.58, 0.40, 0.18), "📖  Hướng Dẫn", 22, btn_size)
+	_style_menu_button(quit_button, Color(0.45, 0.25, 0.10), Color(0.55, 0.32, 0.15), "✖  Thoát", 22, btn_size)
 	
 	# Lưu danh sách buttons để animate hover
 	_menu_buttons = [play_button, settings_button, tutorial_button, quit_button]
@@ -205,6 +209,9 @@ func _style_premium_menu():
 		btn.mouse_entered.connect(_on_button_hover.bind(btn))
 		btn.mouse_exited.connect(_on_button_unhover.bind(btn))
 		_button_base_scales[btn] = btn.scale
+	
+	# Lưu vị trí gốc của Play button để bounce
+	_play_btn_base_y = play_button.position.y
 	
 	# Reset button nhỏ gọn, trong suốt hơn
 	reset_button.custom_minimum_size = Vector2(140, 32)
@@ -313,9 +320,10 @@ func _style_menu_button(btn: Button, base_color: Color, accent_color: Color, tex
 	normal.corner_radius_bottom_left = 14
 	normal.corner_radius_bottom_right = 14
 	normal.border_width_bottom = 3
-	normal.border_width_left = 1
-	normal.border_width_right = 1
-	normal.border_color = base_color.darkened(0.25)
+	normal.border_width_left = 2
+	normal.border_width_right = 2
+	normal.border_width_top = 2
+	normal.border_color = Color(0.25, 0.15, 0.05)
 	normal.content_margin_left = 24
 	normal.content_margin_right = 24
 	normal.content_margin_top = 12
@@ -334,10 +342,10 @@ func _style_menu_button(btn: Button, base_color: Color, accent_color: Color, tex
 	hover.corner_radius_bottom_left = 14
 	hover.corner_radius_bottom_right = 14
 	hover.border_width_bottom = 3
-	hover.border_width_top = 1
-	hover.border_width_left = 1
-	hover.border_width_right = 1
-	hover.border_color = accent_color.lightened(0.35)
+	hover.border_width_top = 2
+	hover.border_width_left = 2
+	hover.border_width_right = 2
+	hover.border_color = Color(0.3, 0.18, 0.06)
 	hover.content_margin_left = 24
 	hover.content_margin_right = 24
 	hover.content_margin_top = 12
@@ -356,9 +364,10 @@ func _style_menu_button(btn: Button, base_color: Color, accent_color: Color, tex
 	pressed.corner_radius_bottom_left = 14
 	pressed.corner_radius_bottom_right = 14
 	pressed.border_width_top = 3
-	pressed.border_width_left = 1
-	pressed.border_width_right = 1
-	pressed.border_color = base_color.darkened(0.4)
+	pressed.border_width_left = 2
+	pressed.border_width_right = 2
+	pressed.border_width_bottom = 2
+	pressed.border_color = Color(0.2, 0.12, 0.04)
 	pressed.content_margin_left = 24
 	pressed.content_margin_right = 24
 	pressed.content_margin_top = 14
@@ -380,12 +389,12 @@ func _style_menu_button(btn: Button, base_color: Color, accent_color: Color, tex
 	focus.border_width_top = 2
 	focus.border_width_left = 2
 	focus.border_width_right = 2
-	focus.border_color = Color(0.4, 1.0, 0.5, 0.7)
+	focus.border_color = Color(0.35, 0.22, 0.08, 0.9)
 	focus.content_margin_left = 24
 	focus.content_margin_right = 24
 	focus.content_margin_top = 12
 	focus.content_margin_bottom = 12
-	focus.shadow_color = Color(0.2, 0.8, 0.3, 0.3)
+	focus.shadow_color = Color(0.4, 0.25, 0.1, 0.3)
 	focus.shadow_size = 8
 	focus.shadow_offset = Vector2(0, 2)
 	focus.anti_aliasing = true
@@ -438,20 +447,26 @@ func _animate_entrance():
 func _process(delta):
 	_bg_timer += delta
 	
-	# === Title shimmer/glow animation ===
+	# === Title shimmer/glow animation (dark brown tone) ===
 	if _title_label:
 		var t = _bg_timer * 2.0
 		var glow = (sin(t) + 1.0) / 2.0
 		var shimmer = (sin(t * 1.7 + 1.0) + 1.0) / 2.0
 		_title_label.add_theme_color_override("font_color", Color(
-			0.15 + shimmer * 0.15,
-			0.8 + glow * 0.2,
-			0.35 + shimmer * 0.15,
+			0.25 + shimmer * 0.1,
+			0.15 + glow * 0.06,
+			0.04 + shimmer * 0.04,
 			1.0
 		))
 		_title_label.add_theme_color_override("font_shadow_color", Color(
-			0.0, 0.4 + glow * 0.3, 0.15, 0.6 + glow * 0.2
+			0.15 + glow * 0.1, 0.08 + glow * 0.05, 0.02, 0.4 + glow * 0.2
 		))
+	
+	# === Play button bounce animation (scale-based vì nằm trong VBoxContainer) ===
+	if is_instance_valid(play_button):
+		var bounce_y = 1.0 + sin(_bg_timer * 3.5) * 0.06  # Scale Y nhảy 6%
+		var bounce_x = 1.0 + sin(_bg_timer * 3.5) * 0.03  # Scale X nhẹ hơn 3%
+		play_button.scale = Vector2(bounce_x, bounce_y)
 	
 	# === Animated background breathing ===
 	var bg_pulse = (sin(_bg_timer * 0.5) + 1.0) / 2.0

@@ -201,6 +201,9 @@ func _ready() -> void:
 	if pause_settings_reset_btn:
 		pause_settings_reset_btn.pressed.connect(_on_pause_settings_reset_pressed)
 	
+	# Tạo giao diện pause menu kiểu game casual
+	_setup_pause_menu_style()
+	
 	# Kết nối signals cho pause settings sliders
 	if pause_brightness_slider:
 		pause_brightness_slider.value_changed.connect(_on_pause_brightness_changed)
@@ -221,8 +224,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Xử lý ESC
 	if Input.is_key_pressed(KEY_ESCAPE):
 		if pause_menu_open:
+			# Nếu đang mở map overlay, đóng map overlay
+			if pause_map_panel and pause_map_panel.visible:
+				pause_map_panel.visible = false
 			# Nếu đang mở settings trong pause, đóng settings
-			if pause_settings_panel and pause_settings_panel.visible:
+			elif pause_settings_panel and pause_settings_panel.visible:
 				pause_settings_panel.visible = false
 			else:
 				# Đóng pause menu
@@ -680,9 +686,12 @@ func toggle_flashlight():
 
 
 ## Khôi phục đèn pin nếu đã nhặt từ trước (Global.has_flashlight)
+## Chỉ khôi phục ở Level 3+ (đèn pin không xuất hiện ở Level 1, 2)
 func _restore_flashlight():
 	if not Global.has_flashlight:
 		return
+	if Global.current_level < 3:
+		return  # Đèn pin chỉ hoạt động từ Level 3+
 	if has_flashlight:
 		return  # Đã có rồi
 	# Tạo lại đèn pin
@@ -832,187 +841,33 @@ func _setup_turtle_hint():
 
 
 func _setup_transparent_buttons():
-	var upgrade_buttons: Array = []
+	var all_buttons: Array = []
 
 	if inventory_upgrade_btn:
-		upgrade_buttons.append(inventory_upgrade_btn)
+		all_buttons.append(inventory_upgrade_btn)
 	if speed_upgrade_btn:
-		upgrade_buttons.append(speed_upgrade_btn)
+		all_buttons.append(speed_upgrade_btn)
 	if energy_upgrade_btn:
-		upgrade_buttons.append(energy_upgrade_btn)
-
-	for btn in upgrade_buttons:
-		_apply_transparent_style(btn)
-
-	# Pause settings buttons (giữ style cũ)
-	var settings_buttons: Array = []
-	if pause_settings_save_btn:
-		settings_buttons.append(pause_settings_save_btn)
-	if pause_settings_reset_btn:
-		settings_buttons.append(pause_settings_reset_btn)
-	if pause_settings_close_btn:
-		settings_buttons.append(pause_settings_close_btn)
-
-	for btn in settings_buttons:
-		_apply_transparent_style(btn)
-
-	# Casual game style cho pause menu buttons
-	_setup_pause_casual_style()
-
-
-func _setup_pause_casual_style():
-	# Nút xanh lá: Tiếp Tục, Chơi Lại
+		all_buttons.append(energy_upgrade_btn)
 	if pause_continue_btn:
-		_apply_casual_green_style(pause_continue_btn)
+		all_buttons.append(pause_continue_btn)
 	if pause_restart_btn:
-		_apply_casual_green_style(pause_restart_btn)
-	# Nút xanh dương: Cài Đặt, Bản Đồ, Thoát
+		all_buttons.append(pause_restart_btn)
 	if pause_settings_btn:
-		_apply_casual_blue_style(pause_settings_btn)
+		all_buttons.append(pause_settings_btn)
 	if pause_mainmenu_btn:
-		_apply_casual_blue_style(pause_mainmenu_btn)
+		all_buttons.append(pause_mainmenu_btn)
 	if pause_quit_btn:
-		_apply_casual_blue_style(pause_quit_btn)
+		all_buttons.append(pause_quit_btn)
+	if pause_settings_save_btn:
+		all_buttons.append(pause_settings_save_btn)
+	if pause_settings_reset_btn:
+		all_buttons.append(pause_settings_reset_btn)
+	if pause_settings_close_btn:
+		all_buttons.append(pause_settings_close_btn)
 
-
-func _apply_casual_green_style(btn: Button):
-	# Normal: xanh lá sáng
-	var normal = StyleBoxFlat.new()
-	normal.bg_color = Color(0.45, 0.75, 0.15, 1.0)
-	normal.border_color = Color(0.55, 0.85, 0.25, 1.0)
-	normal.border_width_top = 3
-	normal.border_width_bottom = 4
-	normal.border_width_left = 2
-	normal.border_width_right = 2
-	normal.corner_radius_top_left = 16
-	normal.corner_radius_top_right = 16
-	normal.corner_radius_bottom_left = 16
-	normal.corner_radius_bottom_right = 16
-	normal.content_margin_left = 20
-	normal.content_margin_right = 20
-	normal.content_margin_top = 10
-	normal.content_margin_bottom = 10
-	normal.shadow_color = Color(0.2, 0.45, 0.05, 0.6)
-	normal.shadow_size = 4
-	normal.shadow_offset = Vector2(0, 3)
-	btn.add_theme_stylebox_override("normal", normal)
-
-	# Hover: xanh lá sáng hơn
-	var hover = StyleBoxFlat.new()
-	hover.bg_color = Color(0.55, 0.85, 0.2, 1.0)
-	hover.border_color = Color(0.65, 0.95, 0.35, 1.0)
-	hover.border_width_top = 3
-	hover.border_width_bottom = 4
-	hover.border_width_left = 2
-	hover.border_width_right = 2
-	hover.corner_radius_top_left = 16
-	hover.corner_radius_top_right = 16
-	hover.corner_radius_bottom_left = 16
-	hover.corner_radius_bottom_right = 16
-	hover.content_margin_left = 20
-	hover.content_margin_right = 20
-	hover.content_margin_top = 10
-	hover.content_margin_bottom = 10
-	hover.shadow_color = Color(0.25, 0.5, 0.08, 0.7)
-	hover.shadow_size = 5
-	hover.shadow_offset = Vector2(0, 4)
-	btn.add_theme_stylebox_override("hover", hover)
-
-	# Pressed: xanh lá tối hơn
-	var pressed = StyleBoxFlat.new()
-	pressed.bg_color = Color(0.35, 0.6, 0.1, 1.0)
-	pressed.border_color = Color(0.45, 0.7, 0.2, 1.0)
-	pressed.border_width_top = 2
-	pressed.border_width_bottom = 2
-	pressed.border_width_left = 2
-	pressed.border_width_right = 2
-	pressed.corner_radius_top_left = 16
-	pressed.corner_radius_top_right = 16
-	pressed.corner_radius_bottom_left = 16
-	pressed.corner_radius_bottom_right = 16
-	pressed.content_margin_left = 20
-	pressed.content_margin_right = 20
-	pressed.content_margin_top = 12
-	pressed.content_margin_bottom = 8
-	btn.add_theme_stylebox_override("pressed", pressed)
-
-	# Font style
-	btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	btn.add_theme_color_override("font_hover_color", Color(1, 1, 0.9, 1))
-	btn.add_theme_color_override("font_pressed_color", Color(0.9, 0.95, 0.85, 1))
-	btn.add_theme_color_override("font_shadow_color", Color(0.15, 0.3, 0.05, 0.8))
-	btn.add_theme_constant_override("shadow_offset_x", 1)
-	btn.add_theme_constant_override("shadow_offset_y", 2)
-
-
-func _apply_casual_blue_style(btn: Button):
-	# Normal: xanh dương nhạt
-	var normal = StyleBoxFlat.new()
-	normal.bg_color = Color(0.25, 0.7, 0.8, 1.0)
-	normal.border_color = Color(0.35, 0.8, 0.9, 1.0)
-	normal.border_width_top = 3
-	normal.border_width_bottom = 4
-	normal.border_width_left = 2
-	normal.border_width_right = 2
-	normal.corner_radius_top_left = 16
-	normal.corner_radius_top_right = 16
-	normal.corner_radius_bottom_left = 16
-	normal.corner_radius_bottom_right = 16
-	normal.content_margin_left = 20
-	normal.content_margin_right = 20
-	normal.content_margin_top = 10
-	normal.content_margin_bottom = 10
-	normal.shadow_color = Color(0.1, 0.35, 0.45, 0.6)
-	normal.shadow_size = 4
-	normal.shadow_offset = Vector2(0, 3)
-	btn.add_theme_stylebox_override("normal", normal)
-
-	# Hover: xanh dương sáng hơn
-	var hover = StyleBoxFlat.new()
-	hover.bg_color = Color(0.3, 0.8, 0.9, 1.0)
-	hover.border_color = Color(0.4, 0.9, 1.0, 1.0)
-	hover.border_width_top = 3
-	hover.border_width_bottom = 4
-	hover.border_width_left = 2
-	hover.border_width_right = 2
-	hover.corner_radius_top_left = 16
-	hover.corner_radius_top_right = 16
-	hover.corner_radius_bottom_left = 16
-	hover.corner_radius_bottom_right = 16
-	hover.content_margin_left = 20
-	hover.content_margin_right = 20
-	hover.content_margin_top = 10
-	hover.content_margin_bottom = 10
-	hover.shadow_color = Color(0.12, 0.4, 0.5, 0.7)
-	hover.shadow_size = 5
-	hover.shadow_offset = Vector2(0, 4)
-	btn.add_theme_stylebox_override("hover", hover)
-
-	# Pressed: xanh dương tối hơn
-	var pressed = StyleBoxFlat.new()
-	pressed.bg_color = Color(0.2, 0.55, 0.65, 1.0)
-	pressed.border_color = Color(0.3, 0.65, 0.75, 1.0)
-	pressed.border_width_top = 2
-	pressed.border_width_bottom = 2
-	pressed.border_width_left = 2
-	pressed.border_width_right = 2
-	pressed.corner_radius_top_left = 16
-	pressed.corner_radius_top_right = 16
-	pressed.corner_radius_bottom_left = 16
-	pressed.corner_radius_bottom_right = 16
-	pressed.content_margin_left = 20
-	pressed.content_margin_right = 20
-	pressed.content_margin_top = 12
-	pressed.content_margin_bottom = 8
-	btn.add_theme_stylebox_override("pressed", pressed)
-
-	# Font style
-	btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	btn.add_theme_color_override("font_hover_color", Color(1, 1, 0.95, 1))
-	btn.add_theme_color_override("font_pressed_color", Color(0.85, 0.95, 1.0, 1))
-	btn.add_theme_color_override("font_shadow_color", Color(0.05, 0.2, 0.3, 0.8))
-	btn.add_theme_constant_override("shadow_offset_x", 1)
-	btn.add_theme_constant_override("shadow_offset_y", 2)
+	for btn in all_buttons:
+		_apply_transparent_style(btn)
 
 
 func _apply_transparent_style(btn: Button):
@@ -1298,6 +1153,150 @@ func _on_energy_upgrade_pressed():
 
 ## ==================== PAUSE MENU SYSTEM ====================
 
+## Tạo giao diện pause menu kiểu game casual
+func _setup_pause_menu_style():
+	if not pause_panel:
+		return
+	
+	# Load font Gluten
+	var gluten_font = load("res://assets/GUI/Post/Font for text/Gluten/Gluten-VariableFont_slnt,wght.ttf")
+	
+	# === Style cho title ===
+	var title_label = pause_panel.get_node_or_null("VBoxContainer/Title")
+	if title_label:
+		title_label.add_theme_font_size_override("font_size", 52)
+		title_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+		title_label.add_theme_color_override("font_shadow_color", Color(0.2, 0.15, 0.1, 0.8))
+		title_label.add_theme_constant_override("shadow_offset_x", 3)
+		title_label.add_theme_constant_override("shadow_offset_y", 3)
+		if gluten_font:
+			title_label.add_theme_font_override("font", gluten_font)
+	
+	# === Style cho background overlay ===
+	var bg = pause_panel.get_node_or_null("Background")
+	if bg:
+		bg.color = Color(0.0, 0.0, 0.0, 0.55)
+	
+	# === VBoxContainer spacing ===
+	var vbox = pause_panel.get_node_or_null("VBoxContainer")
+	if vbox:
+		vbox.add_theme_constant_override("separation", 12)
+	
+	# === Icon paths ===
+	var icon_paths = {
+		"continue": "res://assets/GUI/Post/Assets/Menu Buttons/Icons/Arrow.png",
+		"restart": "res://assets/GUI/Post/Assets/Menu Buttons/Icons/Return.png",
+		"mainmenu": "res://assets/GUI/Post/Assets/Menu Buttons/Icons/House.png",
+		"settings": "res://assets/GUI/Post/Assets/Menu Buttons/Icons/Settings.png"
+	}
+	
+	# === Style nút brown cho tất cả các nút ===
+	var all_pause_buttons = []
+	if pause_continue_btn:
+		all_pause_buttons.append({"btn": pause_continue_btn, "icon": icon_paths["continue"], "text": "TIẾP TỤC"})
+	if pause_restart_btn:
+		all_pause_buttons.append({"btn": pause_restart_btn, "icon": icon_paths["restart"], "text": "CHƠI LẠI"})
+	if pause_mainmenu_btn:
+		all_pause_buttons.append({"btn": pause_mainmenu_btn, "icon": icon_paths["mainmenu"], "text": "BẢN ĐỒ"})
+	if pause_settings_btn:
+		all_pause_buttons.append({"btn": pause_settings_btn, "icon": icon_paths["settings"], "text": "CÀI ĐẶT"})
+	if pause_quit_btn:
+		all_pause_buttons.append({"btn": pause_quit_btn, "icon": "", "text": "THOÁT"})
+	
+	for data in all_pause_buttons:
+		_apply_casual_button_style(
+			data["btn"], data["text"], data["icon"], gluten_font,
+			Color(0.55, 0.35, 0.15, 1.0),  # Brown (nền)
+			Color(0.65, 0.42, 0.18, 1.0),  # Brown sáng hơn (hover)
+			Color(0.40, 0.25, 0.10, 1.0)   # Brown đậm (pressed)
+		)
+
+
+## Áp dụng style nút kiểu game casual (bo tròn, gradient, icon + text)
+func _apply_casual_button_style(btn: Button, text: String, icon_path: String, custom_font, 
+		color_normal: Color, color_hover: Color, color_pressed: Color):
+	# Kích thước nút
+	btn.custom_minimum_size = Vector2(300, 65)
+	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	
+	# Text
+	btn.text = "    " + text  # Thêm khoảng trống cho icon
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	
+	# Font
+	if custom_font:
+		btn.add_theme_font_override("font", custom_font)
+	btn.add_theme_font_size_override("font_size", 26)
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.95, 0.95, 0.95, 1))
+	
+	# Font shadow
+	btn.add_theme_color_override("font_shadow_color", Color(0.15, 0.1, 0.05, 0.6))
+	btn.add_theme_constant_override("shadow_offset_x", 2)
+	btn.add_theme_constant_override("shadow_offset_y", 2)
+	
+	# Normal style
+	var style_normal = StyleBoxFlat.new()
+	style_normal.bg_color = color_normal
+	style_normal.corner_radius_top_left = 20
+	style_normal.corner_radius_top_right = 20
+	style_normal.corner_radius_bottom_left = 20
+	style_normal.corner_radius_bottom_right = 20
+	style_normal.border_color = Color(0.30, 0.18, 0.08, 1.0)  # Dark brown border
+	style_normal.border_width_top = 3
+	style_normal.border_width_bottom = 3
+	style_normal.border_width_left = 3
+	style_normal.border_width_right = 3
+	style_normal.shadow_color = Color(0, 0, 0, 0.25)
+	style_normal.shadow_size = 4
+	style_normal.shadow_offset = Vector2(0, 3)
+	style_normal.content_margin_left = 20
+	style_normal.content_margin_right = 20
+	style_normal.content_margin_top = 12
+	style_normal.content_margin_bottom = 12
+	btn.add_theme_stylebox_override("normal", style_normal)
+	
+	# Hover style
+	var style_hover = style_normal.duplicate()
+	style_hover.bg_color = color_hover
+	style_hover.border_color = Color(0.25, 0.14, 0.05, 1.0)  # Darker brown border on hover
+	style_hover.border_width_top = 4
+	style_hover.border_width_bottom = 4
+	style_hover.border_width_left = 4
+	style_hover.border_width_right = 4
+	btn.add_theme_stylebox_override("hover", style_hover)
+	
+	# Pressed style
+	var style_pressed = style_normal.duplicate()
+	style_pressed.bg_color = color_pressed
+	style_pressed.border_width_top = 3
+	style_pressed.border_width_bottom = 3
+	style_pressed.border_width_left = 3
+	style_pressed.border_width_right = 3
+	style_pressed.border_color = Color(0.20, 0.12, 0.04, 1.0)  # Darkest brown border
+	style_pressed.shadow_size = 1
+	style_pressed.shadow_offset = Vector2(0, 1)
+	btn.add_theme_stylebox_override("pressed", style_pressed)
+	
+	# Focus style (giống normal)
+	var style_focus = style_normal.duplicate()
+	style_focus.border_color = Color(0.35, 0.22, 0.10, 1.0)  # Dark brown focus border
+	style_focus.border_width_top = 3
+	style_focus.border_width_bottom = 3
+	style_focus.border_width_left = 3
+	style_focus.border_width_right = 3
+	btn.add_theme_stylebox_override("focus", style_focus)
+	
+	# Thêm icon bên trái nút
+	if icon_path != "":
+		var icon_tex = load(icon_path) as Texture2D
+		if icon_tex:
+			btn.icon = icon_tex
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			btn.expand_icon = true
+
+
 ## Toggle pause menu
 func toggle_pause_menu():
 	pause_menu_open = not pause_menu_open
@@ -1313,41 +1312,8 @@ func toggle_pause_menu():
 		# Đóng settings panel nếu đang mở
 		if pause_settings_panel:
 			pause_settings_panel.visible = false
-		# Ẩn tất cả UI gameplay để không hiện trên overlay
-		_set_gameplay_ui_visible(false)
 	else:
 		capture_mouse()
-		# Khôi phục UI gameplay
-		_set_gameplay_ui_visible(true)
-
-
-## Ẩn/hiện toàn bộ HUD (trừ PausePanel) khi pause
-var _hud_visibility_backup: Dictionary = {}
-
-func _set_gameplay_ui_visible(visible_state: bool):
-	var hud = get_node_or_null("HUD")
-	if not hud:
-		return
-	
-	if not visible_state:
-		# Lưu trạng thái visible của tất cả children trước khi ẩn
-		_hud_visibility_backup.clear()
-		for child in hud.get_children():
-			if child == pause_panel:
-				continue  # Không ẩn PausePanel
-			if child is CanvasItem:
-				_hud_visibility_backup[child.name] = child.visible
-				child.visible = false
-		# Đóng upgrade menu nếu đang mở
-		if upgrade_menu_open:
-			upgrade_menu_open = false
-	else:
-		# Khôi phục trạng thái visible trước đó
-		for child in hud.get_children():
-			if child == pause_panel:
-				continue
-			if child is CanvasItem:
-				child.visible = _hud_visibility_backup.get(child.name, true)
 
 
 ## Continue button - tiếp tục chơi
@@ -1449,10 +1415,193 @@ func _on_pause_sensitivity_changed(value: float):
 	Global.set_setting("mouse_sensitivity", sens)
 
 
-## Bản Đồ button - chuyển đến chọn level
+## Main Menu button - mở overlay bản đồ trong pause
+var pause_map_panel: Control = null
+
 func _on_pause_mainmenu_pressed():
+	if not pause_map_panel:
+		_build_pause_map_panel()
+	pause_map_panel.visible = true
+
+
+## Đóng overlay bản đồ, quay về pause menu
+func _on_pause_map_close():
+	if pause_map_panel:
+		pause_map_panel.visible = false
+
+
+## Tạo overlay bản đồ (level select) trong pause menu
+const PAUSE_LEVEL_COUNT := 6
+const PAUSE_LEVEL_NAMES := {
+	1: "Vườn trái cây",
+	2: "Khu cam chanh",
+	3: "Mùa hè rực rỡ",
+	4: "Thu hoạch lớn",
+	5: "Thử thách trái cây",
+	6: "Siêu thu hoạch",
+}
+
+func _build_pause_map_panel():
+	pause_map_panel = Control.new()
+	pause_map_panel.name = "PauseMapPanel"
+	pause_map_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_map_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pause_map_panel.visible = false
+	pause_panel.add_child(pause_map_panel)
+	
+	# Overlay tối
+	var overlay = ColorRect.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.color = Color(0, 0, 0, 0.5)
+	pause_map_panel.add_child(overlay)
+	
+	# Panel chính
+	var panel = Panel.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.anchor_left = 0.5
+	panel.anchor_top = 0.5
+	panel.anchor_right = 0.5
+	panel.anchor_bottom = 0.5
+	panel.offset_left = -340
+	panel.offset_top = -280
+	panel.offset_right = 340
+	panel.offset_bottom = 280
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.72, 0.55, 0.40, 0.95)
+	panel_style.corner_radius_top_left = 16
+	panel_style.corner_radius_top_right = 16
+	panel_style.corner_radius_bottom_left = 16
+	panel_style.corner_radius_bottom_right = 16
+	panel_style.border_width_top = 3
+	panel_style.border_width_bottom = 3
+	panel_style.border_width_left = 3
+	panel_style.border_width_right = 3
+	panel_style.border_color = Color(0.30, 0.18, 0.08)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	pause_map_panel.add_child(panel)
+	
+	# VBox bên trong panel
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 20
+	vbox.offset_top = 20
+	vbox.offset_right = -20
+	vbox.offset_bottom = -20
+	vbox.add_theme_constant_override("separation", 20)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	panel.add_child(vbox)
+	
+	# Tiêu đề
+	var title = Label.new()
+	title.text = "BẢN ĐỒ"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 36)
+	title.add_theme_color_override("font_color", Color(1, 1, 1))
+	title.add_theme_color_override("font_shadow_color", Color(0.2, 0.12, 0.05, 0.7))
+	title.add_theme_constant_override("shadow_offset_x", 2)
+	title.add_theme_constant_override("shadow_offset_y", 2)
+	var gluten_font = load("res://assets/GUI/Post/Font for text/Gluten/Gluten-VariableFont_slnt,wght.ttf")
+	if gluten_font:
+		title.add_theme_font_override("font", gluten_font)
+	vbox.add_child(title)
+	
+	# Grid container cho level buttons
+	var grid_center = CenterContainer.new()
+	vbox.add_child(grid_center)
+	
+	var grid = GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 15)
+	grid.add_theme_constant_override("v_separation", 15)
+	grid_center.add_child(grid)
+	
+	# Tạo 6 nút level
+	for i in range(1, PAUSE_LEVEL_COUNT + 1):
+		var btn = _create_pause_map_level_btn(i)
+		grid.add_child(btn)
+	
+	# Nút đóng
+	var close_btn = Button.new()
+	close_btn.text = "← Đóng"
+	close_btn.custom_minimum_size = Vector2(180, 45)
+	close_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	close_btn.add_theme_font_size_override("font_size", 18)
+	close_btn.add_theme_color_override("font_color", Color(1, 1, 1))
+	close_btn.pressed.connect(_on_pause_map_close)
+	_style_pause_map_btn(close_btn)
+	vbox.add_child(close_btn)
+
+
+func _create_pause_map_level_btn(level: int) -> Button:
+	var btn = Button.new()
+	btn.custom_minimum_size = Vector2(160, 100)
+	
+	var unlocked = level == 1 or Global.level_stars.get(level - 1, 0) >= 1
+	var stars = Global.level_stars.get(level, 0)
+	var level_name = PAUSE_LEVEL_NAMES.get(level, "Level %d" % level)
+	
+	if unlocked:
+		var star_str = ""
+		for s in range(3):
+			if s < stars:
+				star_str += "★"
+			else:
+				star_str += "☆"
+		btn.text = "Level %d\n%s\n%s" % [level, level_name, star_str]
+		btn.add_theme_font_size_override("font_size", 14)
+		btn.pressed.connect(_on_pause_map_level_selected.bind(level))
+	else:
+		btn.text = "Level %d\n🔒\nChưa mở khóa" % level
+		btn.add_theme_font_size_override("font_size", 14)
+		btn.disabled = true
+		btn.modulate = Color(1, 1, 1, 0.5)
+	
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
+	_style_pause_map_btn(btn)
+	return btn
+
+
+func _style_pause_map_btn(btn: Button):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.55, 0.35, 0.12)
+	normal.corner_radius_top_left = 12
+	normal.corner_radius_top_right = 12
+	normal.corner_radius_bottom_left = 12
+	normal.corner_radius_bottom_right = 12
+	normal.border_width_top = 2
+	normal.border_width_bottom = 2
+	normal.border_width_left = 2
+	normal.border_width_right = 2
+	normal.border_color = Color(0.25, 0.15, 0.05)
+	normal.content_margin_left = 8
+	normal.content_margin_right = 8
+	normal.content_margin_top = 6
+	normal.content_margin_bottom = 6
+	btn.add_theme_stylebox_override("normal", normal)
+	
+	var hover = normal.duplicate()
+	hover.bg_color = Color(0.65, 0.42, 0.18)
+	hover.border_color = Color(0.3, 0.18, 0.06)
+	btn.add_theme_stylebox_override("hover", hover)
+	
+	var pressed_style = normal.duplicate()
+	pressed_style.bg_color = Color(0.40, 0.25, 0.10)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+	
+	var disabled_style = normal.duplicate()
+	disabled_style.bg_color = Color(0.4, 0.3, 0.2, 0.5)
+	disabled_style.border_color = Color(0.25, 0.15, 0.05, 0.4)
+	btn.add_theme_stylebox_override("disabled", disabled_style)
+
+
+func _on_pause_map_level_selected(level: int):
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scene/level_select.tscn")
+	Global.current_level = level
+	Global.dialogue_mode = "level"
+	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 
 ## Quit button - thoát game

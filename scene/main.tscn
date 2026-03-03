@@ -810,7 +810,7 @@ omni_attenuation = 1.5
 script = ExtResource("9_lvlmgr")
 
 [node name="Node3D" parent="." instance=ExtResource("5_0ha60")]
-transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -133.90001, 68.600006)
+transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -134.1, 68.600006)
 
 [node name="nhanvat" parent="." instance=ExtResource("6_4j5ol")]
 transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.30001, -133.03967, 74.200005)
