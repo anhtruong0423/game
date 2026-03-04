@@ -91,6 +91,11 @@ func play_upgrade_sfx() -> void:
 func play_gameover_sfx() -> void:
 	_play_sfx(gameover_sfx_stream)
 
+## Dừng SFX game over
+func stop_gameover_sfx() -> void:
+	if sfx_player.stream == gameover_sfx_stream:
+		sfx_player.stop()
+
 
 ## Phát SFX hoàn thành level
 func play_levelup_sfx() -> void:

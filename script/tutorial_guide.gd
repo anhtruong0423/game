@@ -43,12 +43,12 @@ const L1_MESSAGES = {
 ## ==================== Level 2 Messages ====================
 const L2_MESSAGES = {
 	"welcome": "Chào cháu! Level 2 có nhiều thử thách mới. Nhấn Tab để mở menu nâng cấp — cháu có thể nâng cấp túi đồ, tốc độ và năng lượng!",
-	"dog_warning": "⚠️ Cẩn thận cháu! Con chó đang đến gần! Nếu bị cắn sẽ mất năng lượng. Nhấn Shift để chạy nhanh thoát thân, nhưng nhớ là chạy nhanh cũng tốn năng lượng!",
+	"dog_warning": " Cẩn thận cháu! Con chó đang đến gần! Nếu bị cắn sẽ mất năng lượng. Nhấn Shift để chạy nhanh thoát thân, nhưng nhớ là chạy nhanh cũng tốn năng lượng!",
 }
 
 ## ==================== Level 3 Messages ====================
 const L3_MESSAGES = {
-	"welcome": "🌙 Level 3 có tính năng mới: chu kỳ ngày và đêm! Khi trời tối, cháu sẽ rất khó nhìn đường. Một cây đèn pin sẽ xuất hiện — nhấn P để nhặt và bật/tắt đèn pin!",
+	"welcome": " Level 3 có tính năng mới: chu kỳ ngày và đêm! Khi trời tối, cháu sẽ rất khó nhìn đường. Một cây đèn pin sẽ xuất hiện — nhấn P để nhặt và bật/tắt đèn pin!",
 }
 
 

@@ -84,11 +84,13 @@ func play_fade_in_animation() -> void:
 
 
 func _on_restart_pressed() -> void:
+	AudioManager.stop_gameover_sfx()
 	AudioManager.play_music()
 	Global.go_to_scene("res://scene/main.tscn")
 
 
 func _on_main_menu_pressed() -> void:
+	AudioManager.stop_gameover_sfx()
 	AudioManager.play_music()
 	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
 

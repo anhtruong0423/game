@@ -86,7 +86,7 @@ var is_sprinting : bool = false
 var energy_blink_timer : float = 0.0
 
 ## Upgrade system
-var upgrade_levels : Dictionary = {"inventory": 0, "speed": 0, "energy": 0}
+var upgrade_levels : Dictionary
 var coin_value_multiplier : float = 1.0  ## Dự phòng cho tương lai
 var upgrade_menu_open : bool = false
 var pause_menu_open : bool = false
@@ -146,6 +146,12 @@ var flashlight_on := false
 var flashlight_node: SpotLight3D = null
 const FLASHLIGHT_PICKUP_RANGE := 3.0
 
+## Dog Bite Effect - Camera shake
+var _shake_intensity: float = 0.0
+var _shake_timer: float = 0.0
+var _original_head_rotation: Vector3 = Vector3.ZERO
+var _bite_warning_label: Label = null
+
 func _ready() -> void:
 	add_to_group("player")
 	# Đảm bảo game không bị kẹt ở trạng thái pause
@@ -157,6 +163,8 @@ func _ready() -> void:
 	if score_label:
 		score_label.visible = false
 
+	upgrade_levels = Global.upgrade_levels
+
 	_setup_energy_bar_style()
 	_setup_transparent_buttons()
 	_setup_turtle_hint()
@@ -164,6 +172,7 @@ func _ready() -> void:
 	_setup_minimap.call_deferred()
 	_setup_zone_indicator.call_deferred()
 	_restore_flashlight.call_deferred()
+	_setup_bite_warning.call_deferred()
 
 	apply_upgrades()
 	update_inventory_ui()
@@ -409,6 +418,8 @@ func _process(_delta: float) -> void:
 		_check_flashlight_proximity()
 	update_energy_ui()
 	_pet_passive_heal(_delta)
+	_process_camera_shake(_delta)
+	_process_bite_warning(_delta)
 
 
 ## Check for nearby interactable objects (fruits, basket) using proximity
@@ -534,14 +545,86 @@ func update_inventory_ui():
 		inventory_label.text = "Túi: " + str(inventory.size()) + "/" + str(max_capacity) + " (%.1fkg)" % total_weight
 
 
-## Tiêu hao năng lượng
-func drain_energy(amount: float):
+## Tiêu hao năng lượng (from_dog=true khi bị chó cắn)
+func drain_energy(amount: float, from_dog: bool = false):
 	var reduction := Global.get_pet_bonus("dog_damage_reduction")
 	var final_amount := amount * (1.0 - reduction)
 	energy = max(0, energy - final_amount)
+	
+	# Chỉ rung camera + cảnh báo khi bị chó cắn
+	if from_dog:
+		_trigger_camera_shake(0.02, 0.15)
+		_show_bite_warning()
+	
 	if energy <= 0 and not is_exhausted:
 		is_exhausted = true
 		trigger_game_over()
+
+
+## === CAMERA SHAKE khi bị chó cắn ===
+func _trigger_camera_shake(intensity: float, duration: float):
+	_shake_intensity = intensity
+	_shake_timer = duration
+
+func _process_camera_shake(delta: float):
+	if _shake_timer <= 0:
+		return
+	_shake_timer -= delta
+	if _shake_timer <= 0:
+		_shake_timer = 0
+		_shake_intensity = 0
+		head.rotation.x = look_rotation.x
+		return
+	# Rung ngẫu nhiên trổi trái-phải và lên-xuống
+	var shake_x = randf_range(-_shake_intensity, _shake_intensity)
+	var shake_y = randf_range(-_shake_intensity, _shake_intensity)
+	head.rotation.x = look_rotation.x + shake_x
+	rotation.y = look_rotation.y + shake_y
+
+
+## === CẢNH BÁO BỊ CẮN ===
+func _setup_bite_warning():
+	var hud_node = get_node_or_null("HUD")
+	if not hud_node:
+		return
+	_bite_warning_label = Label.new()
+	_bite_warning_label.name = "BiteWarning"
+	_bite_warning_label.text = "⚠ Đang bị chó cắn! Năng lượng đang giảm!"
+	_bite_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_bite_warning_label.anchor_left = 0.5
+	_bite_warning_label.anchor_right = 0.5
+	_bite_warning_label.anchor_top = 0.15
+	_bite_warning_label.anchor_bottom = 0.15
+	_bite_warning_label.offset_left = -200
+	_bite_warning_label.offset_right = 200
+	_bite_warning_label.offset_top = -15
+	_bite_warning_label.offset_bottom = 15
+	_bite_warning_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_bite_warning_label.add_theme_font_size_override("font_size", 22)
+	_bite_warning_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2, 1.0))
+	_bite_warning_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	_bite_warning_label.add_theme_constant_override("shadow_offset_x", 2)
+	_bite_warning_label.add_theme_constant_override("shadow_offset_y", 2)
+	_bite_warning_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bite_warning_label.visible = false
+	hud_node.add_child(_bite_warning_label)
+
+var _bite_warning_timer: float = 0.0
+
+func _show_bite_warning():
+	if not _bite_warning_label:
+		return
+	_bite_warning_label.visible = true
+	_bite_warning_timer = 0.5  # Hiển 0.5 giây
+	# Nhấp nháy màu đỏ
+	_bite_warning_label.modulate = Color(1, 1, 1, 1)
+
+func _process_bite_warning(delta: float):
+	if _bite_warning_timer > 0:
+		_bite_warning_timer -= delta
+		if _bite_warning_timer <= 0:
+			if _bite_warning_label:
+				_bite_warning_label.visible = false
 
 
 ## Rùa hồi NL khi player ở gần rùa (bán kính 1m) và đứng yên (chỉ hồi tới 30% max)
@@ -1058,11 +1141,11 @@ func buy_upgrade(upgrade_type: String) -> bool:
 
 	if Global.total_coins < price:
 		return false
+
+	upgrade_levels[upgrade_type] += 1
 	Global.total_coins -= price
 	Global.save_data()
 	AudioManager.play_upgrade_sfx()
-
-	upgrade_levels[upgrade_type] += 1
 
 	apply_upgrades()
 
@@ -1178,9 +1261,6 @@ func _setup_pause_menu_style():
 	if not pause_panel:
 		return
 	
-	# Load font Gluten
-	var gluten_font = load("res://assets/GUI/Post/Font for text/Gluten/Gluten-VariableFont_slnt,wght.ttf")
-	
 	# === Style cho title ===
 	var title_label = pause_panel.get_node_or_null("VBoxContainer/Title")
 	if title_label:
@@ -1189,8 +1269,6 @@ func _setup_pause_menu_style():
 		title_label.add_theme_color_override("font_shadow_color", Color(0.2, 0.15, 0.1, 0.8))
 		title_label.add_theme_constant_override("shadow_offset_x", 3)
 		title_label.add_theme_constant_override("shadow_offset_y", 3)
-		if gluten_font:
-			title_label.add_theme_font_override("font", gluten_font)
 	
 	# === Style cho background overlay ===
 	var bg = pause_panel.get_node_or_null("Background")
@@ -1225,7 +1303,7 @@ func _setup_pause_menu_style():
 	
 	for data in all_pause_buttons:
 		_apply_casual_button_style(
-			data["btn"], data["text"], data["icon"], gluten_font,
+			data["btn"], data["text"], data["icon"], null,
 			Color(0.55, 0.35, 0.15, 1.0),  # Brown (nền)
 			Color(0.65, 0.42, 0.18, 1.0),  # Brown sáng hơn (hover)
 			Color(0.40, 0.25, 0.10, 1.0)   # Brown đậm (pressed)
@@ -1533,9 +1611,6 @@ func _build_pause_map_panel():
 	title.add_theme_color_override("font_shadow_color", Color(0.2, 0.12, 0.05, 0.7))
 	title.add_theme_constant_override("shadow_offset_x", 2)
 	title.add_theme_constant_override("shadow_offset_y", 2)
-	var gluten_font = load("res://assets/GUI/Post/Font for text/Gluten/Gluten-VariableFont_slnt,wght.ttf")
-	if gluten_font:
-		title.add_theme_font_override("font", gluten_font)
 	vbox.add_child(title)
 	
 	# Grid container cho level buttons

@@ -133,3 +133,38 @@ func _on_level_select():
 
 func _on_menu():
 	get_tree().change_scene_to_file("res://scene/mainmenu.tscn")
+
+func _style_brown_button(btn: Button):
+	btn.custom_minimum_size = Vector2(220, 55)
+	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	
+	btn.add_theme_font_size_override("font_size", 22)
+	btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
+	
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.55, 0.35, 0.12)
+	normal.corner_radius_top_left = 14
+	normal.corner_radius_top_right = 14
+	normal.corner_radius_bottom_left = 14
+	normal.corner_radius_bottom_right = 14
+	normal.border_width_top = 3
+	normal.border_width_bottom = 3
+	normal.border_width_left = 3
+	normal.border_width_right = 3
+	normal.border_color = Color(0.25, 0.15, 0.05)
+	normal.content_margin_left = 16
+	normal.content_margin_right = 16
+	normal.content_margin_top = 10
+	normal.content_margin_bottom = 10
+	btn.add_theme_stylebox_override("normal", normal)
+	
+	var hover = normal.duplicate()
+	hover.bg_color = Color(0.65, 0.42, 0.18)
+	hover.border_color = Color(0.3, 0.18, 0.06)
+	btn.add_theme_stylebox_override("hover", hover)
+	
+	var pressed = normal.duplicate()
+	pressed.bg_color = Color(0.40, 0.25, 0.10)
+	pressed.border_color = Color(0.20, 0.12, 0.04)
+	btn.add_theme_stylebox_override("pressed", pressed)

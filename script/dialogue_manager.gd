@@ -22,89 +22,75 @@ var bg_farmer: Texture2D = null
 var level_backgrounds: Dictionary = {}
 
 const LEVEL_DIALOGUES: Dictionary = {
-	## ===== Level 1: Làm quen — nhặt rác + giới thiệu sữa & minimap =====
+	## ===== Level 1: Sự khởi đầu bình yên =====
 	1: {
 		"scene_text": "🌿 Sân vườn yên bình...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Chào cháu Lan! Chào mừng cháu đến nông trại của bác. Hôm nay bác cần cháu giúp dọn dẹp rác quanh vườn!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Dạ, cháu sẵn sàng rồi bác! Cháu cần làm gì ạ?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhiệm vụ đầu tiên đơn giản thôi. Cháu nhặt 1 Chai nhựa và 1 Túi giấy, rồi mang về thùng tái chế.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhấn E để nhặt rác khi đứng gần. Mang về thùng rồi nhấn E lần nữa để bỏ vào nhé!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "À, cháu thấy có mấy hộp sữa Frumi nữa kìa! Cháu có thể nhặt không bác?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Được chứ! Nhấn Q để nhặt sữa Frumi. Uống sữa sẽ hồi năng lượng, rất cần khi chạy nhiều đấy!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhớ dùng bản đồ nhỏ ở góc màn hình. Rác nhiệm vụ sẽ nhấp nháy để cháu dễ tìm!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Tuyệt vời! Không giới hạn thời gian thì thoải mái rồi. Đi dọn rác thôi nào!", "color": Color(0.9, 0.5, 0.7)},
-		]
+			{"speaker": "Bác Nông Dân", "text": "Chào cháu gái! Mới đó mà đã nghỉ hè rồi, mừng cháu về thăm nông trại.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv1_1.png"},
+			{"speaker": "Lan", "text": "Dạ, cháu cũng nhớ nông trại lắm, ở thành phố ồn ào quá. Nhưng sao cháu thấy quang cảnh quanh đây bừa bộn rác thế bác?", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv1_2.png"},
+			{"speaker": "Bác Nông Dân", "text": "Dạo này khu sinh thái gần đây thu hút đông đúc, có một số lượng khách du lịch xả rác bừa bãi nên rác kẹt lại, chưa kịp dọn dẹp.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv1_3.png"},
+			{"speaker": "Lan", "text": "Để cháu phụ bác một tay nhé! Cháu sẽ thu dọn đống rác đó vào thùng tái chế.", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv1_4.png"},
+			{"speaker": "Bác Nông Dân", "text": "Tốt quá! Cháu thử bắt đầu nhặt 1 Chai nhựa và 1 Túi giấy đi. Cứ nhấn phím [E] để lấy rác và bỏ vào thùng tái chế gần đó nhé.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/LV1_5.png"},
+			{"speaker": "Bác Nông Dân", "text": "Nhớ để ý bản đồ mini góc phải (hoặc nhấn [M] để phóng to), rác cần tìm sẽ được tô sáng. À, nếu mệt thì cháu hãy nhặt những hộp sữa Frumi trên đường (nhấn [Q]) để hồi lại năng lượng nhé!", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/LV1_5.png"},
+			{"speaker": "Lan", "text": "Cháu hiểu rồi! Có sữa xịn thế này thì lo gì mệt. Cháu đi dọn ngay đây!", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/LV1_5.png"}		]
 	},
-	## ===== Level 2: Thêm thử thách — chó + năng lượng + chạy nhanh =====
+	## ===== Level 2: Dấu hiệu lan rộng =====
 	2: {
 		"scene_text": "🏘️ Khu phố cần dọn dẹp...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Tốt lắm cháu! Level 2 sẽ khó hơn đấy. Lần này cần nhặt Chai sữa, Giấy báo cũ, Lon nước ngọt và Túi ni-lông.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "4 loại luôn hả bác? Nhiều hơn rồi!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 2 loại là qua màn, nhưng muốn 3 sao thì phải đủ 4 loại trong 4 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Cẩn thận nhé! Trong khu phố có mấy con chó canh giữ. Nếu đến quá gần, chúng sẽ đuổi theo và làm cháu mất năng lượng!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Chó?! Cháu sợ chó lắm! Làm sao tránh được ạ?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Giữ khoảng cách là được. Còn nếu bị đuổi, nhấn Shift để chạy nhanh thoát thân!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhưng nhớ là chạy nhanh sẽ tốn năng lượng gấp đôi. Hết năng lượng là ngã luôn đấy! Uống sữa Frumi để hồi nhé.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Hiểu rồi! Tránh chó, chạy nhanh khi cần, và nhớ uống sữa. Đi dọn rác thôi!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Rác ở nông trại đã dọn gần xong, nhưng cháu nhìn ngoài khu vườn phố kìa, tình hình có vẻ tệ hơn. Cần dọn 4 loại rác lận!", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv2_1.png"},
+			{"speaker": "Lan", "text": "Nhiều quá! Mà cháu nghe thấy tiếng chó sủa ầm ĩ quanh đó, có sao không bác?", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv2_2.png"},
+			{"speaker": "Bác Nông Dân", "text": "Rác sinh hoạt bốc mùi thu hút lũ chó hoang tập trung lại đấy. Cháu phải thật cẩn thận, đừng đến gần. Nếu chúng đuổi, hãy nhấn giữ [Shift] để chạy nhanh nhé!", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv2_3.png"},
+			{"speaker": "Lan", "text": "Cháu sẽ cố gắng tránh xa chúng. Nhưng chạy nhanh thì mệt lắm!", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv2_4.png"},
+			{"speaker": "Bác Nông Dân", "text": "Đúng rồi, chạy nhanh tốn năng lượng gấp đôi, nếu để thanh thể lực cạn kiệt cháu sẽ kiệt sức mà ngất luôn đó! Nhớ uống sữa bổ sung năng lượng dọc đường nhé.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv2_5.png"},
+			{"speaker": "Lan", "text": "Cháu nhớ rồi. Nhặt đủ 2 loại rác là hoàn thành, nhưng cháu sẽ cố gắng dọn sạch cả 4 loại thật nhanh để được 3 sao!", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv2_5.png"}
 		]
 	},
-	## ===== Level 3: Ngày/đêm + đèn pin =====
+	## ===== Level 3: Màn đêm buông xuống =====
 	3: {
-		"scene_text": "🌅 Hoàng hôn buông xuống nông trại...",
+		"scene_text": "🌅 Hoàng hôn buông xuống thị trấn...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 3 rồi! Lần này cháu cần nhặt Thùng carton, Vỏ xe cũ, Hộp sữa cũ, Chai nhựa và Túi giấy trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "5 loại rác! Nhưng... sao trời tối dần vậy bác?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Đúng rồi! Từ level này trở đi, trời sẽ có chu kỳ ngày và đêm. Khi trời tối, cháu sẽ rất khó nhìn đường!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Trời ơi, vậy làm sao mà nhặt rác trong bóng tối?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Đừng lo! Khi trời bắt đầu tối, một cây đèn pin sẽ xuất hiện gần cháu. Nhấn P để nhặt nó!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Sau khi nhặt, nhấn P lần nữa để bật/tắt đèn pin. Đèn sẽ giúp cháu soi đường trong đêm tối.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại rác là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Ngày đêm, đèn pin... thú vị quá! Cháu sẽ chinh phục bóng tối!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Lan", "text": "Bác ơi, cháu dọn mỏi nhừ tay rồi. Mới chốc lát mà trời chuẩn bị tối luôn rồi bác ạ.", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv3_1.png"},
+			{"speaker": "Bác Nông Dân", "text": "Đúng rồi cháu. Rác nhiều làm xe thu gom không vào được, nay khu phố bị cắt điện tạm thời. Khi trời tối hẳn, cháu sẽ rất khó tuần tra đấy.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv3_2.png"},
+			{"speaker": "Lan", "text": "Trời tối đen thì làm sao cháu thấy được để dọn dẹp 5 loại rác đây bác?", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv3_3.png"},
+			{"speaker": "Bác Nông Dân", "text": "Đừng lo, bác đã để sẵn một chiếc đèn pin ngoài kia. Lúc bóng đêm buông xuống, cháu tìm vị trí và nhấn [P] nhặt lấy, sau đó xài [P] bật/tắt để soi sáng đường nhé.", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv3_4.png"},
+			{"speaker": "Bác Nông Dân", "text": "Hoàn thành 3/5 loại rác là về nhà nghỉ ngơi được rồi. Nếu dọn đủ 5 loại trong 3 phút, bác sẽ ráng xin cho cháu huy hiệu 3 sao xuất sắc nhất thị trấn!", "color": Color(0.8, 0.6, 0.2), "bg_img": "res://assets/đối thoại/lv3_5.png"},
+			{"speaker": "Lan", "text": "Có ánh sáng soi chiếu hy vọng rồi. Cháu không sơ bóng tối vì có chiếc đèn pin thân yêu!", "color": Color(0.9, 0.5, 0.7), "bg_img": "res://assets/đối thoại/lv3_6.png"}
 		]
 	},
-	## ===== Level 4: Trọng lượng + nâng cấp =====
+	## ===== Level 4: Thu gom quy mô lớn =====
 	4: {
 		"scene_text": "🏪 Mùa thu gom lớn...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 4 - Thu gom lớn! Cần nhặt Chai nhựa, Túi ni-lông, Chai sữa và Vỏ xe cũ trong 4 phút.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Cháu thấy túi đồ hơi nặng khi mang nhiều rác quá bác ơi...", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Đúng rồi! Mỗi loại rác đều có trọng lượng. Mang càng nặng, cháu sẽ đi càng chậm!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Mẹo nhé: bỏ rác vào thùng thường xuyên để giảm tải. Đừng ôm hết rồi mới mang về!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "À, cháu thấy có bảng nâng cấp nữa kìa! Ấn phím gì vậy bác?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhấn Tab để mở menu nâng cấp! Dùng xu thu được để nâng cấp 3 thứ:", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Túi đồ: mang được nhiều rác hơn. Tốc độ: chạy nhanh hơn. Năng lượng: bền bỉ hơn!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì phải đủ 4 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Nâng cấp rồi sẽ mạnh hơn! Cháu phải đầu tư thông minh!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Lan", "text": "Khu công viên này dơ quá bác ơi. Hơn nữa, hôm qua cháu xách túi rác đi xa thật là mệt mỏi.", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Bữa nay không dễ ăn đâu. Mỗi loại rác có một trọng lượng riêng, mang theo quá tải là cháu di chuyển ì ạch như rùa đổ dốc đấy.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Nhưng may là mình sẽ có nguồn quỹ tài trợ thêm! Bác đã liên hệ với mấy cô bán phế liệu để lấy thêm tiền hoàn thành dọn rác.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Kinh phí đấy cháu sẽ dùng để làm gì ạ?", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Cháu hãy nhấn phím [Tab] nhé. Cháu có thể trích quỹ mua những thiết bị tân tiến hơn: túi rác khổng lồ, giày thể thao siêu tốc hoặc nước uống siêu năng lượng để tăng sức bền.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Cơ chế giống thể thao chuyên nghiệp rồi đây! Để cháu tính toán xem cần nâng cấp chỉ số gì trước để làm nhanh 4/4 loại trước 3 phút lấy 3 sao nha bác!", "color": Color(0.9, 0.5, 0.7)}
 		]
 	},
-	## ===== Level 5: Mẹo chuyên nghiệp =====
+	## ===== Level 5: Chuyên gia phân loại =====
 	5: {
 		"scene_text": "🌙 Đêm trăng trên nông trại...",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Level 5! Cần nhặt Túi giấy, Giấy báo cũ, Lon nước ngọt, Thùng carton và Hộp sữa cũ trong 3 phút rưỡi.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "5 loại rác, thời gian ít hơn... Bác có mẹo gì không ạ?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Có chứ! Đầu tiên, nhấn M để mở bản đồ lớn. Xem vị trí rác rồi lên kế hoạch đường đi!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Thứ hai, nhớ uống sữa Frumi trước khi chạy nhanh. Sữa rải khắp nơi, kể cả trong nhà và trên đồi!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Thứ ba, thú cưng của cháu rất hữu ích! Cáo giúp chạy nhanh hơn, còn rùa giúp hồi năng lượng khi đứng yên gần nó.", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Ồ, cháu chưa biết thú cưng có nhiều khả năng vậy!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 3 loại là qua màn. Muốn 3 sao thì đủ 5 loại trong 3 phút!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Lên kế hoạch, tận dụng thú cưng, uống sữa đều đặn. Cháu tự tin lắm!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đèo nông trại nay bốc mùi ghê thật. 5 loại rác mới tinh, mà trạm xử lý chỉ cho cháu 3 phút rưỡi thôi sấp nhỏ ạ.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Thời gian eo hẹp quá! Có lẽ sức người làm không kịp rồi bác ơi.", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Nghe lời bác, cháu cần sự trợ giúp từ mấy bé thú cưng nhà ta. Pé Cáo lém lỉnh sẽ phụ cháu vừa chạy nhanh, vừa mang thêm rác. Pé rùa chậm nhưng đem lại sức khỏe vô hình hồi năng lượng kỳ diệu, miễn là cháu đứng yên kế nó.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Gì đỉnh thế bác! Các bé ấy dễ thương vô cùng.", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Và cháu đừng quên dùng la bàn nhỏ, nhấn phím [M] để lên chiến lược nhặt rác hợp lý. Tránh chạy vòng vòng tốn hơi.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Quyết tâm gom đủ 5 loại rác trong 3 phút lấy 3 sao luôn. Cháu cùng hai bạn Cáo và Rùa sẽ quét sạch khu này!", "color": Color(0.9, 0.5, 0.7)}
 		]
 	},
-	## ===== Level 6: Thử thách cuối cùng =====
+	## ===== Level 6: Trận chiến cuối cùng =====
 	6: {
 		"scene_text": "🏆 Thử thách siêu dọn dẹp cuối cùng!",
 		"data": [
-			{"speaker": "Bác Nông Dân", "text": "Cháu Lan, đây là thử thách cuối cùng! Siêu dọn dẹp — bác rất tự hào về cháu!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Cháu đã đi một chặng đường dài! Thử thách cuối cùng gì vậy bác?", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Thu gom TẤT CẢ 7 loại rác: Chai nhựa, Túi ni-lông, Chai sữa, Vỏ xe cũ, Lon nước ngọt, Hộp sữa cũ và Thùng carton!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "7 loại trong 3 phút?! Đó là tất cả rác cần dọn luôn!", "color": Color(0.9, 0.5, 0.7)},
-			{"speaker": "Bác Nông Dân", "text": "Đúng vậy! Cháu sẽ cần dùng mọi kỹ năng đã học: tránh chó, dùng đèn pin, uống sữa, nâng cấp thiết bị...", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Nhặt 4 loại là qua màn. Muốn 3 sao thì đủ cả 7 loại trong 2 phút rưỡi!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Bác Nông Dân", "text": "Hoàn thành thử thách này, cháu sẽ trở thành chiến binh bảo vệ môi trường số 1!", "color": Color(0.8, 0.6, 0.2)},
-			{"speaker": "Lan", "text": "Tất cả những gì cháu đã học, hôm nay sẽ phát huy. Đi thôi, lần cuối cùng!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Tuyệt vời Lan ơi! Lời đồn về 'siêu nhân dọn rác' lan xa rồi, thị trưởng thành phố vừa giao phó bãi phế liệu lớn nhất hành tinh này cho cháu.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Trời đất, nó rộng thênh thang và còn có tận... 7 LOẠI RÁC cần dọn!", "color": Color(0.9, 0.5, 0.7)},
+			{"speaker": "Bác Nông Dân", "text": "Đúng thế! Bãi phế liệu hỗn mang này là bài thi cuối cùng. Tránh chó hung dữ trong bóng đêm, soi đèn dò đường, quản lý nâng cấp, uống sữa hồi sức và cùng thú cưng đồng hành.", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Bác Nông Dân", "text": "Dọn 4 loại sẽ cứu vãn tình hình. Nhưng nếu làm cỏ sạch cả 7 loại rác chỉ trong chưa đầy 2 phút rưỡi, bằng khen Thị trưởng và 3 sao vàng sẽ thuộc về cháu!", "color": Color(0.8, 0.6, 0.2)},
+			{"speaker": "Lan", "text": "Làm thôi bác ơi! Cháu không muốn mùa hè của mình là một bãi rác khổng lồ đâu. Cống hiến kỹ năng cuối cùng, xuất phát!", "color": Color(0.9, 0.5, 0.7)}
 		]
 	},
 }
@@ -239,18 +225,23 @@ func show_dialogue(index: int):
 	## Đổi background theo speaker và level
 	var scene_image = get_node_or_null("SceneImage")
 	if scene_image and scene_image is TextureRect:
-		var level = Global.current_level
-		var lvl_bg = level_backgrounds.get(level, null)
-		if entry.speaker == "Lan":
-			if lvl_bg and lvl_bg.get("lan"):
-				scene_image.texture = lvl_bg["lan"]
-			elif bg_lan:
-				scene_image.texture = bg_lan
+		if entry.has("bg_img") and entry.bg_img != "":
+			var custom_bg = load(entry.bg_img)
+			if custom_bg:
+				scene_image.texture = custom_bg
 		else:
-			if lvl_bg and lvl_bg.get("farmer"):
-				scene_image.texture = lvl_bg["farmer"]
-			elif bg_farmer:
-				scene_image.texture = bg_farmer
+			var level = Global.current_level
+			var lvl_bg = level_backgrounds.get(level, null)
+			if entry.speaker == "Lan":
+				if lvl_bg and lvl_bg.get("lan"):
+					scene_image.texture = lvl_bg["lan"]
+				elif bg_lan:
+					scene_image.texture = bg_lan
+			else:
+				if lvl_bg and lvl_bg.get("farmer"):
+					scene_image.texture = lvl_bg["farmer"]
+				elif bg_farmer:
+					scene_image.texture = bg_farmer
 
 	full_text = entry.text
 	displayed_text = ""

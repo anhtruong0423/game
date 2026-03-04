@@ -25,7 +25,7 @@ const EXPANDED_HEIGHT := 500
 const ZONES = [
 	{
 		"name": "Khu Trung Tâm",
-		"icon": "🏪",
+		
 		"color": Color(0.3, 0.9, 0.4, 0.12),
 		"border_color": Color(0.3, 0.9, 0.4, 0.6),
 		"label_color": Color(0.3, 0.9, 0.4, 0.95),
@@ -34,7 +34,7 @@ const ZONES = [
 	},
 	{
 		"name": "Đường Chính",
-		"icon": "🛤️",
+
 		"color": Color(0.9, 0.8, 0.3, 0.08),
 		"border_color": Color(0.9, 0.8, 0.3, 0.5),
 		"label_color": Color(0.9, 0.8, 0.3, 0.95),
@@ -43,7 +43,7 @@ const ZONES = [
 	},
 	{
 		"name": "Cánh Đồng",
-		"icon": "🌾",
+	
 		"color": Color(0.4, 0.8, 0.3, 0.08),
 		"border_color": Color(0.4, 0.8, 0.3, 0.5),
 		"label_color": Color(0.4, 0.8, 0.3, 0.95),
@@ -52,7 +52,7 @@ const ZONES = [
 	},
 	{
 		"name": "Khu Nhà Cửa",
-		"icon": "🏠",
+	
 		"color": Color(0.7, 0.5, 0.3, 0.08),
 		"border_color": Color(0.7, 0.5, 0.3, 0.5),
 		"label_color": Color(0.7, 0.5, 0.3, 0.95),
@@ -61,7 +61,7 @@ const ZONES = [
 	},
 	{
 		"name": "Vùng Tây",
-		"icon": "🌲",
+	
 		"color": Color(0.3, 0.6, 0.8, 0.08),
 		"border_color": Color(0.3, 0.6, 0.8, 0.5),
 		"label_color": Color(0.3, 0.6, 0.8, 0.95),
@@ -70,7 +70,7 @@ const ZONES = [
 	},
 	{
 		"name": "Vùng Đông",
-		"icon": "🌲",
+	
 		"color": Color(0.3, 0.6, 0.8, 0.08),
 		"border_color": Color(0.3, 0.6, 0.8, 0.5),
 		"label_color": Color(0.3, 0.6, 0.8, 0.95),
@@ -454,7 +454,8 @@ func _show_legend() -> void:
 
 	for zone in ZONES:
 		var lbl = Label.new()
-		lbl.text = zone["icon"] + " " + zone["name"]
+		var icon_str = zone.get("icon", "")
+		lbl.text = (icon_str + " " + zone["name"]).strip_edges()
 		lbl.add_theme_font_size_override("font_size", 12)
 		lbl.add_theme_color_override("font_color", zone["label_color"])
 		vbox.add_child(lbl)
@@ -638,17 +639,20 @@ class MinimapOverlay extends Control:
 			# Viền vùng
 			draw_rect(Rect2(rect_pos, rect_size), zone["border_color"], false, 1.5)
 
-			# Tên khu vực
 			var center = rect_pos + rect_size / 2.0
-			var label_text = zone["icon"] + " " + zone["name"]
+			var label_text = zone.get("icon", "") + " " + zone["name"] if zone.has("icon") else zone["name"]
 			var font = ThemeDB.fallback_font
 			if font:
-				var font_size = 13
+				var font_size = 18  # Tăng kích thước font lớn hơn
 				var text_size = font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
 				# Chỉ vẽ nếu vùng đủ lớn
-				if rect_size.x > text_size.x * 0.6:
+				if rect_size.x > text_size.x * 0.5:
 					var text_pos = center - Vector2(text_size.x / 2.0, -text_size.y / 4.0)
-					draw_string(font, text_pos + Vector2(1, 1), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8))
+					# Outline đậm
+					draw_string_outline(font, text_pos, label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 3, Color(0, 0, 0, 0.9))
+					# Bóng đổ (shadow drop)
+					draw_string(font, text_pos + Vector2(2, 2), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.7))
+					# Text chính
 					draw_string(font, text_pos, label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, zone["label_color"])
 
 
@@ -660,14 +664,16 @@ class MinimapOverlay extends Control:
 
 		for zone in minimap_ref.ZONES:
 			if px >= zone["min_x"] and px <= zone["max_x"] and pz >= zone["min_z"] and pz <= zone["max_z"]:
-				zone_name = zone["icon"] + " " + zone["name"]
+				zone_name = zone.get("icon", "") + " " + zone["name"] if zone.has("icon") else zone["name"]
 				zone_color = zone["label_color"]
 				break
 
 		var font = ThemeDB.fallback_font
 		if font:
-			var font_size = 12
+			var font_size = 15  # Tăng text size vị trí người chơi
 			var text_size = font.get_string_size(zone_name, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
-			var text_pos = player_pos + Vector2(-text_size.x / 2.0, 18)
-			draw_string(font, text_pos + Vector2(1, 1), zone_name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8))
+			var text_pos = player_pos + Vector2(-text_size.x / 2.0, 22)
+			
+			draw_string_outline(font, text_pos, zone_name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 3, Color(0, 0, 0, 0.9))
+			draw_string(font, text_pos + Vector2(2, 2), zone_name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.7))
 			draw_string(font, text_pos, zone_name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, zone_color)

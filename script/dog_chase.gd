@@ -78,7 +78,7 @@ func _physics_process(delta):
 		return
 
 	if dist_sq <= bite_range_sq:
-		player.drain_energy(energy_drain_per_second * delta)
+		player.drain_energy(energy_drain_per_second * delta, true)
 	elif dist_sq > 0.01:
 		var inv_dist := 1.0 / sqrt(dist_sq)
 		var dir_x := diff.x * inv_dist
