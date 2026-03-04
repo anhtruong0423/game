@@ -96,11 +96,6 @@ var _menu_buttons: Array = []
 var _button_base_scales: Dictionary = {}
 var _play_btn_base_y: float = 0.0
 
-# Floating fruit config
-const FRUIT_EMOJIS = ["🍎", "🍊", "🍇", "🍋", "🍓", "🍌", "🍒", "🍈", "🥭"]
-const FRUIT_COUNT = 12
-const PARTICLE_DOT_COUNT = 25
-
 
 func _find_bg_sprites(node: Node) -> Array:
 	var result := []

@@ -627,13 +627,13 @@ func _process_bite_warning(delta: float):
 				_bite_warning_label.visible = false
 
 
-## Rùa hồi NL khi player ở gần rùa (bán kính 1m) và đứng yên (chỉ hồi tới 30% max)
+## Rùa hồi NL khi player ở gần rùa (bán kính 1m) và đứng yên (chỉ hồi tới 50% max)
 var _turtle_popup_shown := false
 func _pet_passive_heal(delta: float):
 	var heal_rate := Global.get_pet_bonus("passive_heal")
 	if heal_rate <= 0.0 or is_exhausted:
 		return
-	var heal_cap := max_energy * 0.3
+	var heal_cap := max_energy * 0.5
 	if energy >= heal_cap:
 		return
 	# Phải ở gần rùa (bán kính 1m) VÀ đứng yên
@@ -655,11 +655,11 @@ func _show_turtle_tutorial_popup():
 	if level_mgr and level_mgr.get("tutorial_guide"):
 		var guide = level_mgr.tutorial_guide
 		if guide and guide.has_method("_show_popup"):
-			guide._show_popup("🐢 Năng lượng đang thấp! Hãy chờ rùa đi theo rồi đứng yên bên cạnh nó để hồi năng lượng. Rùa chỉ hồi khi cháu ở gần nó trong bán kính 1 mét!")
+			guide._show_popup(" Năng lượng đang thấp! Hãy chờ rùa đi theo rồi đứng yên bên cạnh nó để hồi năng lượng. Rùa chỉ hồi khi cháu ở gần nó trong bán kính 1 mét!")
 			return
 	# Fallback: hiện hint label nếu không có tutorial guide
 	if turtle_hint_label:
-		turtle_hint_label.text = "🐢 Chờ rùa đến gần và đứng yên để hồi năng lượng!"
+		turtle_hint_label.text = "Chờ rùa đến gần và đứng yên để hồi năng lượng!"
 		turtle_hint_label.visible = true
 
 
@@ -1184,7 +1184,7 @@ func update_upgrade_ui():
 	if not coin_display_label:
 		_create_coin_display()
 	if coin_display_label:
-		coin_display_label.text = "💰 Xu: %d" % Global.total_coins
+		coin_display_label.text = " Xu: %d" % Global.total_coins
 
 	# Cập nhật nút Inventory
 	if inventory_upgrade_btn:
