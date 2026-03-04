@@ -813,7 +813,7 @@ script = ExtResource("9_lvlmgr")
 transform = Transform3D(0.96000004, 0, 0, 0, 0.96000004, 0, 0, 0, 0.96000004, 109.6, -134.1, 68.600006)
 
 [node name="nhanvat" parent="." instance=ExtResource("6_4j5ol")]
-transform = Transform3D(0.6079999, 0, 0, 0, 0.6079999, 0, 0, 0, 0.6079999, 112.30001, -133.03967, 74.200005)
+transform = Transform3D(0.014591994, 0, 0, 0, 0.014591994, 0, 0, 0, 0.014591994, 112.30001, -133.03967, 74.200005)
 
 [node name="Dog" parent="." instance=ExtResource("11_dog")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115, -133.5, 72)

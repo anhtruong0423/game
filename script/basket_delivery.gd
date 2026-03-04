@@ -24,19 +24,22 @@ const FRUIT_SCENE_PATHS = {
 	"thung_carton": "res://scene/items/thungcarton.tscn",
 }
 
+## Vị trí đặt rác bên trong thùng (local space của nhanvat, scale ~0.0146)
+## Offset lớn vì parent node có scale rất nhỏ
 const FRUIT_POSITIONS = [
-	Vector3(0, 0.04, 0),
-	Vector3(0.04, 0.04, 0.02),
-	Vector3(-0.04, 0.04, 0.02),
-	Vector3(0.02, 0.04, -0.04),
-	Vector3(-0.02, 0.04, -0.04),
-	Vector3(0.04, 0.04, -0.02),
-	Vector3(-0.04, 0.04, -0.02),
-	Vector3(0, 0.07, 0),
-	Vector3(0.03, 0.07, 0.03),
+	Vector3(0, 3.0, 0),
+	Vector3(2.5, 3.0, 1.5),
+	Vector3(-2.5, 3.0, 1.5),
+	Vector3(1.5, 3.0, -2.5),
+	Vector3(-1.5, 3.0, -2.5),
+	Vector3(2.5, 3.0, -1.5),
+	Vector3(-2.5, 3.0, -1.5),
+	Vector3(0, 5.5, 0),
+	Vector3(2.0, 5.5, 2.0),
 ]
 
-const FRUIT_VISUAL_SCALE = Vector3(0.3, 0.3, 0.3)
+## Scale lớn để bù cho parent nhanvat có scale ~0.0146
+const FRUIT_VISUAL_SCALE = Vector3(20.0, 20.0, 20.0)
 
 func _ready():
 	add_to_group("basket")
@@ -92,7 +95,7 @@ func _add_fruit_visual(fruit_type: String):
 	else:
 		var base_index = index % FRUIT_POSITIONS.size()
 		var layer = index / FRUIT_POSITIONS.size()
-		instance.position = FRUIT_POSITIONS[base_index] + Vector3(0, 0.04 * layer, 0)
+		instance.position = FRUIT_POSITIONS[base_index] + Vector3(0, 3.0 * layer, 0)
 
 	fruit_visuals.add_child(instance)
 

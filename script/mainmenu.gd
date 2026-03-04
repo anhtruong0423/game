@@ -501,8 +501,20 @@ func _process(delta):
 
 
 func _on_play_pressed() -> void:
-	# Luôn mở Character Select trước
-	get_tree().change_scene_to_file("res://scene/character_select.tscn")
+	# Player mới (chưa có sao nào) → vào thẳng Dialogue Level 1 (bỏ qua pet select)
+	var has_any_stars := false
+	for level in Global.level_stars:
+		if Global.level_stars[level] > 0:
+			has_any_stars = true
+			break
+	
+	if not has_any_stars:
+		Global.current_level = 1
+		Global.dialogue_mode = "level"
+		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
+	else:
+		# Player đã chơi → Level Select (pet select sẽ hiện sau dialogue)
+		get_tree().change_scene_to_file("res://scene/level_select.tscn")
 
 
 func _on_settings_pressed() -> void:

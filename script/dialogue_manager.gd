@@ -274,7 +274,12 @@ func advance_dialogue():
 
 func finish_dialogue():
 	dialogue_finished.emit()
-	Global.go_to_scene("res://scene/main.tscn")
+	# Level 2+ → chọn thú cưng trước khi vào game
+	# Level 1 → vào game trực tiếp (không cần chọn pet)
+	if Global.current_level >= 2:
+		get_tree().change_scene_to_file("res://scene/character_select.tscn")
+	else:
+		Global.go_to_scene("res://scene/main.tscn")
 
 
 func _on_skip_pressed():
