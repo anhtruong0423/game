@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bxcavqmi0m82b"]
+
+[ext_resource type="Script" path="res://script/coin.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dt15lgmdv74kk" path="res://assets/TRASH/GIAY BAO CU.glb" id="2_i2nsc"]
+
+[sub_resource type="SphereShape3D" id="sphere_col"]
+radius = 0.3
+
+[node name="GiayBaoCu" type="Node3D"]
+script = ExtResource("1_script")
+item_type = "giay_bao_cu"
+prompt_message = "Nhấn E để nhặt Giấy báo cũ"
+value = 350
+weight = 0.2
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1.9000001, 0, 0, 0, 1.9000001, 0, 0, 0, 1.9000001, 0, 0, 0)
+shape = SubResource("sphere_col")
+
+[node name="GIAY BAO CU" parent="." instance=ExtResource("2_i2nsc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0, 0)

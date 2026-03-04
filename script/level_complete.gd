@@ -14,6 +14,9 @@ extends Control
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
+	# Nền pastel brown
+	background.color = Color(0.72, 0.55, 0.40, 1.0)
+
 	var level = Global.current_level
 	var stars = Global.last_stars
 
@@ -38,13 +41,26 @@ func _ready():
 	# Hiển thị bonus xu theo sao
 	var bonus = Global.last_star_bonus
 	if bonus > 0:
-		score_label.text += "\n⭐ Thưởng sao: +" + str(bonus) + " xu"
-	score_label.text += "\n💰 Tổng xu: " + str(Global.total_coins)
+		score_label.text += "\n Thưởng sao: +" + str(bonus) + " xu"
+	score_label.text += "\nTổng xu: " + str(Global.total_coins)
 
 	var is_last_level = level >= 6
 	if is_last_level:
 		next_level_btn.text = "Hoàn thành game!"
 		next_level_btn.pressed.connect(_on_finish_game)
+	elif stars == 1:
+		# Đạt 1 sao: vẫn giữ nút Level tiếp theo + thêm thông báo khuyến khích
+		next_level_btn.text = "Level tiếp theo"
+		next_level_btn.pressed.connect(_on_next_level)
+		# Thêm thông báo khuyến khích chơi lại
+		var encourage = Label.new()
+		encourage.name = "EncourageLabel"
+		encourage.text = " Bạn chỉ đạt 1 sao!\nChơi lại để đạt thêm sao nhé!"
+		encourage.add_theme_font_size_override("font_size", 18)
+		encourage.add_theme_color_override("font_color", Color(1.0, 0.6, 0.2))
+		encourage.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		$VBoxContainer.add_child(encourage)
+		$VBoxContainer.move_child(encourage, $VBoxContainer.get_child_count() - 2)
 	else:
 		next_level_btn.text = "Level tiếp theo"
 		next_level_btn.pressed.connect(_on_next_level)
@@ -72,7 +88,7 @@ func play_fade_in():
 
 	var tween = create_tween()
 	tween.set_parallel(false)
-	tween.tween_property(background, "color:a", 0.85, 0.4)
+	tween.tween_property(background, "color:a", 1.0, 0.4)
 	tween.tween_property(title_label, "modulate:a", 1.0, 0.3)
 	tween.tween_property(stars_label, "modulate:a", 1.0, 0.4)
 	tween.tween_property(time_label, "modulate:a", 1.0, 0.2)

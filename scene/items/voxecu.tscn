@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://boi420uqgkdun"]
+
+[ext_resource type="Script" path="res://script/coin.gd" id="1_vhagn"]
+[ext_resource type="PackedScene" uid="uid://cohae4ldo18ui" path="res://assets/TRASH/VO XE CU.glb" id="2_wb8v0"]
+
+[sub_resource type="SphereShape3D" id="sphere_col"]
+radius = 0.3
+
+[node name="VoXeCu" type="Node3D"]
+script = ExtResource("1_vhagn")
+item_type = "vo_xe_cu"
+prompt_message = "Nhấn E để nhặt Vỏ xe cũ"
+value = 600
+weight = 0.4
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(5.3, 0, 0, 0, 5.3, 0, 0, 0, 5.3, 0, 0, 0)
+shape = SubResource("sphere_col")
+
+[node name="VO XE CU" parent="." instance=ExtResource("2_wb8v0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)

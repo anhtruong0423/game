@@ -1,6 +1,6 @@
 extends Node3D
 
-## Script cho trái cây - dùng cho tất cả fruit scenes
+## Script cho rác tái chế - dùng cho tất cả trash scenes
 
 @export var item_type: String = ""
 @export var display_name: String = ""

@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://q6u4eou2n3td"]
+
+[ext_resource type="Script" path="res://script/coin.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://bqvv4mus5mlr4" path="res://assets/TRASH/CHAISUA.glb" id="2_2cr67"]
+
+[sub_resource type="SphereShape3D" id="sphere_col"]
+radius = 0.3
+
+[node name="ChaiSua" type="Node3D"]
+script = ExtResource("1_script")
+item_type = "chai_sua"
+prompt_message = "Nhấn E để nhặt Chai sữa"
+value = 400
+weight = 0.3
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("sphere_col")
+
+[node name="CHAISUA" parent="." instance=ExtResource("2_2cr67")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, -0.2, -0.1)

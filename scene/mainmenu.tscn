@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://buhmiacmb70vr"]
 
 [ext_resource type="Script" uid="uid://cqg21gofprsir" path="res://script/mainmenu.gd" id="1_mainmenu"]
-[ext_resource type="Texture2D" uid="uid://cu321vq3y5vow" path="res://assets/background/background.png" id="2_h8uk4"]
+[ext_resource type="Texture2D" path="res://assets/background/nền.jpg" id="2_h8uk4"]
 
 [sub_resource type="SystemFont" id="SystemFont_h8uk4"]
 
@@ -32,7 +32,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.02, 0.03, 0.08, 0.45)
+color = Color(0, 0, 0, 0.1)
 
 [node name="GradientOverlay" type="ColorRect" parent="."]
 layout_mode = 1
@@ -41,7 +41,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.02, 0.08, 0.05, 0.3)
+color = Color(0, 0, 0, 0)
 
 [node name="MenuContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -122,7 +122,6 @@ theme_override_font_sizes/font_size = 14
 text = "Reset Data (Test)"
 
 [node name="SettingsPanel" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -131,6 +130,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Overlay" type="ColorRect" parent="SettingsPanel"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -174,14 +174,14 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
 theme_override_font_sizes/font_size = 28
-text = "⚙️ CÀI ĐẶT"
+text = "CÀI ĐẶT"
 horizontal_alignment = 1
 
 [node name="DisplaySection" type="Label" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "🖥️ HIỂN THỊ"
+text = "HIỂN THỊ"
 
 [node name="BrightnessContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -236,7 +236,7 @@ button_pressed = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "🔊 ÂM THANH"
+text = "ÂM THANH"
 
 [node name="MasterContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -308,7 +308,7 @@ horizontal_alignment = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "🎮 ĐIỀU KHIỂN"
+text = "ĐIỀU KHIỂN"
 
 [node name="SensitivityContainer" type="HBoxContainer" parent="SettingsPanel/Panel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -367,7 +367,6 @@ theme_override_font_sizes/font_size = 16
 text = "Đóng"
 
 [node name="TutorialPanel" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -431,7 +430,7 @@ theme_override_constants/separation = 15
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 20
-text = "🎮 ĐIỀU KHIỂN"
+text = "ĐIỀU KHIỂN"
 
 [node name="Controls" type="Label" parent="TutorialPanel/Panel/VBoxContainer/ScrollContainer/Content"]
 layout_mode = 2
@@ -446,7 +445,7 @@ autowrap_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 20
-text = "🔧 TƯƠNG TÁC"
+text = "TƯƠNG TÁC"
 
 [node name="Interaction" type="Label" parent="TutorialPanel/Panel/VBoxContainer/ScrollContainer/Content"]
 layout_mode = 2
@@ -460,7 +459,7 @@ autowrap_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 20
-text = "📋 HỆ THỐNG"
+text = "HỆ THỐNG"
 
 [node name="System" type="Label" parent="TutorialPanel/Panel/VBoxContainer/ScrollContainer/Content"]
 layout_mode = 2
@@ -474,7 +473,7 @@ autowrap_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 20
-text = "🎯 MỤC TIÊU"
+text = "MỤC TIÊU"
 
 [node name="Goal" type="Label" parent="TutorialPanel/Panel/VBoxContainer/ScrollContainer/Content"]
 layout_mode = 2
@@ -489,7 +488,7 @@ autowrap_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 20
-text = "⚡ NĂNG LƯỢNG"
+text = "NĂNG LƯỢNG"
 
 [node name="Energy" type="Label" parent="TutorialPanel/Panel/VBoxContainer/ScrollContainer/Content"]
 layout_mode = 2

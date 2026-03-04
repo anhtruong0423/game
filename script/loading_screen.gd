@@ -125,8 +125,8 @@ func _build_ui():
 	var tips = [
 		"Giữ Shift để chạy nhanh, nhưng tốn gấp đôi năng lượng!",
 		"Uống sữa FRUMI để hồi phục năng lượng.",
-		"Mang trái cây về rổ để hoàn thành nhiệm vụ.",
-		"Nhặt đủ trái cây nhanh để đạt 3 sao!",
+		"Mang rác về thùng tái chế để hoàn thành nhiệm vụ.",
+		"Nhặt đủ rác nhanh để đạt 3 sao!",
 	]
 	tip.text = tips[randi() % tips.size()]
 	vbox.add_child(tip)

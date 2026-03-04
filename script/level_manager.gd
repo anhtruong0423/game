@@ -5,21 +5,21 @@ signal level_can_pass()
 signal level_completed(stars: int)
 
 const ITEM_DISPLAY_NAMES = {
-	"apple": "Táo",
-	"banana": "Chuối",
-	"cherry": "Cherry",
-	"grape": "Nho",
-	"lemon": "Chanh",
-	"mango": "Xoài",
-	"melon": "Dưa lưới",
-	"orange": "Cam",
-	"strawberry": "Dâu",
+	"chai_nhua": "Chai nhựa",
+	"tui_giay": "Túi giấy",
+	"tui_nilong": "Túi ni-lông",
+	"lon_nuoc_ngot": "Lon nước ngọt",
+	"giay_bao_cu": "Giấy báo cũ",
+	"vo_xe_cu": "Vỏ xe cũ",
+	"hop_sua_cu": "Hộp sữa cũ",
+	"chai_sua": "Chai sữa",
+	"thung_carton": "Thùng carton",
 }
 
 const LEVEL_DATA = {
-	## ===== Level 1: Làm Quen — chỉ nhặt trái cây, không chướng ngại =====
+	## ===== Level 1: Làm Quen — chỉ nhặt rác, không chướng ngại =====
 	1: {
-		"required_items": ["apple", "banana"],
+		"required_items": ["chai_nhua", "tui_giay"],
 		"min_to_pass": 2,
 		"time_limit": 0,
 		"star_conditions": {
@@ -28,8 +28,8 @@ const LEVEL_DATA = {
 			3: {"items": 2, "time": 0}
 		},
 		"spawn_items": [
-			{"type": "apple", "position": Vector3(105, -133.5, 85)},
-			{"type": "banana", "position": Vector3(115, -133.5, 87)},
+			{"type": "chai_nhua", "position": Vector3(105, -133.5, 85)},
+			{"type": "tui_giay", "position": Vector3(115, -133.5, 87)},
 		],
 		"enable_dog": false,
 		"enable_milk": true,
@@ -40,7 +40,7 @@ const LEVEL_DATA = {
 	},
 	## ===== Level 2: Thử Thách — thêm chó + sữa =====
 	2: {
-		"required_items": ["orange", "lemon", "grape", "cherry"],
+		"required_items": ["chai_sua", "giay_bao_cu", "lon_nuoc_ngot", "tui_nilong"],
 		"min_to_pass": 2,
 		"time_limit": 300,
 		"star_conditions": {
@@ -49,10 +49,10 @@ const LEVEL_DATA = {
 			3: {"items": 4, "time": 240}
 		},
 		"spawn_items": [
-			{"type": "orange", "position": Vector3(50, -133.5, 85)},
-			{"type": "lemon", "position": Vector3(-20, -133.5, 80)},
-			{"type": "grape", "position": Vector3(5, -133.5, 55)},
-			{"type": "cherry", "position": Vector3(116, -133.5, 73)},
+			{"type": "chai_sua", "position": Vector3(50, -133.5, 85)},
+			{"type": "giay_bao_cu", "position": Vector3(-20, -133.5, 80)},
+			{"type": "lon_nuoc_ngot", "position": Vector3(5, -133.5, 55)},
+			{"type": "tui_nilong", "position": Vector3(116, -133.5, 73)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -63,7 +63,7 @@ const LEVEL_DATA = {
 	},
 	## ===== Level 3: Khám Phá Đêm — ngày đêm + đèn pin =====
 	3: {
-		"required_items": ["strawberry", "mango", "melon", "apple", "banana"],
+		"required_items": ["thung_carton", "vo_xe_cu", "hop_sua_cu", "chai_nhua", "tui_giay"],
 		"min_to_pass": 3,
 		"time_limit": 240,
 		"star_conditions": {
@@ -72,11 +72,11 @@ const LEVEL_DATA = {
 			3: {"items": 5, "time": 180}
 		},
 		"spawn_items": [
-			{"type": "strawberry", "position": Vector3(80, -133.5, 85)},
-			{"type": "mango", "position": Vector3(-80, -133.5, 70)},
-			{"type": "melon", "position": Vector3(200, -133.5, 80)},
-			{"type": "apple", "position": Vector3(-30, -133.5, 50)},
-			{"type": "banana", "position": Vector3(130, -133.5, 40)},
+			{"type": "thung_carton", "position": Vector3(80, -133.5, 85)},
+			{"type": "vo_xe_cu", "position": Vector3(-80, -133.5, 70)},
+			{"type": "hop_sua_cu", "position": Vector3(200, -133.5, 80)},
+			{"type": "chai_nhua", "position": Vector3(-30, -133.5, 50)},
+			{"type": "tui_giay", "position": Vector3(130, -133.5, 40)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -86,7 +86,7 @@ const LEVEL_DATA = {
 	},
 	## ===== Levels 4-6: giữ nguyên gameplay gốc =====
 	4: {
-		"required_items": ["apple", "cherry", "orange", "mango"],
+		"required_items": ["chai_nhua", "tui_nilong", "chai_sua", "vo_xe_cu"],
 		"min_to_pass": 3,
 		"time_limit": 240,
 		"star_conditions": {
@@ -95,10 +95,10 @@ const LEVEL_DATA = {
 			3: {"items": 4, "time": 180}
 		},
 		"spawn_items": [
-			{"type": "apple", "position": Vector3(104, -133.5, 70)},
-			{"type": "cherry", "position": Vector3(120, -133.5, 74)},
-			{"type": "orange", "position": Vector3(108, -133.5, 64)},
-			{"type": "mango", "position": Vector3(117, -133.5, 80)},
+			{"type": "chai_nhua", "position": Vector3(104, -133.5, 70)},
+			{"type": "tui_nilong", "position": Vector3(120, -133.5, 74)},
+			{"type": "chai_sua", "position": Vector3(108, -133.5, 64)},
+			{"type": "vo_xe_cu", "position": Vector3(117, -133.5, 80)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -107,7 +107,7 @@ const LEVEL_DATA = {
 		"blink_minimap": true,
 	},
 	5: {
-		"required_items": ["banana", "lemon", "grape", "strawberry", "melon"],
+		"required_items": ["tui_giay", "giay_bao_cu", "lon_nuoc_ngot", "thung_carton", "hop_sua_cu"],
 		"min_to_pass": 3,
 		"time_limit": 210,
 		"star_conditions": {
@@ -116,11 +116,11 @@ const LEVEL_DATA = {
 			3: {"items": 5, "time": 180}
 		},
 		"spawn_items": [
-			{"type": "banana", "position": Vector3(103, -133.5, 67)},
-			{"type": "lemon", "position": Vector3(121, -133.5, 71)},
-			{"type": "grape", "position": Vector3(106, -133.5, 78)},
-			{"type": "strawberry", "position": Vector3(118, -133.5, 64)},
-			{"type": "melon", "position": Vector3(110, -133.5, 82)},
+			{"type": "tui_giay", "position": Vector3(103, -133.5, 67)},
+			{"type": "giay_bao_cu", "position": Vector3(121, -133.5, 71)},
+			{"type": "lon_nuoc_ngot", "position": Vector3(106, -133.5, 78)},
+			{"type": "thung_carton", "position": Vector3(118, -133.5, 64)},
+			{"type": "hop_sua_cu", "position": Vector3(110, -133.5, 82)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -129,7 +129,7 @@ const LEVEL_DATA = {
 		"blink_minimap": true,
 	},
 	6: {
-		"required_items": ["apple", "cherry", "orange", "mango", "grape", "melon", "strawberry"],
+		"required_items": ["chai_nhua", "tui_nilong", "chai_sua", "vo_xe_cu", "lon_nuoc_ngot", "hop_sua_cu", "thung_carton"],
 		"min_to_pass": 4,
 		"time_limit": 180,
 		"star_conditions": {
@@ -138,13 +138,13 @@ const LEVEL_DATA = {
 			3: {"items": 7, "time": 150}
 		},
 		"spawn_items": [
-			{"type": "apple", "position": Vector3(104, -133.5, 66)},
-			{"type": "cherry", "position": Vector3(121, -133.5, 68)},
-			{"type": "orange", "position": Vector3(106, -133.5, 75)},
-			{"type": "mango", "position": Vector3(119, -133.5, 78)},
-			{"type": "grape", "position": Vector3(110, -133.5, 82)},
-			{"type": "melon", "position": Vector3(115, -133.5, 63)},
-			{"type": "strawberry", "position": Vector3(108, -133.5, 71)},
+			{"type": "chai_nhua", "position": Vector3(104, -133.5, 66)},
+			{"type": "tui_nilong", "position": Vector3(121, -133.5, 68)},
+			{"type": "chai_sua", "position": Vector3(106, -133.5, 75)},
+			{"type": "vo_xe_cu", "position": Vector3(119, -133.5, 78)},
+			{"type": "lon_nuoc_ngot", "position": Vector3(110, -133.5, 82)},
+			{"type": "hop_sua_cu", "position": Vector3(115, -133.5, 63)},
+			{"type": "thung_carton", "position": Vector3(108, -133.5, 71)},
 		],
 		"enable_dog": true,
 		"enable_milk": true,
@@ -264,7 +264,7 @@ func clear_existing_items():
 		for child in milks_node.get_children():
 			child.queue_free()
 
-	# Xóa trái cây/sữa scatter (từ FruitSpawner)
+	# Xóa rác/sữa scatter (từ TrashSpawner)
 	var scattered = get_parent().get_node_or_null("scattered_fruits")
 	if scattered:
 		scattered.queue_free()
@@ -272,6 +272,18 @@ func clear_existing_items():
 	if scattered_m:
 		scattered_m.queue_free()
 
+
+const ITEM_SCENE_PATHS = {
+	"chai_nhua": "res://scene/items/chainhua.tscn",
+	"tui_giay": "res://scene/items/tuigiay.tscn",
+	"tui_nilong": "res://scene/items/tuinilong.tscn",
+	"lon_nuoc_ngot": "res://scene/items/lonnuocngot.tscn",
+	"giay_bao_cu": "res://scene/items/giaybaocu.tscn",
+	"vo_xe_cu": "res://scene/items/voxecu.tscn",
+	"hop_sua_cu": "res://scene/items/hopsuacu.tscn",
+	"chai_sua": "res://scene/items/chaisua.tscn",
+	"thung_carton": "res://scene/items/thungcarton.tscn",
+}
 
 func spawn_level_items():
 	var data = LEVEL_DATA.get(current_level, null)
@@ -285,7 +297,10 @@ func spawn_level_items():
 		get_parent().add_child(coins_node)
 
 	for item_info in data["spawn_items"]:
-		var scene_path = "res://scene/items/" + item_info["type"] + ".tscn"
+		var scene_path = ITEM_SCENE_PATHS.get(item_info["type"], "")
+		if scene_path == "":
+			push_warning("[LevelManager] Không tìm thấy scene cho item: " + item_info["type"])
+			continue
 		var scene = load(scene_path)
 		if scene:
 			var instance = scene.instantiate()
@@ -368,12 +383,12 @@ func _apply_level_features():
 	if data.get("enable_flashlight", false):
 		_setup_flashlight_spawn()
 
-	## === FruitSpawner (tắt trái cây ngẫu nhiên khi chỉ cần trái nhiệm vụ) ===
+	## === TrashSpawner (tắt rác ngẫu nhiên khi chỉ cần rác nhiệm vụ) ===
 	var fruit_spawner = parent.get_node_or_null("FruitSpawner")
 	if fruit_spawner and data.get("only_mission_fruits", false):
-		# Chỉ hiển thị trái cây nhiệm vụ — tắt FruitSpawner
+		# Chỉ hiển thị rác nhiệm vụ — tắt Spawner
 		fruit_spawner.process_mode = Node.PROCESS_MODE_DISABLED
-		# Xóa trái cây đã scatter
+		# Xóa rác đã scatter
 		var sc_fruits = parent.get_node_or_null("scattered_fruits")
 		if sc_fruits:
 			sc_fruits.queue_free()
@@ -395,7 +410,7 @@ func _remove_dogs_near_shop(spawner: Node):
 			print("[LevelManager] Xóa NPC dog gần FrumiShop: %s" % child.name)
 
 
-## Thông báo cho minimap về chế độ nhấp nháy trái cây
+## Thông báo cho minimap về chế độ nhấp nháy rác nhiệm vụ
 func _notify_minimap_blink():
 	var data = LEVEL_DATA.get(current_level, null)
 	if not data:
@@ -699,7 +714,7 @@ func check_mission_progress():
 		complete_level()
 		return
 
-	# Hoàn thành tất cả trái cây → auto complete (kể cả khi đã chọn "Ở lại")
+	# Hoàn thành tất cả rác → auto complete (kể cả khi đã chọn "Ở lại")
 	if all_done:
 		complete_level()
 		return

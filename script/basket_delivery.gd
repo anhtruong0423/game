@@ -1,10 +1,10 @@
 extends Node3D
 
-## Script cho rổ trái cây - nơi player mang trái cây đến bỏ vào
-## Khi trái cây được bỏ vào, hiển thị đúng hình dạng 3D model của trái cây trong rổ
+## Script cho thùng rác - nơi player mang rác đến bỏ vào
+## Khi rác được bỏ vào, hiển thị đúng hình dạng 3D model của rác trong thùng
 ## Tối ưu: preload tất cả scene 1 lần thay vì load mỗi khi nhặt
 
-@export var prompt_message: String = "Nhấn E để bỏ trái cây vào rổ"
+@export var prompt_message: String = "Nhấn E để bỏ rác vào thùng"
 
 var delivered_fruits: Array = []
 var fruit_visuals: Node3D = null
@@ -13,15 +13,15 @@ var fruit_visuals: Node3D = null
 var _scene_cache: Dictionary = {}
 
 const FRUIT_SCENE_PATHS = {
-	"apple": "res://scene/items/apple.tscn",
-	"banana": "res://scene/items/banana.tscn",
-	"cherry": "res://scene/items/cherry.tscn",
-	"grape": "res://scene/items/grape.tscn",
-	"lemon": "res://scene/items/lemon.tscn",
-	"mango": "res://scene/items/mango.tscn",
-	"melon": "res://scene/items/melon.tscn",
-	"orange": "res://scene/items/orange.tscn",
-	"strawberry": "res://scene/items/strawberry.tscn",
+	"chai_nhua": "res://scene/items/chainhua.tscn",
+	"tui_giay": "res://scene/items/tuigiay.tscn",
+	"tui_nilong": "res://scene/items/tuinilong.tscn",
+	"lon_nuoc_ngot": "res://scene/items/lonnuocngot.tscn",
+	"giay_bao_cu": "res://scene/items/giaybaocu.tscn",
+	"vo_xe_cu": "res://scene/items/voxecu.tscn",
+	"hop_sua_cu": "res://scene/items/hopsuacu.tscn",
+	"chai_sua": "res://scene/items/chaisua.tscn",
+	"thung_carton": "res://scene/items/thungcarton.tscn",
 }
 
 const FRUIT_POSITIONS = [
@@ -43,7 +43,7 @@ func _ready():
 	fruit_visuals = Node3D.new()
 	fruit_visuals.name = "FruitVisuals"
 	add_child(fruit_visuals)
-	# Preload tất cả fruit scenes để tránh lag khi nhặt
+	# Preload tất cả trash scenes để tránh lag khi nhặt
 	_preload_scenes()
 
 

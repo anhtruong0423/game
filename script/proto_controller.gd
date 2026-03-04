@@ -6,7 +6,7 @@
 extends CharacterBody3D
 
 ## Tutorial signals
-signal fruit_picked_up(item_type: String)
+signal trash_picked_up(item_type: String)
 signal milk_picked_up()
 signal inventory_full_attempted()
 
@@ -453,7 +453,7 @@ func check_interactable():
 		if nearest_basket:
 			current_interactable = nearest_basket
 			if interact_prompt:
-				interact_prompt.text = nearest_basket.prompt_message if nearest_basket.get("prompt_message") else "Nhấn E để bỏ trái cây vào rổ"
+				interact_prompt.text = nearest_basket.prompt_message if nearest_basket.get("prompt_message") else "Nhấn E để bỏ rác vào thùng"
 			return
 
 	current_interactable = null
@@ -487,7 +487,7 @@ func add_to_inventory_typed(item_type: String, item_value: int, item_weight: flo
 	total_weight += item_weight
 	update_inventory_ui()
 	AudioManager.play_pick_sfx()
-	fruit_picked_up.emit(item_type)
+	trash_picked_up.emit(item_type)
 	return true
 
 
@@ -1220,7 +1220,7 @@ func _apply_casual_button_style(btn: Button, text: String, icon_path: String, cu
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	
 	# Text
-	btn.text = "    " + text  # Thêm khoảng trống cho icon
+	btn.text = text
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	
 	# Font
@@ -1419,8 +1419,11 @@ func _on_pause_sensitivity_changed(value: float):
 var pause_map_panel: Control = null
 
 func _on_pause_mainmenu_pressed():
-	if not pause_map_panel:
-		_build_pause_map_panel()
+	# Rebuild mỗi khi mở để cập nhật trạng thái mở khóa level
+	if pause_map_panel:
+		pause_map_panel.queue_free()
+		pause_map_panel = null
+	_build_pause_map_panel()
 	pause_map_panel.visible = true
 
 
@@ -1433,12 +1436,12 @@ func _on_pause_map_close():
 ## Tạo overlay bản đồ (level select) trong pause menu
 const PAUSE_LEVEL_COUNT := 6
 const PAUSE_LEVEL_NAMES := {
-	1: "Vườn trái cây",
-	2: "Khu cam chanh",
-	3: "Mùa hè rực rỡ",
-	4: "Thu hoạch lớn",
-	5: "Thử thách trái cây",
-	6: "Siêu thu hoạch",
+	1: "Dọn dẹp sân vườn",
+	2: "Khu phố sạch",
+	3: "Dọn rác ban đêm",
+	4: "Thu gom lớn",
+	5: "Thử thách tái chế",
+	6: "Siêu dọn dẹp",
 }
 
 func _build_pause_map_panel():

@@ -112,7 +112,9 @@ func _find_bg_sprites(node: Node) -> Array:
 
 
 func _style_premium_menu():
-	# === Deep dark gradient background ===
+	# === Background đã được set trong scene (BackgroundImage node) ===
+	
+	# Dark overlay rất nhẹ để text dễ đọc
 	_bg_rect = get_node_or_null("Background")
 	if not _bg_rect:
 		_bg_rect = ColorRect.new()
@@ -121,30 +123,12 @@ func _style_premium_menu():
 		_bg_rect.anchor_right = 1.0
 		_bg_rect.anchor_bottom = 1.0
 		add_child(_bg_rect)
-		move_child(_bg_rect, 0)
-	_bg_rect.color = Color(0.02, 0.03, 0.08, 0.45)  # Dark overlay
+		move_child(_bg_rect, 1)
+	_bg_rect.color = Color(0, 0, 0, 0.1)
 	
 	_overlay_rect = get_node_or_null("GradientOverlay")
-	if not _overlay_rect:
-		_overlay_rect = ColorRect.new()
-		_overlay_rect.name = "GradientOverlay"
-		_overlay_rect.anchors_preset = Control.PRESET_FULL_RECT
-		_overlay_rect.anchor_right = 1.0
-		_overlay_rect.anchor_bottom = 1.0
-		add_child(_overlay_rect)
-		move_child(_overlay_rect, 1)
-	_overlay_rect.color = Color(0.02, 0.08, 0.05, 0.3)
-	
-	# Thêm vignette overlay tối hơn ở viền
-	var vignette = ColorRect.new()
-	vignette.name = "Vignette"
-	vignette.layout_mode = 1
-	vignette.anchors_preset = Control.PRESET_FULL_RECT
-	vignette.anchor_right = 1.0
-	vignette.anchor_bottom = 1.0
-	vignette.color = Color(0, 0, 0, 0.2)
-	add_child(vignette)
-	move_child(vignette, 2)
+	if _overlay_rect:
+		_overlay_rect.color = Color(0, 0, 0, 0.0)  # Ẩn hoàn toàn
 	
 	# === Floating Particle Dots (ambient sparkles) ===
 	_create_particle_dots()
@@ -168,9 +152,9 @@ func _style_premium_menu():
 	
 	# === Style Subtitle ===
 	var subtitle = $MenuContainer/Subtitle
-	subtitle.text = "✨ Thu thập trái cây • Giao hàng • Khám phá thế giới ✨"
+	subtitle.text = "Thu gom rác • Tái chế • Bảo vệ môi trường"
 	subtitle.add_theme_font_size_override("font_size", 17)
-	subtitle.add_theme_color_override("font_color", Color(0.65, 0.85, 0.7, 0.95))
+	subtitle.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06, 0.9))  # Dark brown
 	
 	# === Separator line dưới subtitle ===
 	var sep = ColorRect.new()
@@ -186,20 +170,20 @@ func _style_premium_menu():
 	info_label.name = "InfoLabel"
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	info_label.add_theme_font_size_override("font_size", 15)
-	info_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.85, 0.8))
+	info_label.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06, 0.9))  # Dark brown
 	if Global.best_score > 0:
-		info_label.text = "🏆 Điểm cao nhất: " + str(Global.best_score) + "  •  Level: " + str(Global.current_level)
+		info_label.text = "Điểm cao nhất: " + str(Global.best_score) + "  •  Level: " + str(Global.current_level)
 	else:
-		info_label.text = "🎮 Chào mừng người chơi mới!"
+		info_label.text = "Chào mừng người chơi mới!"
 	$MenuContainer.add_child(info_label)
 	$MenuContainer.move_child(info_label, 3)
 	
-	# === Style tất cả buttons (cùng kích thước) ===
+	# === Style tất cả buttons (cùng kích thước, không icon) ===
 	var btn_size = Vector2(320, 55)
-	_style_menu_button(play_button, Color(0.55, 0.35, 0.12), Color(0.65, 0.42, 0.18), "▶  Bắt Đầu Chơi", 26, btn_size)
-	_style_menu_button(settings_button, Color(0.50, 0.30, 0.10), Color(0.60, 0.38, 0.16), "⚙️  Cài Đặt", 22, btn_size)
-	_style_menu_button(tutorial_button, Color(0.48, 0.32, 0.12), Color(0.58, 0.40, 0.18), "📖  Hướng Dẫn", 22, btn_size)
-	_style_menu_button(quit_button, Color(0.45, 0.25, 0.10), Color(0.55, 0.32, 0.15), "✖  Thoát", 22, btn_size)
+	_style_menu_button(play_button, Color(0.55, 0.35, 0.12), Color(0.65, 0.42, 0.18), "Bắt Đầu Chơi", 26, btn_size)
+	_style_menu_button(settings_button, Color(0.50, 0.30, 0.10), Color(0.60, 0.38, 0.16), "Cài Đặt", 22, btn_size)
+	_style_menu_button(tutorial_button, Color(0.48, 0.32, 0.12), Color(0.58, 0.40, 0.18), "Hướng Dẫn", 22, btn_size)
+	_style_menu_button(quit_button, Color(0.45, 0.25, 0.10), Color(0.55, 0.32, 0.15), "Thoát", 22, btn_size)
 	
 	# Lưu danh sách buttons để animate hover
 	_menu_buttons = [play_button, settings_button, tutorial_button, quit_button]
@@ -468,22 +452,7 @@ func _process(delta):
 		var bounce_x = 1.0 + sin(_bg_timer * 3.5) * 0.03  # Scale X nhẹ hơn 3%
 		play_button.scale = Vector2(bounce_x, bounce_y)
 	
-	# === Animated background breathing ===
-	var bg_pulse = (sin(_bg_timer * 0.5) + 1.0) / 2.0
-	if _bg_rect:
-		_bg_rect.color = Color(
-			0.02 + bg_pulse * 0.01,
-			0.03 + bg_pulse * 0.01,
-			0.08 + bg_pulse * 0.02,
-			0.45
-		)
-	if _overlay_rect:
-		_overlay_rect.color = Color(
-			0.02 + bg_pulse * 0.02,
-			0.08 + bg_pulse * 0.02,
-			0.05 + bg_pulse * 0.01,
-			0.25 + bg_pulse * 0.05
-		)
+	# === Background overlay (giữ nguyên, không animate vì đã dùng hình nền) ===
 	
 	# === Float fruit emojis ===
 	var viewport_size = get_viewport_rect().size

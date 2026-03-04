@@ -1,7 +1,7 @@
 extends Node3D
 
 ## Thú cưng đi theo player với tốc độ tùy loại
-## Fox: nhanh x2, phát hiện trái cây
+## Fox: nhanh x2, phát hiện rác
 ## Turtle: chậm x0.5, hồi NL khi player đứng yên
 
 var player: CharacterBody3D = null

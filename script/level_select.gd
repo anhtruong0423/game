@@ -6,12 +6,12 @@ extends Control
 const LEVEL_COUNT := 6
 
 const LEVEL_NAMES := {
-	1: "Vườn trái cây",
-	2: "Khu cam chanh",
-	3: "Mùa hè rực rỡ",
-	4: "Thu hoạch lớn",
-	5: "Thử thách trái cây",
-	6: "Siêu thu hoạch",
+	1: "Dọn dẹp sân vườn",
+	2: "Khu phố sạch",
+	3: "Dọn rác ban đêm",
+	4: "Thu gom lớn",
+	5: "Thử thách tái chế",
+	6: "Siêu dọn dẹp",
 }
 
 var level_buttons: Array[Button] = []
@@ -100,34 +100,22 @@ func _create_level_button(level: int) -> Button:
 	var stars = Global.level_stars.get(level, 0)
 	var level_name = LEVEL_NAMES.get(level, "Level %d" % level)
 
-	# Nội dung nút - tạo star text với màu vàng cho sao đã đạt
-	var star_text = ""
+	# Tạo star text hiển thị
+	var star_display = ""
 	for s in range(3):
 		if s < stars:
-			star_text += "[color=#FFD700]★[/color]"
+			star_display += "★ "
 		else:
-			star_text += "[color=#888888]☆[/color]"
+			star_display += "☆ "
+	star_display = star_display.strip_edges()
 
 	if unlocked:
-		btn.text = "Level %d\n%s" % [level, level_name]
+		btn.text = "Level %d\n%s\n%s" % [level, level_name, star_display]
 		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_level_selected.bind(level))
-		# Thêm RichTextLabel cho ngôi sao màu vàng
-		var star_label = RichTextLabel.new()
-		star_label.bbcode_enabled = true
-		star_label.text = star_text
-		star_label.fit_content = true
-		star_label.scroll_active = false
-		star_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		star_label.anchors_preset = Control.PRESET_BOTTOM_WIDE
-		star_label.anchor_top = 1.0
-		star_label.anchor_bottom = 1.0
-		star_label.offset_top = -30.0
-		star_label.offset_bottom = -5.0
-		star_label.add_theme_font_size_override("normal_font_size", 22)
-		# Căn giữa text
-		star_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		btn.add_child(star_label)
+		# Đổi màu sao vàng nếu có sao
+		if stars > 0:
+			btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
 	else:
 		btn.text = "Level %d\n🔒\nChưa mở khóa" % level
 		btn.add_theme_font_size_override("font_size", 16)

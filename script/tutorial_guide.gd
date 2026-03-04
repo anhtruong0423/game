@@ -32,9 +32,9 @@ const INVENTORY_FULL_COOLDOWN := 15.0
 
 ## ==================== Level 1 Messages ====================
 const L1_MESSAGES = {
-	"welcome": "Chào cháu! Trái cây nhiệm vụ đang nhấp nháy trên minimap. Hãy đi đến gần và nhấn E để nhặt!",
-	"first_fruit": "Giỏi lắm cháu! Cháu đã nhặt được trái cây đầu tiên. Tiếp tục tìm trái cây tiếp theo nhé!",
-	"second_fruit": "Tuyệt vời! Bây giờ hãy mang trái cây về rổ giao hàng. Đến gần rổ rồi nhấn E để bỏ vào!",
+	"welcome": "Chào cháu! Rác nhiệm vụ đang nhấp nháy trên minimap. Hãy đi đến gần và nhấn E để nhặt!",
+	"first_fruit": "Giỏi lắm cháu! Cháu đã nhặt được rác đầu tiên. Tiếp tục tìm rác tiếp theo nhé!",
+	"second_fruit": "Tuyệt vời! Bây giờ hãy mang rác về thùng tái chế. Đến gần thùng rồi nhấn E để bỏ vào!",
 	"deliver": "Xuất sắc! Cháu đã giao hàng thành công! Cứ tiếp tục nhặt và giao là được.",
 	"energy_low": "Cẩn thận! Năng lượng đang thấp. Tìm hộp sữa Frumi gần đây và nhấn Q để uống hồi sức!",
 	"milk_picked": "Tốt lắm! Sữa Frumi giúp hồi năng lượng. Nhớ uống thường xuyên khi chạy nhiều nhé!",
@@ -58,8 +58,8 @@ func setup(p_player: Node, p_level: int = 1):
 	_create_popup_ui()
 
 	# Kết nối signals từ player
-	if player.has_signal("fruit_picked_up"):
-		player.fruit_picked_up.connect(_on_fruit_picked)
+	if player.has_signal("trash_picked_up"):
+		player.trash_picked_up.connect(_on_trash_picked)
 	if player.has_signal("milk_picked_up"):
 		player.milk_picked_up.connect(_on_milk_picked)
 	if player.has_signal("inventory_full_attempted"):
@@ -109,7 +109,7 @@ func _unhandled_input(event):
 
 ## ==================== Event Handlers ====================
 
-func _on_fruit_picked(_item_type: String):
+func _on_trash_picked(_item_type: String):
 	if current_level != 1:
 		return
 	fruits_picked += 1
@@ -139,7 +139,7 @@ func _on_inventory_full():
 	if _inventory_full_cooldown > 0:
 		return
 	_inventory_full_cooldown = INVENTORY_FULL_COOLDOWN
-	_show_popup("Túi đồ đã đầy rồi cháu ơi! Hãy mang trái cây về rổ giao hàng (nhấn E) rồi quay lại nhặt tiếp. Hoặc nhấn Tab để nâng cấp túi đồ!")
+	_show_popup("Túi đồ đã đầy rồi cháu ơi! Hãy mang rác về thùng tái chế (nhấn E) rồi quay lại nhặt tiếp. Hoặc nhấn Tab để nâng cấp túi đồ!")
 
 
 ## Gọi từ dog_chase.gd khi chó bắt đầu đuổi lần đầu (Level 2)
