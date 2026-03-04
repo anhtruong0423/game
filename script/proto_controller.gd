@@ -138,6 +138,7 @@ var coin_display_label: Label = null  ## Hiển thị số xu trên bảng upgra
 var pet_instance: Node3D = null
 var turtle_hint_label: Label = null
 var minimap_instance: Node = null
+var zone_indicator_instance: Node = null
 
 ## Flashlight system
 var has_flashlight := false
@@ -161,6 +162,7 @@ func _ready() -> void:
 	_setup_turtle_hint()
 	_spawn_pet.call_deferred()
 	_setup_minimap.call_deferred()
+	_setup_zone_indicator.call_deferred()
 	_restore_flashlight.call_deferred()
 
 	apply_upgrades()
@@ -263,11 +265,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not pause_menu_open:
 			toggle_upgrade_menu()
 	
-	# Toggle minimap (press M)
+	# Mở rộng minimap (press M)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_M:
 		if not pause_menu_open and not upgrade_menu_open:
-			if minimap_instance and minimap_instance.has_method("toggle"):
-				minimap_instance.toggle()
+			if minimap_instance and minimap_instance.has_method("toggle_expand"):
+				minimap_instance.toggle_expand()
 
 	# Flashlight (press P) - nhặt hoặc bật/tắt đèn pin
 	if event is InputEventKey and event.pressed and event.keycode == KEY_P:
@@ -606,6 +608,24 @@ func _setup_minimap():
 	minimap_instance.name = "Minimap"
 	add_child(minimap_instance)
 	minimap_instance.setup(self, hud)
+
+
+func _setup_zone_indicator():
+	var hud = get_node_or_null("HUD")
+	if not hud:
+		return
+	var zone_script = load("res://script/zone_indicator.gd")
+	if not zone_script:
+		push_warning("[ZoneIndicator] Không load được zone_indicator.gd")
+		return
+	zone_indicator_instance = Node.new()
+	zone_indicator_instance.set_script(zone_script)
+	zone_indicator_instance.name = "ZoneIndicator"
+	add_child(zone_indicator_instance)
+	zone_indicator_instance.setup(self, hud)
+
+
+
 
 
 ## ==================== FLASHLIGHT SYSTEM ====================
