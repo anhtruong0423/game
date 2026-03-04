@@ -29,28 +29,20 @@ func _ready() -> void:
 	# Background nâu
 	background.color = Color(0.72, 0.55, 0.40, 1.0)
 	
-	# Load font Melon Pop
-	var melon_font = load("res://assets/font/Melon Pop.ttf")
-	
-	# Title style
-	if melon_font:
-		title_label.add_theme_font_override("font", melon_font)
+	# Title style (font mặc định)
 	title_label.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06))  # Dark brown
 	title_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.3))
 	title_label.add_theme_constant_override("shadow_offset_x", 2)
 	title_label.add_theme_constant_override("shadow_offset_y", 2)
 	
-	# Score labels style
-	if melon_font:
-		score_label.add_theme_font_override("font", melon_font)
-		best_score_label.add_theme_font_override("font", melon_font)
+	# Score labels style (font mặc định)
 	score_label.add_theme_color_override("font_color", Color(1, 1, 1))
 	best_score_label.add_theme_color_override("font_color", Color(1, 0.9, 0.3))
 	
-	# Style buttons
-	_style_brown_button(restart_button, "CHƠI LẠI", melon_font)
-	_style_brown_button(main_menu_button, "MENU CHÍNH", melon_font)
-	_style_brown_button(quit_button, "THOÁT", melon_font)
+	# Style buttons (font mặc định)
+	_style_brown_button(restart_button, "CHƠI LẠI")
+	_style_brown_button(main_menu_button, "MENU CHÍNH")
+	_style_brown_button(quit_button, "THOÁT")
 	
 	# Bắt đầu animation fade in
 	play_fade_in_animation()
@@ -105,14 +97,12 @@ func _on_quit_pressed() -> void:
 	get_tree().quit()
 
 
-func _style_brown_button(btn: Button, text: String, custom_font):
+func _style_brown_button(btn: Button, text: String):
 	btn.text = text
 	btn.custom_minimum_size = Vector2(220, 55)
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	
-	if custom_font:
-		btn.add_theme_font_override("font", custom_font)
 	btn.add_theme_font_size_override("font_size", 22)
 	btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
 	

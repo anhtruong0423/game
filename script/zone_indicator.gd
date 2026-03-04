@@ -7,42 +7,42 @@ extends Node
 ## Dựa trên MILK_SPAWN_POSITIONS trong level_manager.gd
 const ZONES = [
 	{
-		"name": "🏪 Khu Trung Tâm",
+		"name": "Khu Trung Tâm",
 		"subtitle": "FrumiShop & Thùng rác",
 		"color": Color(0.3, 0.9, 0.4),
 		"min_x": 95.0, "max_x": 130.0,
 		"min_z": 60.0, "max_z": 90.0,
 	},
 	{
-		"name": "🛤️ Đường Chính",
+		"name": "Đường Chính",
 		"subtitle": "Con đường lớn xuyên nông trại",
 		"color": Color(0.9, 0.8, 0.3),
 		"min_x": -130.0, "max_x": 170.0,
 		"min_z": 82.0, "max_z": 95.0,
 	},
 	{
-		"name": "🌾 Cánh Đồng",
+		"name": "Cánh Đồng",
 		"subtitle": "Khu vực canh tác",
 		"color": Color(0.4, 0.8, 0.3),
 		"min_x": -110.0, "max_x": 60.0,
 		"min_z": 40.0, "max_z": 70.0,
 	},
 	{
-		"name": "🏠 Khu Nhà Cửa",
+		"name": "Khu Nhà Cửa",
 		"subtitle": "Khu dân cư yên tĩnh",
 		"color": Color(0.7, 0.5, 0.3),
 		"min_x": -30.0, "max_x": 140.0,
 		"min_z": 15.0, "max_z": 40.0,
 	},
 	{
-		"name": "🌲 Vùng Tây",
+		"name": "Vùng Tây",
 		"subtitle": "Vùng hoang dã phía tây",
 		"color": Color(0.3, 0.6, 0.8),
 		"min_x": -220.0, "max_x": -110.0,
 		"min_z": 55.0, "max_z": 95.0,
 	},
 	{
-		"name": "🌲 Vùng Đông",
+		"name": "Vùng Đông",
 		"subtitle": "Phía đông nông trại",
 		"color": Color(0.3, 0.6, 0.8),
 		"min_x": 140.0, "max_x": 270.0,
@@ -169,7 +169,7 @@ func _check_zone() -> void:
 			break
 
 	if new_zone == "":
-		new_zone = "🗺️ Ngoại Ô"
+		new_zone = "Ngoại Ô"
 		new_subtitle = "Vùng chưa khám phá"
 		new_color = Color(0.6, 0.6, 0.6)
 

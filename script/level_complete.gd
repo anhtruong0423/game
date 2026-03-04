@@ -69,6 +69,18 @@ func _ready():
 	level_select_btn.pressed.connect(_on_level_select)
 	menu_btn.pressed.connect(_on_menu)
 
+	# Style brown cho tất cả buttons
+	_style_brown_button(next_level_btn)
+	_style_brown_button(replay_btn)
+	_style_brown_button(level_select_btn)
+	_style_brown_button(menu_btn)
+
+	# Title style
+	title_label.add_theme_color_override("font_color", Color(0.3, 0.18, 0.06))
+	title_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.3))
+	title_label.add_theme_constant_override("shadow_offset_x", 2)
+	title_label.add_theme_constant_override("shadow_offset_y", 2)
+
 	play_fade_in()
 	
 	# Phát SFX hoàn thành level

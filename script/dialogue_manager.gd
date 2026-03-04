@@ -228,12 +228,13 @@ func show_dialogue(index: int):
 		name_label.text = entry.speaker
 		name_label.add_theme_color_override("font_color", entry.color)
 
-	## Đổi avatar theo speaker
+	## Đổi avatar theo speaker - chỉ hiện avatar cho Lan
 	if avatar_texture:
 		if entry.speaker == "Lan" and avatar_lan:
 			avatar_texture.texture = avatar_lan
-		elif avatar_farmer:
-			avatar_texture.texture = avatar_farmer
+			avatar_texture.visible = true
+		else:
+			avatar_texture.visible = false
 
 	## Đổi background theo speaker và level
 	var scene_image = get_node_or_null("SceneImage")

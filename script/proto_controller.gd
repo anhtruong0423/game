@@ -1327,6 +1327,13 @@ func toggle_pause_menu():
 	# Pause/unpause game
 	get_tree().paused = pause_menu_open
 	
+	# Ẩn/hiện minimap khi pause
+	if minimap_instance and minimap_instance.has_method("toggle"):
+		if pause_menu_open:
+			minimap_instance.minimap_container.visible = false
+		else:
+			minimap_instance.minimap_container.visible = minimap_instance.is_visible
+	
 	if pause_menu_open:
 		release_mouse()
 		# Đóng settings panel nếu đang mở
