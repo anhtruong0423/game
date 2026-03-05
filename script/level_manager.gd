@@ -854,12 +854,9 @@ func _on_stay_pressed():
 		choice_panel.queue_free()
 		choice_panel = null
 	choice_shown = true  # Không hiện lại panel nữa (đã chọn rồi)
-	# Lưu kết quả + mở khóa level tiếp theo
+	# Lưu kết quả sao hiện tại (KHÔNG tăng current_level ở đây)
 	var stars = calculate_stars()
 	Global.save_level_result(current_level, stars)
-	if current_level < 6:
-		Global.current_level = current_level + 1
-		Global.save_data()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if pass_notification:
 		pass_notification.text = "Tiếp tục nhặt để đạt 3 sao!"

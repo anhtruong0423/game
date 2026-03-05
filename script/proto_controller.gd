@@ -574,13 +574,13 @@ func _process_camera_shake(delta: float):
 		_shake_timer = 0
 		_shake_intensity = 0
 		head.rotation.x = look_rotation.x
+		head.rotation.y = 0.0
 		return
 	# Rung ngẫu nhiên trổi trái-phải và lên-xuống
 	var shake_x = randf_range(-_shake_intensity, _shake_intensity)
 	var shake_y = randf_range(-_shake_intensity, _shake_intensity)
 	head.rotation.x = look_rotation.x + shake_x
-	rotation.y = look_rotation.y + shake_y
-
+	head.rotation.y = shake_y
 
 ## === CẢNH BÁO BỊ CẮN ===
 func _setup_bite_warning():
@@ -1056,9 +1056,13 @@ func update_energy_ui():
 	if ratio <= 0.2:
 		energy_blink_timer += get_process_delta_time()
 		var blink = (sin(energy_blink_timer * 10.0) + 1.0) / 2.0
-		_energy_fill_style.bg_color = Color(0.9, 0.1, 0.1).lerp(Color(0.5, 0.0, 0.0), blink)
+		var new_color = Color(0.9, 0.1, 0.1).lerp(Color(0.5, 0.0, 0.0), blink)
+		if _energy_fill_style.bg_color != new_color:
+			_energy_fill_style.bg_color = new_color
 	else:
-		_energy_fill_style.bg_color = Color(0.2, 0.8, 0.2)
+		var default_color = Color(0.2, 0.8, 0.2)
+		if _energy_fill_style.bg_color != default_color:
+			_energy_fill_style.bg_color = default_color
 		energy_blink_timer = 0.0
 
 	# Hiển thị gợi ý rùa khi năng lượng thấp

@@ -86,6 +86,10 @@ func _ready() -> void:
 
 ## ==================== PREMIUM STYLING ====================
 
+const FRUIT_COUNT := 25
+const FRUIT_EMOJIS := ["📦", "🗞️", "🍼", "🥤", "🛍️", "🥫", "🧃", "🛒"]
+const PARTICLE_DOT_COUNT := 40
+
 var _title_label: Label
 var _bg_timer: float = 0.0
 var _bg_rect: ColorRect

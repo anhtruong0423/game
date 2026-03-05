@@ -3,23 +3,28 @@ extends Node3D
 ## Tự động tạo trimesh collision cho tất cả MeshInstance3D trong scene
 ## Dùng call_deferred + batch processing để tránh lag spike khi load
 
-const BATCH_SIZE := 3  ## Chỉ xử lý 3 mesh mỗi frame
+const MAX_FRAME_MSEC := 5  ## Tối đa 5 milliseconds xử lý mỗi frame để luôn mượt mà
 
 func _ready():
 	# Dùng call_deferred để tránh freeze khi load scene
 	call_deferred("_add_collision_batch")
 
 
-## Thu thập tất cả mesh cần tạo collision, rồi xử lý từng batch với delay
+## Thu thập tất cả mesh cần tạo collision, rồi xử lý với time-slicing
 func _add_collision_batch():
 	var meshes: Array = []
 	_collect_meshes(self, meshes)
 	
-	# Tạo collision cho từng batch, chờ 1 frame giữa mỗi batch
+	var start_time = Time.get_ticks_msec()
+	
 	for i in range(meshes.size()):
 		meshes[i].create_trimesh_collision()
-		if (i + 1) % BATCH_SIZE == 0 and i < meshes.size() - 1:
+		
+		# Nếu đã xài quá ~5ms cho loop này, nhường frame lại ngay và reset timer
+		if Time.get_ticks_msec() - start_time >= MAX_FRAME_MSEC:
 			await get_tree().process_frame
+			start_time = Time.get_ticks_msec()
+
 
 
 ## Đệ quy thu thập tất cả MeshInstance3D chưa có StaticBody3D
