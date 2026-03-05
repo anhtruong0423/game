@@ -509,7 +509,6 @@ func _on_play_pressed() -> void:
 	
 	if not has_any_stars:
 		Global.current_level = 1
-		Global.dialogue_mode = "level"
 		get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 	else:
 		# Player đã chơi → Level Select (pet select sẽ hiện sau dialogue)

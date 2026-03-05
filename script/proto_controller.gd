@@ -1709,7 +1709,6 @@ func _style_pause_map_btn(btn: Button):
 func _on_pause_map_level_selected(level: int):
 	get_tree().paused = false
 	Global.current_level = level
-	Global.dialogue_mode = "level"
 	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 

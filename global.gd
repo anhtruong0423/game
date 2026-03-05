@@ -2,7 +2,6 @@ extends Node
 
 const SAVE_PATH = "user://save_data.cfg"
 
-var coin := 0
 var best_score := 0
 var last_score := 0
 
@@ -19,7 +18,6 @@ var upgrade_levels: Dictionary = {"inventory": 0, "speed": 0, "energy": 0}
 ## Tutorial và Pet Selection
 var tutorial_completed := false
 var selected_pet := ""  ## "fox" hoặc "turtle"
-var dialogue_mode := "tutorial"  ## "tutorial" hoặc "level"
 
 ## Loading screen
 var next_scene_path := ""
@@ -32,7 +30,7 @@ const PET_BONUSES = {
 		"inventory_bonus": 2,
 		"dog_damage_reduction": 0.0,
 		"passive_heal": 0.0,
-		"interact_range_bonus": 2.0,
+		"interact_range_bonus": 4.0,
 		"follow_speed_mult": 2.0,
 		"scene_path": "res://scene/fox.tscn"
 	},
@@ -97,11 +95,6 @@ func advance_level():
 		save_data()
 
 
-## Đánh dấu tutorial đã hoàn thành
-func complete_tutorial():
-	tutorial_completed = true
-	save_data()
-
 
 ## Chọn thú cưng
 func select_pet(pet_name: String):
@@ -151,7 +144,7 @@ func load_data():
 	if err == OK:
 		best_score = config.get_value("game", "best_score", 0)
 		tutorial_completed = config.get_value("game", "tutorial_completed", false)
-		selected_pet = config.get_value("game", "selected_pet", config.get_value("game", "selected_character", ""))
+		selected_pet = config.get_value("game", "selected_pet", "")
 		current_level = config.get_value("game", "current_level", 1)
 		total_coins = config.get_value("game", "total_coins", 0)
 		has_flashlight = config.get_value("game", "has_flashlight", false)

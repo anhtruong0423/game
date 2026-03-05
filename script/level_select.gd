@@ -192,7 +192,6 @@ func _is_level_unlocked(level: int) -> bool:
 
 func _on_level_selected(level: int):
 	Global.current_level = level
-	Global.dialogue_mode = "level"
 	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 

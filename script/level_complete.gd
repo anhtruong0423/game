@@ -114,7 +114,6 @@ func play_fade_in():
 
 func _on_next_level():
 	Global.advance_level()
-	Global.dialogue_mode = "level"
 	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 
@@ -123,7 +122,6 @@ func _on_finish_game():
 
 
 func _on_replay():
-	Global.dialogue_mode = "level"
 	get_tree().change_scene_to_file("res://scene/dialogue.tscn")
 
 

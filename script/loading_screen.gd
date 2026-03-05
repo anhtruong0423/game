@@ -1,11 +1,10 @@
 extends Control
 
-## Loading screen - hiển thị trong lúc load scene nặng, chuyển ngay khi xong
+## Loading screen - preload scene chính + tất cả sub-scene nặng để tránh giật lag
 
 var progress: Array = []
 var target_path: String = ""
 var loading_started := false
-var loaded_scene: PackedScene = null
 
 var progress_bar: ProgressBar
 var percent_label: Label
@@ -19,6 +18,33 @@ const PROGRESS_LERP_SPEED := 30.0
 
 var _bar_fill_style: StyleBoxFlat
 
+## Preload sub-scene nặng (items, pets, milk, dog, shop...)
+const PRELOAD_SCENES: Array = [
+	"res://scene/items/chainhua.tscn",
+	"res://scene/items/chaisua.tscn",
+	"res://scene/items/giaybaocu.tscn",
+	"res://scene/items/hopsuacu.tscn",
+	"res://scene/items/lonnuocngot.tscn",
+	"res://scene/items/thungcarton.tscn",
+	"res://scene/items/tuigiay.tscn",
+	"res://scene/items/tuinilong.tscn",
+	"res://scene/items/voxecu.tscn",
+	"res://scene/milk_grape.tscn",
+	"res://scene/milk_melon.tscn",
+	"res://scene/milk_strawberry.tscn",
+	"res://scene/dog.tscn",
+	"res://scene/fox.tscn",
+	"res://scene/turtle.tscn",
+	"res://scene/basket.tscn",
+	"res://scene/frumishop.tscn",
+]
+
+## Trạng thái loading
+enum LoadPhase { MAIN_SCENE, SUB_SCENES, DONE }
+var _phase: int = LoadPhase.MAIN_SCENE
+var _sub_index: int = 0
+var _cached_scenes: Array = []  ## Giữ reference để không bị GC
+
 
 func _ready():
 	target_path = Global.next_scene_path
@@ -28,6 +54,7 @@ func _ready():
 	_build_ui()
 	ResourceLoader.load_threaded_request(target_path, "", true)
 	loading_started = true
+	_phase = LoadPhase.MAIN_SCENE
 
 
 func _build_ui():
@@ -127,6 +154,8 @@ func _build_ui():
 		"Uống sữa FRUMI để hồi phục năng lượng.",
 		"Mang rác về thùng tái chế để hoàn thành nhiệm vụ.",
 		"Nhặt đủ rác nhanh để đạt 3 sao!",
+		"Chọn thú cưng Cáo để nhặt xa hơn!",
+		"Rùa hồi năng lượng khi bạn đứng yên bên cạnh!",
 	]
 	tip.text = tips[randi() % tips.size()]
 	vbox.add_child(tip)
@@ -142,26 +171,61 @@ func _process(delta):
 		dot_count = (dot_count + 1) % 4
 		dots_label.text = "Đang tải" + ".".repeat(dot_count)
 
-	var status = ResourceLoader.load_threaded_get_status(target_path, progress)
-
-	match status:
-		ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-			real_progress = progress[0] * 100.0 if progress.size() > 0 else 1.0
-			real_progress = max(1.0, real_progress)
-
-		ResourceLoader.THREAD_LOAD_LOADED:
-			real_progress = 100.0
-			loading_started = false
-			var scene = ResourceLoader.load_threaded_get(target_path)
-			get_tree().change_scene_to_packed(scene)
-			return
-
-		ResourceLoader.THREAD_LOAD_FAILED:
-			loading_started = false
-			dots_label.text = "Lỗi! Đang thử lại..."
-			get_tree().change_scene_to_file(target_path)
+	match _phase:
+		LoadPhase.MAIN_SCENE:
+			_process_main_scene()
+		LoadPhase.SUB_SCENES:
+			_process_sub_scenes()
+		LoadPhase.DONE:
 			return
 
 	display_progress = move_toward(display_progress, real_progress, PROGRESS_LERP_SPEED * delta)
 	progress_bar.value = display_progress
 	percent_label.text = "%d%%" % int(display_progress)
+
+
+## Giai đoạn 1: Load scene chính (0% - 60%)
+func _process_main_scene():
+	var status = ResourceLoader.load_threaded_get_status(target_path, progress)
+
+	match status:
+		ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			var p = progress[0] if progress.size() > 0 else 0.0
+			real_progress = max(1.0, p * 60.0)  # 0-60%
+
+		ResourceLoader.THREAD_LOAD_LOADED:
+			real_progress = 60.0
+			_phase = LoadPhase.SUB_SCENES
+			_sub_index = 0
+
+		ResourceLoader.THREAD_LOAD_FAILED:
+			loading_started = false
+			dots_label.text = "Lỗi! Đang thử lại..."
+			get_tree().change_scene_to_file(target_path)
+
+
+## Giai đoạn 2: Preload sub-scenes (60% - 100%), 1-2 scene mỗi frame
+func _process_sub_scenes():
+	# Load 2 scene mỗi frame để không block quá lâu
+	var loaded_this_frame := 0
+	while _sub_index < PRELOAD_SCENES.size() and loaded_this_frame < 2:
+		var path = PRELOAD_SCENES[_sub_index]
+		if ResourceLoader.exists(path):
+			var res = load(path)
+			if res:
+				_cached_scenes.append(res)
+		_sub_index += 1
+		loaded_this_frame += 1
+
+	# Cập nhật progress: 60% + (sub_progress * 40%)
+	var sub_progress = float(_sub_index) / max(1, PRELOAD_SCENES.size())
+	real_progress = 60.0 + sub_progress * 40.0
+
+	# Hoàn thành tất cả sub-scenes → chuyển scene
+	if _sub_index >= PRELOAD_SCENES.size():
+		real_progress = 100.0
+		_phase = LoadPhase.DONE
+		loading_started = false
+		var scene = ResourceLoader.load_threaded_get(target_path)
+		get_tree().change_scene_to_packed(scene)
+
